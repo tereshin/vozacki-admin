@@ -8,6 +8,10 @@ export * from './navigation'
 // Auth types
 export * from './auth'
 
+// Base component types
+export * from './base-data-table'
+export * from './filters'
+
 // Entity types
 export * from './administrators'
 export * from './articles'

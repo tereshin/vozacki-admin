@@ -15,6 +15,8 @@ export const useArticlesApi = () => {
     search?: string;
     language_id?: string;
     category_uid?: string;
+    sort_field?: string;
+    sort_order?: 'asc' | 'desc';
   }): Promise<ArticleResponse> => {
     try {
       let query = supabase
@@ -38,7 +40,15 @@ export const useArticlesApi = () => {
       const from = (page - 1) * perPage
       const to = from + perPage - 1
 
-      query = query.range(from, to).order('created_at', { ascending: false })
+      // Сортировка
+      const sortField = params?.sort_field || 'published_at'
+      const sortOrder = params?.sort_order || 'desc'
+      const ascending = sortOrder === 'asc'
+      
+      query = query.range(from, to).order(sortField, { 
+        ascending, 
+        nullsFirst: sortField === 'published_at' ? false : true 
+      })
 
       const { data, error, count } = await query
 

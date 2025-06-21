@@ -40,7 +40,7 @@ export default defineNuxtConfig({
   },
   i18n: i18nConfig,
   vite: {
-    plugins: [tailwindcss()],
+    plugins: [tailwindcss()]
   },
   css: [
     "~/assets/css/main.css",
@@ -71,6 +71,11 @@ export default defineNuxtConfig({
       theme: {
         preset: Aura
       }
+    },
+    autoImport: true,
+    components: {
+      include: "*",
+      exclude: []
     }
   },
   runtimeConfig: {

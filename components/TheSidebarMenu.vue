@@ -1,6 +1,6 @@
 <template>
-  <Drawer :visible="generalStore.isMenuOpen" :modal="generalStore.isMobile" :dismissable="false" position="left" class="!w-64"
-    @update:visible="generalStore.isMenuOpen = $event">
+  <Drawer :visible="generalStore.isMenuOpen" :modal="generalStore.isMobile" :dismissable="false" position="left"
+    class="!w-64" @update:visible="generalStore.isMenuOpen = $event">
     <template #container="{ closeCallback }">
       <div class="flex flex-col h-full bg-white">
         <!-- Sidebar header -->
@@ -12,9 +12,7 @@
             </div>
           </span>
           <span class="lg:hidden">
-            <Button type="button" @click="generalStore.isMenuOpen = false" variant="outline" size="sm">
-              <span name="i-heroicons-x-mark" class="w-4 h-4" />
-            </Button>
+            <Button type="button" @click="generalStore.isMenuOpen = false" variant="link" size="small" severity="secondary" icon="pi pi-times" class="!text-gray-500" />
           </span>
         </div>
 
@@ -27,8 +25,25 @@
           </nav>
         </div>
 
+        <!-- Content Language Selector -->
+        <div class="px-4 py-3 border-t border-gray-200">
+          <div class="flex flex-col space-y-2">
+            <label class="text-xs font-medium text-gray-700">{{ $t('sidebar.contentLanguage') }}</label>
+            <Select 
+              v-model="contentLanguageId" 
+              :options="availableLanguages" 
+              option-label="name"
+              option-value="id" 
+              :placeholder="$t('sidebar.selectLanguage')" 
+              class="w-full text-sm"
+              size="small"
+              @change="onLanguageChange"
+            />
+          </div>
+        </div>
+
         <!-- Sidebar Footer -->
-        <div class="mt-auto px-4 py-4 border-t border-gray-200">
+        <div class="px-4 py-4 border-t border-gray-200">
           <div class="flex items-center justify-between">
             <div class="flex items-center space-x-3">
               <div class="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
@@ -39,7 +54,8 @@
                 <span class="text-xs text-gray-500">Admin</span>
               </div>
             </div>
-            <Button variant="text" size="small" @click="handleLogout" :loading="authStore.loading" icon="pi pi-sign-out" />
+            <Button variant="text" size="small" @click="handleLogout" :loading="authStore.loading"
+              icon="pi pi-sign-out" />
           </div>
         </div>
       </div>
@@ -50,6 +66,7 @@
 <script setup lang="ts">
 // Import interfaces/types
 import type { NavigationItem, NavigationGroup } from "~/types/navigation";
+import type { LanguageResource } from "~/types/languages";
 import Drawer from 'primevue/drawer';
 
 // Import components
@@ -58,11 +75,19 @@ import BaseNavigationGroup from "~/components/base/BaseNavigationGroup.vue";
 // Import stores
 import { useGeneralStore } from "~/store/general";
 import { useAuthStore } from '~/store/auth';
+import { useLanguagesStore } from "~/store/languages";
 
 // Stores
 const generalStore = useGeneralStore();
 const authStore = useAuthStore();
+const languagesStore = useLanguagesStore();
 const { user } = storeToRefs(authStore);
+
+// App settings
+const { contentLanguageId, initSettings } = useAppSettings();
+
+// Languages
+const availableLanguages = ref<LanguageResource[]>([]);
 
 // Menu configuration
 const menu = ref<NavigationGroup[]>([
@@ -72,7 +97,7 @@ const menu = ref<NavigationGroup[]>([
     nav: [
       {
         name: "Dashboard",
-        icon: "folder-plus",
+        icon: "sidebar-open",
         link: useRoutesNames().dashboard,
         conditions: [],
       },
@@ -85,13 +110,13 @@ const menu = ref<NavigationGroup[]>([
       {
         name: "Articles",
         icon: "folder-plus",
-        link: "/articles",
+        link: useRoutesNames().articles,
         conditions: [],
       },
       {
-        name: "Topics",
+        name: "Test materials",
         icon: "folder-plus",
-        link: "/topics",
+        link: useRoutesNames().tests,
         conditions: [],
       },
     ],
@@ -138,10 +163,7 @@ function loadCollapsedState() {
 }
 
 function goTo(item: NavigationItem) {
-  console.log('Navigating to:', item.link);
-  // Пока используем простой alert вместо навигации, так как страницы не созданы
-  alert(`Переход на: ${item.name} (${item.link})`);
-
+  navigateTo(item.link);
   if (generalStore.isMobile) {
     generalStore.isMenuOpen = false;
   }
@@ -156,10 +178,33 @@ async function handleLogout() {
   }
 }
 
+function onLanguageChange() {
+  // Язык автоматически сохраняется через contentLanguageId computed свойство
+  console.log('Content language changed to:', contentLanguageId.value);
+}
+
+async function loadLanguages() {
+  try {
+    const response = await languagesStore.getLanguages({ 
+      is_active: true, 
+      per_page: 100 
+    });
+    availableLanguages.value = response.data.collection;
+  } catch (error) {
+    console.error('Failed to load languages:', error);
+  }
+}
+
 // Lifecycle hooks
-onMounted(() => {
+onMounted(async () => {
   generalStore.initMobileDetection();
   loadCollapsedState();
+  
+  // Инициализируем настройки приложения
+  initSettings();
+  
+  // Загружаем доступные языки
+  await loadLanguages();
 });
 
 onUnmounted(() => {

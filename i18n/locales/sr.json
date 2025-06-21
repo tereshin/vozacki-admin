@@ -12,12 +12,112 @@
     "emailRequired": "Unesite email adresu",
     "unexpectedError": "Došlo je do neočekivane greške"
   },
+  "articles": {
+    "title": "Članci",
+    "filters": {
+      "title": "Filteri",
+      "filter": "Filter",
+      "search": "Pretraži",
+      "searchPlaceholder": "Pretraži po naslovu ili slug...",
+      "language": "Jezik",
+      "allLanguages": "Svi jezici",
+      "category": "Kategorija",
+      "allCategories": "Sve kategorije",
+      "perPage": "Zapisa po strani",
+      "resetFilters": "Resetuj filtere"
+    },
+    "table": {
+      "title": "Naslov",
+      "slug": "Slug",
+      "language": "Jezik",
+      "category": "Kategorija",
+      "status": "Status",
+      "publishedAt": "Datum publikovanja",
+      "actions": "Akcije",
+      "edit": "Uredi",
+      "view": "Pregledaj",
+      "duplicate": "Dupliraj",
+      "delete": "Obriši",
+      "published": "Objavljen",
+      "draft": "Nacrt",
+      "noCategory": "Bez kategorije",
+      "unknown": "Nepoznato",
+      "sortAsc": "Sortiraj rastuce",
+      "sortDesc": "Sortiraj opadajuce"
+    },
+    "states": {
+      "loading": "Učitavanje članaka...",
+      "error": "Greška pri učitavanju podataka",
+      "tryAgain": "Pokušaj ponovo",
+      "notFound": "Članci nisu pronađeni",
+      "notFoundDescription": "Pokušajte da promenite parametre filtriranja"
+    },
+    "actions": {
+      "refresh": "Osveži",
+      "deleteConfirm": "Da li ste sigurni da želite da obrišete ovaj članak?",
+      "deleteError": "Greška pri brisanju članka"
+    },
+    "pagination": {
+      "showing": "Prikazano",
+      "of": "od",
+      "records": "zapisa",
+      "page": "Strana",
+      "previous": "Nazad",
+      "next": "Napred"
+    }
+  },
+
   "common": {
     "selectLanguage": "Izaberi jezik",
+    "filters": "Filteri",
     "languages": {
       "en": "Engleski",
       "ru": "Ruski",
       "sr": "Srpski"
+    }
+  },
+
+  "sidebar": {
+    "contentLanguage": "Jezik sadržaja",
+    "selectLanguage": "Izaberi jezik"
+  },
+
+  "tests": {
+    "title": "Тест материјали",
+    "filters": {
+      "title": "Филтери",
+      "filter": "Филтрирај",
+      "search": "Претрага",
+      "searchPlaceholder": "Претрага по имену или опису...",
+      "language": "Језик",
+      "allLanguages": "Сви језици",
+      "resetFilters": "Ресетуј филтере"
+    },
+    "tree": {
+      "topic": "Тема",
+      "testTitle": "Назив теста",
+      "totalQuestions": "Питања",
+      "actions": "Акције",
+      "edit": "Уреди",
+      "view": "Погледај",
+      "delete": "Обриши",
+      "addTest": "Додај тест",
+      "editTopic": "Уреди тему",
+      "deleteTopic": "Обриши тему",
+      "expandAll": "Прошири све",
+      "collapseAll": "Скупи све"
+    },
+    "states": {
+      "loading": "Учитавање тест материјала...",
+      "error": "Грешка при учитавању података",
+      "tryAgain": "Покушај поново",
+      "notFound": "Тест материјали нису пронађени",
+      "notFoundDescription": "Покушајте да промените параметре филтера или проверите везу"
+    },
+    "actions": {
+      "refresh": "Освежи",
+      "deleteConfirm": "Да ли сте сигурни да желите да обришете овај елемент?",
+      "deleteError": "Грешка при брисању елемента"
     }
   }
 } 

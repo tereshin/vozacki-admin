@@ -39,5 +39,6 @@ export type IconName =
     | 'sidebar-open'
     | 'sidebar-close'
     | 'flag'
+    | 'folder'
     | 'folder-plus'
     | 'user-square';

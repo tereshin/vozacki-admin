@@ -1,9 +1,6 @@
 <template>
-  <div class="min-h-screen bg-gray-50">
-   
-  </div>
+  <DashboardIndexPage />
 </template>
-
 <script setup lang="ts">
 // Middleware для защиты страницы
 definePageMeta({
@@ -18,4 +15,4 @@ useHead({
     { name: 'description', content: 'Административная панель Vozacki' }
   ]
 });
-</script> 
+</script>

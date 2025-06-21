@@ -531,5 +531,5 @@ export type CompositeTypes<
 > = PublicCompositeTypeNameOrOptions extends { schema: keyof Database }
   ? Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
   : PublicCompositeTypeNameOrOptions extends keyof PublicSchema["CompositeTypes"]
-    ? PublicSchema["CompositeTypes"][CompositeTypeName]
+    ? never // Fixed: Changed from PublicSchema["CompositeTypes"][CompositeTypeName] since CompositeTypes is empty
     : never 

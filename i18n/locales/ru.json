@@ -13,12 +13,112 @@
     "unexpectedError": "Произошла неожиданная ошибка"
   },
 
+  "articles": {
+    "title": "Статьи",
+    "filters": {
+      "title": "Фильтры",
+      "filter": "Фильтр",
+      "search": "Поиск",
+      "searchPlaceholder": "Поиск по названию или slug...",
+      "language": "Язык",
+      "allLanguages": "Все языки",
+      "category": "Категория",
+      "allCategories": "Все категории",
+      "perPage": "Записей на странице",
+      "resetFilters": "Сбросить фильтры"
+    },
+    "table": {
+      "title": "Заголовок",
+      "slug": "Slug",
+      "language": "Язык",
+      "category": "Категория",
+      "status": "Статус",
+      "publishedAt": "Дата публикации",
+      "actions": "Действия",
+      "edit": "Редактировать",
+      "view": "Просмотр",
+      "duplicate": "Дублировать",
+      "delete": "Удалить",
+      "published": "Опубликована",
+      "draft": "Черновик",
+      "noCategory": "Без категории",
+      "unknown": "Неизвестно",
+      "sortAsc": "Сортировка по возрастанию",
+      "sortDesc": "Сортировка по убыванию"
+    },
+    "states": {
+      "loading": "Загрузка статей...",
+      "error": "Ошибка загрузки данных",
+      "tryAgain": "Попробовать снова",
+      "notFound": "Статьи не найдены",
+      "notFoundDescription": "Попробуйте изменить параметры фильтрации"
+    },
+    "actions": {
+      "refresh": "Обновить",
+      "deleteConfirm": "Вы уверены, что хотите удалить эту статью?",
+      "deleteError": "Ошибка при удалении статьи"
+    },
+    "pagination": {
+      "showing": "Показано",
+      "of": "из",
+      "records": "записей",
+      "page": "Страница",
+      "previous": "Назад",
+      "next": "Вперед"
+    }
+  },
+
+  "tests": {
+    "title": "Тестовые материалы",
+    "filters": {
+      "title": "Фильтры",
+      "filter": "Фильтровать",
+      "search": "Поиск",
+      "searchPlaceholder": "Поиск по названию или описанию...",
+      "language": "Язык",
+      "allLanguages": "Все языки",
+      "resetFilters": "Сбросить фильтры"
+    },
+    "tree": {
+      "topic": "Тема",
+      "testTitle": "Название теста",
+      "totalQuestions": "Вопросы",
+      "actions": "Действия",
+      "edit": "Редактировать",
+      "view": "Просмотреть",
+      "delete": "Удалить",
+      "addTest": "Добавить тест",
+      "editTopic": "Редактировать тему",
+      "deleteTopic": "Удалить тему",
+      "expandAll": "Развернуть все",
+      "collapseAll": "Свернуть все"
+    },
+    "states": {
+      "loading": "Загрузка тестовых материалов...",
+      "error": "Ошибка загрузки данных",
+      "tryAgain": "Попробовать снова",
+      "notFound": "Тестовые материалы не найдены",
+      "notFoundDescription": "Попробуйте изменить параметры фильтра или проверьте соединение"
+    },
+    "actions": {
+      "refresh": "Обновить",
+      "deleteConfirm": "Вы действительно хотите удалить этот элемент?",
+      "deleteError": "Ошибка удаления элемента"
+    }
+  },
+
   "common": {
     "selectLanguage": "Выберите язык",
+    "filters": "Фильтры",
     "languages": {
       "en": "Английский",
       "ru": "Русский",
       "sr": "Сербский"
     }
+  },
+
+  "sidebar": {
+    "contentLanguage": "Язык контента",
+    "selectLanguage": "Выберите язык"
   }
 }
