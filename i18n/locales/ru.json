@@ -1,0 +1,24 @@
+{
+  "login": {
+    "title": "Вход в систему",
+    "emailLabel": "Email адрес",
+    "emailPlaceholder": "Введите email",
+    "submitButton": "Получить ссылку для входа",
+    "submitting": "Отправка...",
+    "errorTitle": "Ошибка авторизации",
+    "successTitle": "Ссылка отправлена",
+    "successMessage": "Ссылка для входа отправлена на ваш email. Проверьте почту и перейдите по ссылке.",
+    "invalidEmail": "Введите корректный email адрес",
+    "emailRequired": "Введите email адрес",
+    "unexpectedError": "Произошла неожиданная ошибка"
+  },
+
+  "common": {
+    "selectLanguage": "Выберите язык",
+    "languages": {
+      "en": "Английский",
+      "ru": "Русский",
+      "sr": "Сербский"
+    }
+  }
+}

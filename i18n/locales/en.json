@@ -1,0 +1,24 @@
+{
+  "login": {
+    "title": "Log in to system",
+    "emailLabel": "Email address",
+    "emailPlaceholder": "Enter your email",
+    "submitButton": "Get login link",
+    "submitting": "Sending...",
+    "errorTitle": "Authorization error",
+    "successTitle": "Link sent",
+    "successMessage": "Login link has been sent to your email. Check your inbox and click the link.",
+    "invalidEmail": "Enter a valid email address",
+    "emailRequired": "Enter email address",
+    "unexpectedError": "An unexpected error occurred"
+  },
+
+  "common": {
+    "selectLanguage": "Select language",
+    "languages": {
+      "en": "English",
+      "ru": "Russian",
+      "sr": "Serbian"
+    }
+  }
+}

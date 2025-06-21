@@ -1,0 +1,23 @@
+{
+  "login": {
+    "title": "Uloguj se u sistem",
+    "emailLabel": "Email adresa",
+    "emailPlaceholder": "Unesite email",
+    "submitButton": "Dobij link za ulogovanje",
+    "submitting": "Slanje...",
+    "errorTitle": "Greška u autorizaciji",
+    "successTitle": "Link je poslat",
+    "successMessage": "Link za ulogovanje je poslat na vaš email. Proverite poštu i kliknite na link.",
+    "invalidEmail": "Unesite ispravnu email adresu",
+    "emailRequired": "Unesite email adresu",
+    "unexpectedError": "Došlo je do neočekivane greške"
+  },
+  "common": {
+    "selectLanguage": "Izaberi jezik",
+    "languages": {
+      "en": "Engleski",
+      "ru": "Ruski",
+      "sr": "Srpski"
+    }
+  }
+} 
