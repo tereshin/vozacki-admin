@@ -5,66 +5,29 @@ import type {
   AdministratorResponse,
   SingleAdministratorResponse 
 } from '~/types/administrators'
-import type { Tables } from '~/types/database'
 
 export const useAdministratorsApi = () => {
-  const supabase = useSupabase()
-
   const getAdministrators = async (params?: {
     page?: number;
     per_page?: number;
     search?: string;
-    role?: string;
+    role_id?: string;
     sort_field?: string;
     sort_order?: 'asc' | 'desc';
   }): Promise<AdministratorResponse> => {
     try {
-      let query = supabase
-        .from('administrators')
-        .select('*', { count: 'exact' })
+      const query = new URLSearchParams()
+      
+      if (params?.page) query.append('page', params.page.toString())
+      if (params?.per_page) query.append('per_page', params.per_page.toString())
+      if (params?.search) query.append('search', params.search)
+      if (params?.role_id) query.append('role_id', params.role_id)
+      if (params?.sort_field) query.append('sort_field', params.sort_field)
+      if (params?.sort_order) query.append('sort_order', params.sort_order)
 
-      if (params?.search) {
-        query = query.or(`first_name.ilike.%${params.search}%,last_name.ilike.%${params.search}%,email.ilike.%${params.search}%`)
-      }
-
-      if (params?.role) {
-        query = query.eq('role', params.role)
-      }
-
-      const page = params?.page || 1
-      const perPage = params?.per_page || 10
-      const from = (page - 1) * perPage
-      const to = from + perPage - 1
-
-      // Применяем сортировку
-      const sortField = params?.sort_field || 'created_at'
-      const sortOrder = params?.sort_order || 'desc'
-      const ascending = sortOrder === 'asc'
-
-      query = query.range(from, to).order(sortField, { ascending })
-
-      const { data, error, count } = await query
-
-      if (error) throw error
-
-      const collection = (data || []).map((item: Tables<'administrators'>) => ({
-        ...item,
-        full_name: `${item.first_name || ''} ${item.last_name || ''}`.trim()
-      })) as AdministratorResource[]
-
-      return {
-        data: {
-          collection,
-          meta: {
-            current_page: page,
-            from: from + 1,
-            last_page: Math.ceil((count || 0) / perPage),
-            per_page: perPage,
-            to: Math.min(to + 1, count || 0),
-            total: count || 0
-          }
-        }
-      }
+      const response = await $fetch<AdministratorResponse>(`/api/administrators?${query.toString()}`)
+      
+      return response
     } catch (error) {
       console.error('Error fetching administrators:', error)
       throw error
@@ -73,22 +36,9 @@ export const useAdministratorsApi = () => {
 
   const getSingleAdministrator = async (id: string): Promise<SingleAdministratorResponse> => {
     try {
-      const { data, error } = await supabase
-        .from('administrators')
-        .select('*')
-        .eq('id', id)
-        .single()
-
-      if (error) throw error
-
-      const administrator = {
-        ...data,
-        full_name: `${data.first_name || ''} ${data.last_name || ''}`.trim()
-      } as AdministratorResource
-
-      return {
-        data: administrator
-      }
+      const { data } = await $fetch<SingleAdministratorResponse>(`/api/administrators/${id}`)
+      
+      return { data }
     } catch (error) {
       console.error('Error fetching administrator:', error)
       throw error
@@ -97,22 +47,12 @@ export const useAdministratorsApi = () => {
 
   const createAdministrator = async (body: AdministratorRequest): Promise<SingleAdministratorResponse> => {
     try {
-      const { data, error } = await supabase
-        .from('administrators')
-        .insert(body)
-        .select()
-        .single()
-
-      if (error) throw error
-
-      const administrator = {
-        ...data,
-        full_name: `${data.first_name || ''} ${data.last_name || ''}`.trim()
-      } as AdministratorResource
-
-      return {
-        data: administrator
-      }
+      const { data } = await $fetch<SingleAdministratorResponse>('/api/administrators', {
+        method: 'POST',
+        body
+      })
+      
+      return { data }
     } catch (error) {
       console.error('Error creating administrator:', error)
       throw error
@@ -121,26 +61,12 @@ export const useAdministratorsApi = () => {
 
   const updateAdministrator = async (id: string, body: AdministratorUpdateRequest): Promise<SingleAdministratorResponse> => {
     try {
-      const { data, error } = await supabase
-        .from('administrators')
-        .update({
-          ...body,
-          updated_at: new Date().toISOString()
-        })
-        .eq('id', id)
-        .select()
-        .single()
-
-      if (error) throw error
-
-      const administrator = {
-        ...data,
-        full_name: `${data.first_name || ''} ${data.last_name || ''}`.trim()
-      } as AdministratorResource
-
-      return {
-        data: administrator
-      }
+      const { data } = await $fetch<SingleAdministratorResponse>(`/api/administrators/${id}`, {
+        method: 'PUT',
+        body
+      })
+      
+      return { data }
     } catch (error) {
       console.error('Error updating administrator:', error)
       throw error
@@ -149,12 +75,9 @@ export const useAdministratorsApi = () => {
 
   const deleteAdministrator = async (id: string): Promise<void> => {
     try {
-      const { error } = await supabase
-        .from('administrators')
-        .delete()
-        .eq('id', id)
-
-      if (error) throw error
+      await $fetch(`/api/administrators/${id}`, {
+        method: 'DELETE'
+      })
     } catch (error) {
       console.error('Error deleting administrator:', error)
       throw error

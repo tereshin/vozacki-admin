@@ -117,7 +117,6 @@ import type { FilterFieldConfig } from '~/types/filters'
 // Stores
 import { useTopicsStore } from '~/store/topics'
 import { useTestsStore } from '~/store/tests'
-import { useLanguagesStore } from '~/store/languages'
 import { useGeneralStore } from '~/store/general'
 
 // Components
@@ -136,7 +135,6 @@ const toast = useToast()
 // Stores
 const topicsStore = useTopicsStore()
 const testsStore = useTestsStore()
-const languagesStore = useLanguagesStore()
 const generalStore = useGeneralStore()
 
 // App settings
@@ -147,6 +145,7 @@ const expandedKeys = ref<{ [key: string]: boolean }>({})
 const loadingNodes = ref<Set<string>>(new Set())
 
 // Data
+const { loadLanguages: loadCachedLanguages } = useCachedData()
 const languages = ref<LanguageResource[]>([])
 const testsByTopic = ref<Map<string, TestResource[]>>(new Map())
 
@@ -275,8 +274,7 @@ const loadData = async () => {
     try {
         // Only load languages if not already loaded
         if (languages.value.length === 0) {
-            await languagesStore.getLanguages()
-            languages.value = languagesStore.items
+            languages.value = await loadCachedLanguages()
         }
 
         // Load only topics initially - tests will be loaded dynamically
@@ -506,8 +504,7 @@ onMounted(async () => {
     await initSettings()
 
     // First load languages to get proper language_id
-    await languagesStore.getLanguages()
-    languages.value = languagesStore.items
+    languages.value = await loadCachedLanguages()
 
     // Set correct language_id after languages are loaded
     let languageId = getLanguageIdByCode(contentLanguageId.value)
@@ -529,7 +526,7 @@ onMounted(async () => {
     }
 
     if (languageId) {
-        filters.value.language_id = languageId
+        filters.value.language_id = contentLanguageId.value
     }
 
     // Now load data with correct language_id

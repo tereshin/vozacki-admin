@@ -92,10 +92,13 @@ export default defineNuxtConfig({
       exclude: []
     }
   },
+  plugins: [
+    '~/plugins/supabase.client.ts'
+  ],
   runtimeConfig: {
     public: {
       supabaseUrl: process.env.SUPABASE_URL || 'https://vemilyrevahvusnpoghi.supabase.co',
-      supabasePublishableKey: process.env.SUPABASE_PUBLISHABLE_KEY || '',
+      supabasePublishableKey: process.env.SUPABASE_ANON_KEY || '',
     }
   },
 })

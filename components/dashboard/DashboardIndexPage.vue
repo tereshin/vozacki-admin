@@ -14,7 +14,7 @@
         <!-- Main Content -->
         <div class="flex flex-col gap-4">
             <!-- Loading state -->
-            <div v-if="pending" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 p-6">
+            <div v-if="isLoading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 p-6">
                 <Card v-for="i in 4" :key="i" class="animate-pulse">
                     <template #content>
                         <div>
@@ -31,9 +31,9 @@
                     <template #content>
                         <div>
                             <h3 class="text-red-800 font-medium mb-2">{{ $t('dashboard.errors.loadingStats') }}</h3>
-                            <p class="text-red-600 text-sm">{{ error.message }}</p>
+                            <p class="text-red-600 text-sm">{{ error }}</p>
                             <Button 
-                                @click="refresh()" 
+                                @click="loadStats()" 
                                 severity="danger"
                                 size="small"
                                 class="mt-4"
@@ -56,7 +56,7 @@
                                 <div class="flex items-center justify-between mb-4">
                                     <div>
                                         <p class="text-sm font-medium text-gray-600 mb-2">{{ $t('dashboard.stats.articles') }}</p>
-                                        <p class="text-3xl font-bold text-gray-900">{{ stats?.articles_count || 0 }}</p>
+                                        <p class="text-3xl font-bold text-gray-900">{{ stats.articles_count }}</p>
                                     </div>
                                     <div class="p-3 bg-blue-100 rounded-full">
                                         <BaseIcon name="folder" class="w-6 h-6 text-blue-600" />
@@ -81,7 +81,7 @@
                                 <div class="flex items-center justify-between mb-4">
                                     <div>
                                         <p class="text-sm font-medium text-gray-600 mb-2">{{ $t('dashboard.stats.topics') }}</p>
-                                        <p class="text-3xl font-bold text-gray-900">{{ stats?.topics_count || 0 }}</p>
+                                        <p class="text-3xl font-bold text-gray-900">{{ stats.topics_count }}</p>
                                     </div>
                                     <div class="p-3 bg-green-100 rounded-full">
                                         <BaseIcon name="folder-plus" class="w-6 h-6 text-green-600" />
@@ -103,7 +103,7 @@
                                 <div class="flex items-center justify-between mb-4">
                                     <div>
                                         <p class="text-sm font-medium text-gray-600 mb-2">{{ $t('dashboard.stats.tests') }}</p>
-                                        <p class="text-3xl font-bold text-gray-900">{{ stats?.tests_count || 0 }}</p>
+                                        <p class="text-3xl font-bold text-gray-900">{{ stats.tests_count }}</p>
                                     </div>
                                     <div class="p-3 bg-purple-100 rounded-full">
                                         <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -130,7 +130,7 @@
                                 <div class="flex items-center justify-between mb-4">
                                     <div>
                                         <p class="text-sm font-medium text-gray-600 mb-2">{{ $t('dashboard.stats.administrators') }}</p>
-                                        <p class="text-3xl font-bold text-gray-900">{{ stats?.administrators_count || 0 }}</p>
+                                        <p class="text-3xl font-bold text-gray-900">{{ stats.administrators_count }}</p>
                                     </div>
                                     <div class="p-3 bg-orange-100 rounded-full">
                                         <BaseIcon name="user-square" class="w-6 h-6 text-orange-600" />
@@ -163,7 +163,7 @@
                                     <BaseIcon name="flag" class="w-5 h-5 text-blue-600" />
                                 </div>
                                 <div>
-                                    <p class="font-medium text-gray-900">{{ contentLanguageId }}</p>
+                                    <p class="font-medium text-gray-900">{{ contentLanguageCode }}</p>
                                     <p class="text-sm text-gray-500">{{ $t('dashboard.currentLanguage.description') }}</p>
                                 </div>
                             </div>
@@ -188,23 +188,66 @@ const breadcrumbItems = ref([
 ])
 
 // App settings для получения текущего языка
-const { contentLanguageId, initSettings } = useAppSettings()
+const { contentLanguageId, contentLanguageCode, initSettings } = useAppSettings()
 
 // API для получения статистики
 const { getDashboardStats } = useDashboardApi()
 
-// Реактивная загрузка статистики при изменении языка
-const { data: stats, pending, error, refresh } = await useLazyAsyncData<DashboardStats>(
-    'dashboard-stats',
-    () => getDashboardStats(contentLanguageId.value),
-    {
-        // Перезагружать при изменении языка
-        watch: [contentLanguageId]
+// Локальное состояние
+const isLoading = ref(true)
+const error = ref<string | null>(null)
+const stats = ref<DashboardStats>({
+    articles_count: 0,
+    topics_count: 0,
+    tests_count: 0,
+    administrators_count: 0
+})
+
+// Функция загрузки статистики
+const loadStats = async () => {
+    try {
+        isLoading.value = true
+        error.value = null
+        
+        console.log('Loading stats with language ID:', contentLanguageId.value)
+        
+        const result = await getDashboardStats(contentLanguageId.value)
+        stats.value = result
+        
+        console.log('Stats loaded successfully:', result)
+    } catch (err) {
+        console.error('Failed to load stats:', err)
+        error.value = err instanceof Error ? err.message : 'Unknown error occurred'
+    } finally {
+        isLoading.value = false
     }
-)
+}
+
+// Watcher для перезагрузки при изменении языка
+watch(contentLanguageId, (newLanguageId) => {
+    if (newLanguageId && newLanguageId !== 'sr-lat') {
+        console.log('Language changed to:', newLanguageId)
+        loadStats()
+    }
+}, { immediate: false })
 
 // 14. Lifecycle hooks — ВСЕГДА в самом конце
-onMounted(() => {
-    initSettings()
+onMounted(async () => {
+    try {
+        console.log('Initializing dashboard...')
+        
+        // Сначала инициализируем настройки языка
+        await initSettings()
+        
+        console.log('Settings initialized. Language ID:', contentLanguageId.value)
+        
+        // Затем загружаем статистику
+        await loadStats()
+        
+    } catch (err) {
+        console.error('Failed to initialize dashboard:', err)
+        error.value = err instanceof Error ? err.message : 'Failed to initialize dashboard'
+        isLoading.value = false
+    }
 })
 </script>

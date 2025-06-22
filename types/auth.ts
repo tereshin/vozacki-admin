@@ -5,18 +5,26 @@ export interface User {
   updated_at: string;
 }
 
+export interface AdministratorUser extends User {
+  role?: {
+    id: string;
+    name: string;
+    code: string;
+  };
+}
+
 export interface LoginRequest {
   email: string;
 }
 
 export interface LoginResponse {
-  user: User | null;
+  user: AdministratorUser | null;
   session: any | null;
   error?: string;
 }
 
 export interface AuthState {
-  user: User | null;
+  user: AdministratorUser | null;
   session: any | null;
   isAuthenticated: boolean;
   loading: boolean;

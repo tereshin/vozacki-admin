@@ -51,7 +51,7 @@
               </div>
               <div class="flex flex-col">
                 <span class="text-sm font-medium text-gray-900">{{ user?.email || 'User' }}</span>
-                <span class="text-xs text-gray-500">Admin</span>
+                <span class="text-xs text-gray-500">{{ currentRoleName || 'Admin' }}</span>
               </div>
             </div>
             <Button variant="text" size="small" @click="handleLogout" :loading="authStore.loading"
@@ -75,65 +75,89 @@ import BaseNavigationGroup from "~/components/base/BaseNavigationGroup.vue";
 // Import stores
 import { useGeneralStore } from "~/store/general";
 import { useAuthStore } from '~/store/auth';
-import { useLanguagesStore } from "~/store/languages";
+import { useCacheManager } from "~/composables/useCacheManager";
+
+// Import permissions
+import { usePermissions } from "~/composables/usePermissions";
 
 // Stores
 const generalStore = useGeneralStore();
 const authStore = useAuthStore();
-const languagesStore = useLanguagesStore();
 const { user } = storeToRefs(authStore);
+
+// Permissions
+const { canAccessAdministrators, canManageContent, canViewTests, currentRoleName } = usePermissions();
 
 // App settings
 const { contentLanguageId, initSettings } = useAppSettings();
 
-// Languages
+// Languages from cache
+const { loadActiveLanguages } = useCachedData();
 const availableLanguages = ref<LanguageResource[]>([]);
 
 // Menu configuration
-const menu = ref<NavigationGroup[]>([
-  {
-    name: "Dashboard",
-    conditions: [],
-    nav: [
-      {
-        name: "Dashboard",
-        icon: "sidebar-open",
-        link: useRoutesNames().dashboard,
-        conditions: [],
-      },
-    ],
-  },
-  {
-    name: "Management",
-    conditions: [],
-    nav: [
-      {
-        name: "Articles",
-        icon: "folder-plus",
-        link: useRoutesNames().articles,
-        conditions: [],
-      },
-      {
-        name: "Test materials",
-        icon: "folder-plus",
-        link: useRoutesNames().tests,
-        conditions: [],
-      },
-    ],
-  },
-  {
-    name: "Users",
-    conditions: [],
-    nav: [
-      {
-        name: "Administrators",
-        icon: "folder-plus",
-        link: useRoutesNames().administrators,
-        conditions: [],
-      },
-    ],
-  },
-]);
+const menu = computed<NavigationGroup[]>(() => {
+  const menuItems: NavigationGroup[] = [
+    {
+      name: "Dashboard",
+      conditions: [],
+      nav: [
+        {
+          name: "Dashboard",
+          icon: "sidebar-open",
+          link: useRoutesNames().dashboard,
+          conditions: [],
+        },
+      ],
+    },
+  ];
+
+  // Добавляем раздел Management только если есть права на управление контентом
+  if (canManageContent.value) {
+    menuItems.push({
+      name: "Management",
+      conditions: [],
+      nav: [
+        {
+          name: "Articles",
+          icon: "folder-plus",
+          link: useRoutesNames().articles,
+          conditions: [],
+        },
+        {
+          name: "Test materials",
+          icon: "folder-plus",
+          link: useRoutesNames().tests,
+          conditions: [],
+        },
+      ],
+    });
+  }
+
+  // Добавляем раздел Users только если есть права на доступ к администраторам
+  if (canAccessAdministrators.value) {
+    menuItems.push({
+      name: "Users",
+      conditions: [],
+      nav: [
+        {
+          name: "Administrators",
+          icon: "folder-plus",
+          link: useRoutesNames().administrators,
+          conditions: [],
+        },
+        {
+          name: "Roles",
+          icon: "user-square",
+          link: useRoutesNames().roles,
+          conditions: [],
+        },
+      ],
+    });
+  }
+
+  return menuItems;
+});
 
 // Collapsible groups state
 const collapsedGroups = ref<Record<number, boolean>>({});
@@ -144,13 +168,13 @@ function toggleGroup(groupIndex: number) {
   collapsedGroups.value[groupIndex] = !collapsedGroups.value[groupIndex];
   console.log('New state:', collapsedGroups.value[groupIndex]);
   // Save to localStorage for persistence
-  if (process.client) {
+  if (import.meta.client) {
     localStorage.setItem('sidebar-collapsed-groups', JSON.stringify(collapsedGroups.value));
   }
 }
 
 function loadCollapsedState() {
-  if (process.client) {
+  if (import.meta.client) {
     try {
       const saved = localStorage.getItem('sidebar-collapsed-groups');
       if (saved) {
@@ -185,13 +209,13 @@ function onLanguageChange() {
 
 async function loadLanguages() {
   try {
-    const response = await languagesStore.getLanguages({ 
-      is_active: true, 
-      per_page: 100 
-    });
-    availableLanguages.value = response.data.collection;
+    // Инициализируем кэш если он еще не инициализирован
+    const { initializeCache } = useCacheManager()
+    await initializeCache()
+    
+    availableLanguages.value = await loadActiveLanguages();
   } catch (error) {
-    console.error('Failed to load languages:', error);
+    console.error('Failed to load languages from cache:', error);
   }
 }
 
@@ -203,7 +227,7 @@ onMounted(async () => {
   // Инициализируем настройки приложения
   initSettings();
   
-  // Загружаем доступные языки
+  // Загружаем доступные языки из кэша
   await loadLanguages();
 });
 

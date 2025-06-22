@@ -125,8 +125,10 @@
     "first_name": "First Name",
     "last_name": "Last Name",
     "full_name": "Full Name",
+    "display_name": "Display Name",
     "email": "Email",
     "role": "Role",
+    "select_role": "Select role",
     "created_at": "Created At",
     "updated_at": "Updated At",
     "created_successfully": "Administrator created successfully",
@@ -163,6 +165,9 @@
     "reset": "Reset",
     "apply": "Apply",
     "not_specified": "Not specified",
+    "created_at": "Created At",
+    "confirm_delete": "Confirm Delete",
+    "search": "Search",
     "languages": {
       "en": "English",
       "ru": "Russian",
@@ -183,6 +188,15 @@
       "isActive": "Is Active",
       "activeOnly": "Active only"
     }
+  },
+
+  "roles": {
+    "title": "Roles",
+    "name": "Name",
+    "code": "Code",
+    "search_placeholder": "Search by name or code...",
+    "empty_state_title": "No roles found",
+    "empty_state_description": "No roles match the search criteria"
   },
 
   "dashboard": {

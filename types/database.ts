@@ -12,32 +12,43 @@ export type Database = {
       administrators: {
         Row: {
           created_at: string
+          display_name: string | null
           email: string
           first_name: string | null
           id: string
           last_name: string | null
-          role: string
+          role_id: string | null
           updated_at: string
         }
         Insert: {
           created_at?: string
+          display_name?: string | null
           email: string
           first_name?: string | null
           id: string
           last_name?: string | null
-          role?: string
+          role_id?: string | null
           updated_at?: string
         }
         Update: {
           created_at?: string
+          display_name?: string | null
           email?: string
           first_name?: string | null
           id?: string
           last_name?: string | null
-          role?: string
+          role_id?: string | null
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "administrators_role_id_fkey"
+            columns: ["role_id"]
+            isOneToOne: false
+            referencedRelation: "roles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       answers: {
         Row: {
@@ -415,6 +426,27 @@ export type Database = {
             referencedColumns: ["uid"]
           },
         ]
+      }
+      roles: {
+        Row: {
+          code: string
+          created_at: string
+          id: string
+          name: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          id?: string
+          name: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          id?: string
+          name?: string
+        }
+        Relationships: []
       }
     }
     Views: {

@@ -8,6 +8,7 @@
         >
             <template #header-actions>
                 <Button 
+                    v-if="canAccessAdministrators"
                     :label="$t('administrators.add_new')"
                     icon="pi pi-plus" 
                     size="small"
@@ -67,8 +68,8 @@
 
                 <template #column-role="{ data }">
                     <Tag 
-                        :value="$t(`administrators.roles.${data.role}`)" 
-                        :severity="getRoleSeverity(data.role)"
+                        :value="data.role?.name || $t('common.not_specified')" 
+                        :severity="data.role?.code ? getRoleSeverity(data.role.code) : 'secondary'"
                     />
                 </template>
 
@@ -91,6 +92,7 @@
                             class="text-gray-600 hover:text-gray-900"
                         />
                         <Button 
+                            v-if="canAccessAdministrators"
                             icon="pi pi-pencil" 
                             @click="editAdministrator(data)"
                             size="small"
@@ -100,6 +102,7 @@
                             class="text-blue-600 hover:text-blue-900"
                         />
                         <Button 
+                            v-if="canAccessAdministrators"
                             icon="pi pi-trash" 
                             @click="confirmDeleteAdministrator(data)"
                             size="small"
@@ -171,21 +174,38 @@
                     </div>
 
                     <div>
-                        <label for="role" class="block text-sm font-medium text-gray-900 mb-2">
+                        <label for="display_name" class="block text-sm font-medium text-gray-900 mb-2">
+                            {{ $t('administrators.display_name') }}
+                        </label>
+                        <InputText 
+                            id="display_name"
+                            v-model="form.display_name" 
+                            class="w-full"
+                            :class="{ 'p-invalid': formErrors.display_name }"
+                        />
+                        <small v-if="formErrors.display_name" class="text-red-600 text-sm mt-1">
+                            {{ formErrors.display_name }}
+                        </small>
+                    </div>
+
+                    <div>
+                        <label for="role_id" class="block text-sm font-medium text-gray-900 mb-2">
                             {{ $t('administrators.role') }} <span class="text-red-500">*</span>
                         </label>
                         <Dropdown 
-                            id="role"
-                            v-model="form.role" 
-                            :options="roleOptions"
-                            option-label="label"
-                            option-value="value"
+                            id="role_id"
+                            v-model="form.role_id" 
+                            :options="availableRoles"
+                            option-label="name"
+                            option-value="id"
                             class="w-full"
-                            :class="{ 'p-invalid': formErrors.role }"
+                            :class="{ 'p-invalid': formErrors.role_id }"
+                            :placeholder="$t('administrators.select_role')"
+                            :loading="rolesStore.loading"
                             required
                         />
-                        <small v-if="formErrors.role" class="text-red-600 text-sm mt-1">
-                            {{ formErrors.role }}
+                        <small v-if="formErrors.role_id" class="text-red-600 text-sm mt-1">
+                            {{ formErrors.role_id }}
                         </small>
                     </div>
                 </div>
@@ -232,8 +252,8 @@
                             {{ $t('administrators.role') }}
                         </label>
                         <Tag 
-                            :value="$t(`administrators.roles.${viewingAdministrator.role}`)" 
-                            :severity="getRoleSeverity(viewingAdministrator.role)"
+                            :value="viewingAdministrator.role?.name || $t('common.not_specified')" 
+                            :severity="viewingAdministrator.role?.code ? getRoleSeverity(viewingAdministrator.role.code) : 'secondary'"
                         />
                     </div>
                     <div>
@@ -322,6 +342,10 @@ import type { FilterFieldConfig } from '~/types/filters'
 // Import stores
 import { useAdministratorsStore } from '~/store/administrators'
 import { useGeneralStore } from '~/store/general'
+import { useRolesStore } from '~/store/roles'
+
+// Import permissions
+import { usePermissions } from '~/composables/usePermissions'
 
 // Import libraries and third-party dependencies
 import { useI18n } from 'vue-i18n'
@@ -332,6 +356,10 @@ const { t } = useI18n()
 const toast = useToast()
 const administratorsStore = useAdministratorsStore()
 const generalStore = useGeneralStore()
+const rolesStore = useRolesStore()
+
+// Permissions
+const { canAccessAdministrators } = usePermissions()
 
 // Utils composables
 const { formatDateLong } = useFormatDate()
@@ -349,7 +377,7 @@ const deletingAdministrator = ref<AdministratorResource | null>(null)
 // Filters
 const filters = ref({
   search: '',
-  role: ''
+  role_id: ''
 })
 const sortField = ref('email')
 const sortOrder = ref<'asc' | 'desc'>('asc')
@@ -360,16 +388,13 @@ const form = ref<AdministratorRequest>({
   email: '',
   first_name: '',
   last_name: '',
-  role: 'user'
+  display_name: '',
+  role_id: ''
 })
 const formErrors = ref<Record<string, string>>({})
 
 // Computed properties
-const roleOptions = computed(() => [
-  { label: t('administrators.roles.admin'), value: 'admin' },
-  { label: t('administrators.roles.user'), value: 'user' },
-  { label: t('administrators.roles.moderator'), value: 'moderator' }
-])
+const availableRoles = computed(() => rolesStore.allRoles)
 
 const breadcrumbItems = computed(() => [
   {
@@ -388,14 +413,14 @@ const filterFields = computed((): FilterFieldConfig[] => [
     icon: 'pi pi-search'
   },
   {
-    key: 'role',
+    key: 'role_id',
     type: 'select',
     label: 'administrators.role',
     placeholder: 'administrators.filter_by_role',
     width: 'lg:w-1/3',
-    options: roleOptions.value,
-    optionLabel: 'label',
-    optionValue: 'value',
+    options: availableRoles.value,
+    optionLabel: 'name',
+    optionValue: 'id',
     showClear: true
   }
 ])
@@ -411,7 +436,7 @@ const columns = computed((): BaseDataTableColumn[] => [
     key: 'role',
     header: t('administrators.role'),
     sortable: true,
-    field: 'role'
+    field: 'role_id'
   },
   {
     key: 'created_at',
@@ -440,8 +465,8 @@ const loadAdministrators = async () => {
     if (filters.value.search?.trim()) {
       params.search = filters.value.search.trim()
     }
-    if (filters.value.role?.trim()) {
-      params.role = filters.value.role.trim()
+    if (filters.value.role_id?.trim()) {
+      params.role_id = filters.value.role_id.trim()
     }
     
     await administratorsStore.getAdministrators(params)
@@ -485,7 +510,8 @@ const resetForm = () => {
     email: '',
     first_name: '',
     last_name: '',
-    role: 'user'
+    display_name: '',
+    role_id: ''
   }
   formErrors.value = {}
 }
@@ -505,7 +531,8 @@ const submitForm = async () => {
         email: form.value.email,
         first_name: form.value.first_name || null,
         last_name: form.value.last_name || null,
-        role: form.value.role
+        display_name: form.value.display_name || null,
+        role_id: form.value.role_id || null
       }
       
       await administratorsStore.updateAdministrator(editingAdministrator.value.id, updateData)
@@ -557,7 +584,8 @@ const editAdministrator = (administrator: AdministratorResource) => {
     email: administrator.email,
     first_name: administrator.first_name || '',
     last_name: administrator.last_name || '',
-    role: administrator.role
+    display_name: administrator.display_name || '',
+    role_id: administrator.role_id || ''
   }
   showCreateDialog.value = true
 }
@@ -594,8 +622,25 @@ const deleteAdministrator = async () => {
 }
 
 // Lifecycle
-onMounted(() => {
-  loadAdministrators()
+onMounted(async () => {
+  try {
+    // Инициализируем кэш если он еще не инициализирован
+    const { initializeCache } = useCacheManager()
+    await initializeCache()
+    
+    // Загружаем роли для выпадающего списка из кэша
+    await rolesStore.getAllRoles()
+    // Затем загружаем администраторов
+    await loadAdministrators()
+  } catch (error) {
+    console.error('Error initializing administrators page:', error)
+    toast.add({
+      severity: 'error',
+      summary: t('common.error'),
+      detail: t('administrators.error_loading'),
+      life: 3000
+    })
+  }
 })
 </script>
 

@@ -1,5 +1,7 @@
 <template>
+<div>
     <AdministratorsIndexPage />
+</div>
 </template>
 <script setup lang="ts">
 // Middleware для защиты страницы

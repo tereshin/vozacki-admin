@@ -85,8 +85,10 @@
     "first_name": "Ime",
     "last_name": "Prezime",
     "full_name": "Puno ime",
+    "display_name": "Prikazano ime",
     "email": "Email",
     "role": "Uloga",
+    "select_role": "Izaberi ulogu",
     "created_at": "Datum kreiranja",
     "updated_at": "Datum ažuriranja",
     "created_successfully": "Administrator je uspešno kreiran",
@@ -106,6 +108,15 @@
     }
   },
 
+  "roles": {
+    "title": "Uloge",
+    "name": "Naziv",
+    "code": "Kod",
+    "search_placeholder": "Pretraži po nazivu ili kodu...",
+    "empty_state_title": "Uloge nisu pronađene",
+    "empty_state_description": "Nema uloga koje odgovaraju kriterijumima pretrage"
+  },
+
   "common": {
     "selectLanguage": "Izaberi jezik",
     "filters": "Filteri",
@@ -123,6 +134,9 @@
     "reset": "Resetuj",
     "apply": "Primeni",
     "not_specified": "Nije specificirano",
+    "created_at": "Datum kreiranja",
+    "confirm_delete": "Potvrdi brisanje",
+    "search": "Pretraži",
     "languages": {
       "en": "Engleski",
       "ru": "Ruski",

@@ -1,9 +1,9 @@
 import { defineStore } from "pinia";
-import type { AuthState, LoginRequest, User } from "~/types/auth";
+import type { AuthState, LoginRequest, AdministratorUser } from "~/types/auth";
 
 export const useAuthStore = defineStore("auth", () => {
   // State
-  const user = ref<User | null>(null);
+  const user = ref<AdministratorUser | null>(null);
   const session = ref<any | null>(null);
   const loading = ref<boolean>(false);
   const error = ref<string | null>(null);
@@ -12,7 +12,7 @@ export const useAuthStore = defineStore("auth", () => {
   const isAuthenticated = computed(() => !!user.value && !!session.value);
 
   // Actions
-  const { login: apiLogin, logout: apiLogout, getCurrentUser, getCurrentSession } = useAuthApi();
+  const { login: apiLogin, logout: apiLogout, getCurrentUser, getCurrentSession, getCurrentAdministrator } = useAuthApi();
 
   async function login(payload: LoginRequest): Promise<{ error?: string | null }> {
     loading.value = true;
@@ -70,7 +70,7 @@ export const useAuthStore = defineStore("auth", () => {
 
     try {
       const [userResponse, sessionResponse] = await Promise.all([
-        getCurrentUser(),
+        getCurrentAdministrator(),
         getCurrentSession(),
       ]);
 

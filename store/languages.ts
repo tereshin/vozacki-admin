@@ -1,8 +1,11 @@
 import { defineStore } from "pinia";
 import type { MetaResponse } from "~/types/general";
 import type { LanguageResource, LanguageResponse, LanguageRequest, LanguageUpdateRequest } from "~/types/languages";
+import { useCacheManager } from "~/composables/useCacheManager";
 
 export const useLanguagesStore = defineStore("languages", () => {
+  // Cache utilities
+  const { getCachedLanguages } = useCacheManager();
   // State
   const items = ref<LanguageResource[]>([]);
   const meta = ref<MetaResponse>({
@@ -22,13 +25,47 @@ export const useLanguagesStore = defineStore("languages", () => {
     error.value = null;
     
     try {
-      const { getLanguages } = useLanguagesApi();
-      const response = await getLanguages(payload);
+      // Try to get from cache first
+      const cachedLanguages = await getCachedLanguages();
+      let filteredLanguages = cachedLanguages;
       
-      items.value = response.data.collection;
-      meta.value = response.data.meta;
+      // Apply filters if payload provided
+      if (payload) {
+        if (payload.is_active !== undefined) {
+          filteredLanguages = filteredLanguages.filter(lang => lang.is_active === payload.is_active);
+        }
+        if (payload.search) {
+          const searchLower = payload.search.toLowerCase();
+          filteredLanguages = filteredLanguages.filter(lang => 
+            lang.name.toLowerCase().includes(searchLower) || 
+            lang.code.toLowerCase().includes(searchLower)
+          );
+        }
+      }
       
-      return response;
+      // Apply pagination
+      const page = payload?.page || 1;
+      const perPage = payload?.per_page || 10;
+      const startIndex = (page - 1) * perPage;
+      const endIndex = startIndex + perPage;
+      const paginatedItems = filteredLanguages.slice(startIndex, endIndex);
+      
+      items.value = paginatedItems;
+      meta.value = {
+        current_page: page,
+        from: startIndex + 1,
+        last_page: Math.ceil(filteredLanguages.length / perPage),
+        per_page: perPage,
+        to: Math.min(endIndex, filteredLanguages.length),
+        total: filteredLanguages.length
+      };
+      
+      return {
+        data: {
+          collection: paginatedItems,
+          meta: meta.value
+        }
+      };
     } catch (err) {
       error.value = err instanceof Error ? err.message : 'An error occurred';
       throw err;

@@ -1,4 +1,4 @@
-import type { LoginRequest, LoginResponse, User } from "~/types/auth";
+import type { LoginRequest, LoginResponse, User, AdministratorUser } from "~/types/auth";
 
 export const useAuthApi = () => {
   const supabase = useSupabase();
@@ -21,7 +21,7 @@ export const useAuthApi = () => {
       }
 
       return {
-        user: data.user as User | null,
+        user: data.user as AdministratorUser | null,
         session: data.session,
       };
     } catch (error: any) {
@@ -47,7 +47,7 @@ export const useAuthApi = () => {
     }
   };
 
-  const getCurrentUser = async (): Promise<{ user: User | null; error?: string }> => {
+  const getCurrentUser = async (): Promise<{ user: AdministratorUser | null; error?: string }> => {
     try {
       const { data: { user }, error } = await supabase.auth.getUser();
       
@@ -55,7 +55,7 @@ export const useAuthApi = () => {
         return { user: null, error: error.message };
       }
 
-      return { user: user as User | null };
+      return { user: user as AdministratorUser | null };
     } catch (error: any) {
       return { user: null, error: error.message || "Произошла ошибка при получении пользователя" };
     }
@@ -75,10 +75,38 @@ export const useAuthApi = () => {
     }
   };
 
+  const getCurrentAdministrator = async (): Promise<{ user: AdministratorUser | null; error?: string }> => {
+    try {
+      // Получаем текущую сессию для токена
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      
+      if (sessionError || !session?.access_token) {
+        return { 
+          user: null, 
+          error: "No valid session found" 
+        };
+      }
+
+      const response = await $fetch<{ data: AdministratorUser }>('/api/auth/me', {
+        headers: {
+          'Authorization': `Bearer ${session.access_token}`
+        }
+      });
+      
+      return { user: response.data };
+    } catch (error: any) {
+      return { 
+        user: null, 
+        error: error.message || "Произошла ошибка при получении данных администратора" 
+      };
+    }
+  };
+
   return {
     login,
     logout,
     getCurrentUser,
     getCurrentSession,
+    getCurrentAdministrator,
   };
 }; 

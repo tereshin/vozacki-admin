@@ -87,7 +87,6 @@ import { useI18n } from 'vue-i18n'
 import { useConfirm } from 'primevue/useconfirm'
 import { useToast } from 'primevue/usetoast'
 import { useArticlesStore } from '~/store/articles'
-import { useLanguagesStore } from '~/store/languages'
 import { useCategoriesStore } from '~/store/categories'
 import TheHeader from "~/components/TheHeader.vue"
 import BaseFilter from "~/components/base/BaseFilter.vue"
@@ -108,7 +107,6 @@ const toast = useToast()
 
 // Stores
 const articlesStore = useArticlesStore()
-const languagesStore = useLanguagesStore()
 const categoriesStore = useCategoriesStore()
 
 // App settings
@@ -132,6 +130,7 @@ const sortField = ref<string>('published_at')
 const sortOrder = ref<'asc' | 'desc'>('desc')
 
 // Data for filters
+const { loadLanguages: loadCachedLanguages } = useCachedData()
 const languages = ref<LanguageResource[]>([])
 const categories = ref<CategoryResource[]>([])
 
@@ -391,12 +390,12 @@ onMounted(async () => {
         initSettings()
         
         // Load languages and categories for filters
-        const [languagesResponse, categoriesResponse] = await Promise.all([
-            languagesStore.getLanguages({ is_active: true, per_page: 100 }),
+        const [languagesData, categoriesResponse] = await Promise.all([
+            loadCachedLanguages(),
             categoriesStore.getCategories({ per_page: 100 })
         ])
 
-        languages.value = languagesResponse.data.collection
+        languages.value = languagesData
         categories.value = categoriesResponse.data.collection
 
         // Auto-select language from settings if not selected

@@ -8,7 +8,14 @@ import type {
 import type { Tables } from '~/types/database'
 
 export const useLanguagesApi = () => {
-  const supabase = useSupabase()
+  let supabase: any = null
+  
+  try {
+    supabase = useSupabase()
+  } catch (error) {
+    console.error('Failed to initialize Supabase client:', error)
+    throw new Error('Supabase client initialization failed')
+  }
 
   const getLanguages = async (params?: {
     page?: number;
@@ -17,6 +24,10 @@ export const useLanguagesApi = () => {
     is_active?: boolean;
   }): Promise<LanguageResponse> => {
     try {
+      if (!supabase) {
+        throw new Error('Supabase client is not initialized')
+      }
+
       let query = supabase
         .from('languages')
         .select('*', { count: 'exact' })
@@ -63,6 +74,10 @@ export const useLanguagesApi = () => {
 
   const getSingleLanguage = async (id: string): Promise<SingleLanguageResponse> => {
     try {
+      if (!supabase) {
+        throw new Error('Supabase client is not initialized')
+      }
+
       const { data, error } = await supabase
         .from('languages')
         .select('*')
@@ -82,6 +97,10 @@ export const useLanguagesApi = () => {
 
   const createLanguage = async (body: LanguageRequest): Promise<SingleLanguageResponse> => {
     try {
+      if (!supabase) {
+        throw new Error('Supabase client is not initialized')
+      }
+
       const { data, error } = await supabase
         .from('languages')
         .insert(body)
@@ -101,6 +120,10 @@ export const useLanguagesApi = () => {
 
   const updateLanguage = async (id: string, body: LanguageUpdateRequest): Promise<SingleLanguageResponse> => {
     try {
+      if (!supabase) {
+        throw new Error('Supabase client is not initialized')
+      }
+
       const { data, error } = await supabase
         .from('languages')
         .update(body)
@@ -121,6 +144,10 @@ export const useLanguagesApi = () => {
 
   const deleteLanguage = async (id: string): Promise<void> => {
     try {
+      if (!supabase) {
+        throw new Error('Supabase client is not initialized')
+      }
+
       const { error } = await supabase
         .from('languages')
         .delete()
