@@ -4,10 +4,13 @@
   "type": "module",
   "scripts": {
     "build": "nuxt build",
+    "build:analyze": "nuxt build && node scripts/analyze-bundles.cjs",
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "postinstall": "nuxt prepare",
+    "analyze": "node scripts/analyze-bundles.cjs",
+    "build:report": "npm run build && npm run analyze"
   },
   "dependencies": {
     "@nuxt/icon": "^1.14.0",

@@ -219,7 +219,7 @@ export const FILTER_CONFIGS = {
       type: 'boolean' as const,
       label: 'languages.filters.isActive',
       width: 'lg:w-1/4',
-      checkboxLabel: 'Active only'
+      checkboxLabel: 'languages.filters.activeOnly'
     }
   ]
 } as const

@@ -3,7 +3,7 @@
         <!-- Header -->
         <TheHeader :title="$t('tests.title')" :items="breadcrumbItems">
             <template #actions>
-                <Button @click="refreshData" :loading="isLoading" :label="$t('tests.actions.refresh')"
+                <Button @click="refreshData" :loading="generalStore.isLoading" :label="$t('tests.actions.refresh')"
                     icon="pi pi-refresh" class="p-button-primary" />
             </template>
         </TheHeader>
@@ -25,7 +25,7 @@
                                     @click="collapseAll" />
                             </div>
                         </div>
-                        <TreeTable v-model:expandedKeys="expandedKeys" :value="treeData" :loading="isLoading"
+                        <TreeTable v-model:expandedKeys="expandedKeys" :value="treeData" :loading="generalStore.isLoading"
                             class="p-treetable-sm" stripedRows showGridlines responsiveLayout="scroll"
                             @node-expand="onNodeExpand">
                             <template #empty>
@@ -108,20 +108,22 @@
 
 <script setup lang="ts">
 // ==================== IMPORTS ====================
-import { ref, onMounted, computed, watch } from 'vue'
-import { useI18n } from 'vue-i18n'
-import { useConfirm } from 'primevue/useconfirm'
-import { useToast } from 'primevue/usetoast'
-import { useTopicsStore } from '~/store/topics'
-import { useTestsStore } from '~/store/tests'
-import { useLanguagesStore } from '~/store/languages'
-import TheHeader from "~/components/TheHeader.vue"
-import BaseFilter from "~/components/base/BaseFilter.vue"
-import BaseIcon from "~/components/base/BaseIcon.vue"
+// Types
 import type { LanguageResource } from '~/types/languages'
 import type { TopicResource } from '~/types/topics'
 import type { TestResource } from '~/types/tests'
 import type { FilterFieldConfig } from '~/types/filters'
+
+// Stores
+import { useTopicsStore } from '~/store/topics'
+import { useTestsStore } from '~/store/tests'
+import { useLanguagesStore } from '~/store/languages'
+import { useGeneralStore } from '~/store/general'
+
+// Components
+import TheHeader from "~/components/TheHeader.vue"
+import BaseFilter from "~/components/base/BaseFilter.vue"
+import BaseIcon from "~/components/base/BaseIcon.vue"
 
 // ==================== COMPOSABLES ====================
 // I18n
@@ -135,13 +137,12 @@ const toast = useToast()
 const topicsStore = useTopicsStore()
 const testsStore = useTestsStore()
 const languagesStore = useLanguagesStore()
+const generalStore = useGeneralStore()
 
 // App settings
 const { contentLanguageId, initSettings } = useAppSettings()
 
 // ==================== REACTIVE STATE ====================
-// Loading state
-const isLoading = ref(false)
 const expandedKeys = ref<{ [key: string]: boolean }>({})
 const loadingNodes = ref<Set<string>>(new Set())
 
@@ -169,15 +170,15 @@ const filterConfigs = computed<FilterFieldConfig[]>(() => [
     {
         key: 'search',
         type: 'text',
-        label: t('tests.filters.search'),
-        placeholder: t('tests.filters.searchPlaceholder'),
+        label: 'tests.filters.search',
+        placeholder: 'tests.filters.searchPlaceholder',
         width: 'w-full'
     },
     {
         key: 'language_id',
         type: 'select',
-        label: t('tests.filters.language'),
-        placeholder: t('tests.filters.allLanguages'),
+        label: 'tests.filters.language',
+        placeholder: 'tests.filters.allLanguages',
         optionLabel: 'label',
         optionValue: 'value',
         options: [
@@ -270,7 +271,7 @@ const onFilterReset = () => {
 
 // Data loading methods
 const loadData = async () => {
-    isLoading.value = true
+    generalStore.isLoading = true
     try {
         // Only load languages if not already loaded
         if (languages.value.length === 0) {
@@ -289,7 +290,6 @@ const loadData = async () => {
         testsByTopic.value.clear()
         loadingNodes.value.clear()
     } catch (error) {
-        console.error('Error loading data:', error)
         toast.add({
             severity: 'error',
             summary: t('tests.states.error'),
@@ -297,13 +297,11 @@ const loadData = async () => {
             life: 5000
         })
     } finally {
-        isLoading.value = false
+        generalStore.isLoading = false
     }
 }
 
 const onNodeExpand = async (node: any) => {
-    console.log('Node expand:', node)
-
     // Only load tests for topic nodes
     if (node.data.type !== 'topic') return
 
@@ -326,10 +324,7 @@ const onNodeExpand = async (node: any) => {
 
         // Store tests in our Map
         testsByTopic.value.set(topicUid, response.data.collection)
-
-        console.log('Loaded tests for topic:', topicUid, 'count:', response.data.collection.length)
     } catch (error) {
-        console.error('Error loading tests for topic:', error)
         toast.add({
             severity: 'error',
             summary: t('tests.states.error'),
@@ -372,10 +367,7 @@ const getLanguageName = (languageId: string): string => {
 }
 
 const getLanguageIdByCode = (code: string): string | undefined => {
-    console.log('getLanguageIdByCode called with:', code)
-    console.log('Available languages:', languages.value.map(l => l.code))
     const language = languages.value.find(lang => lang.code === code)
-    console.log('Found language:', language)
     return language?.id
 }
 
@@ -429,12 +421,10 @@ const getActionItems = (item: any) => {
 
 const addTest = (topic: TopicResource) => {
     // TODO: Implement add test functionality
-    console.log('Add test for topic:', topic)
 }
 
 const editItem = (item: TopicResource | TestResource) => {
     // TODO: Implement edit functionality
-    console.log('Edit item:', item)
 }
 
 const deleteItem = (item: TopicResource | TestResource) => {
@@ -463,7 +453,6 @@ const deleteItem = (item: TopicResource | TestResource) => {
 
                 await loadData()
             } catch (error) {
-                console.error('Error deleting item:', error)
                 toast.add({
                     severity: 'error',
                     summary: t('tests.states.error'),
@@ -487,12 +476,8 @@ watch(contentLanguageId, (newCode) => {
 
 // Watch for language list changes (when languages are loaded)
 watch(languages, (newLanguages, oldLanguages) => {
-    console.log('Languages watch triggered, new length:', newLanguages.length, 'old length:', oldLanguages?.length)
-    console.log('Current filters.language_id:', filters.value.language_id)
-
     if (newLanguages.length > 0 && !filters.value.language_id) {
         let languageId = getLanguageIdByCode(contentLanguageId.value)
-        console.log('Setting language from code:', contentLanguageId.value, 'to ID:', languageId)
 
         // Try alternatives if not found
         if (!languageId) {
@@ -500,7 +485,6 @@ watch(languages, (newLanguages, oldLanguages) => {
             for (const alt of alternatives) {
                 languageId = getLanguageIdByCode(alt)
                 if (languageId) {
-                    console.log('Found language with alternative code:', alt, '->', languageId)
                     break
                 }
             }
@@ -509,47 +493,31 @@ watch(languages, (newLanguages, oldLanguages) => {
         // Use first available if still not found
         if (!languageId && newLanguages.length > 0) {
             languageId = newLanguages[0].id
-            console.log('Using first available language:', languageId)
         }
 
         if (languageId) {
             filters.value.language_id = languageId
-            console.log('Successfully set filters.language_id to:', languageId)
-        } else {
-            console.warn('Could not find any suitable language')
         }
     }
 }, { immediate: true })
 
-// Debug watch for filter changes
-watch(filters, (newFilters) => {
-    console.log('Filters changed:', newFilters)
-}, { deep: true })
-
 // ==================== LIFECYCLE ====================
 onMounted(async () => {
-    console.log('=== TestsIndexPage onMounted ===')
-
     await initSettings()
-    console.log('Settings initialized, contentLanguageId:', contentLanguageId.value)
 
     // First load languages to get proper language_id
     await languagesStore.getLanguages()
     languages.value = languagesStore.items
-    console.log('Languages loaded:', languages.value.map(l => ({ id: l.id, code: l.code, name: l.name })))
 
     // Set correct language_id after languages are loaded
     let languageId = getLanguageIdByCode(contentLanguageId.value)
-    console.log('Language ID for code', contentLanguageId.value, ':', languageId)
 
     // If not found, try some common alternatives
     if (!languageId) {
-        console.log('Trying alternative language codes...')
         const alternatives = ['sr', 'sr-lat', 'sr-latn', 'serbian']
         for (const alt of alternatives) {
             languageId = getLanguageIdByCode(alt)
             if (languageId) {
-                console.log('Found language with alternative code:', alt, '->', languageId)
                 break
             }
         }
@@ -558,17 +526,11 @@ onMounted(async () => {
     // If still not found, use first available language
     if (!languageId && languages.value.length > 0) {
         languageId = languages.value[0].id
-        console.log('Using first available language:', languageId)
     }
 
     if (languageId) {
         filters.value.language_id = languageId
-        console.log('Set filters.language_id to:', languageId)
-    } else {
-        console.warn('Could not find any suitable language ID')
     }
-
-    console.log('Final filters before loadData:', filters.value)
 
     // Now load data with correct language_id
     await loadData()

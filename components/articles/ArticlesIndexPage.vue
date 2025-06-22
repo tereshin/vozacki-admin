@@ -66,7 +66,7 @@
 
                 <template #column-publishedAt="{ data }">
                     <div class="text-900">
-                        {{ data.published_at ? formatDate(data.published_at) : '-' }}
+                        {{ data.published_at ? formatDateShort(data.published_at) : '-' }}
                     </div>
                 </template>
             </BaseDataTable>
@@ -96,6 +96,7 @@ import type { LanguageResource } from '~/types/languages'
 import type { CategoryResource } from '~/types/categories'
 import type { FilterFieldConfig } from '~/types/filters'
 import type { BaseDataTableColumn } from '~/types/base-data-table'
+import { useAppSettings } from '~/composables/useAppSettings'
 
 // ==================== COMPOSABLES ====================
 // I18n
@@ -112,6 +113,9 @@ const categoriesStore = useCategoriesStore()
 
 // App settings
 const { contentLanguageId, initSettings } = useAppSettings()
+
+// Utils composables
+const { formatDateShort } = useFormatDate()
 
 // ==================== REACTIVE STATE ====================
 // Filters
@@ -275,27 +279,17 @@ const refreshData = () => {
 }
 
 // Utility methods
+const { getLanguageName: getLanguageNameUtil, getCategoryName: getCategoryNameUtil } = useGetEntityName()
+
 const getLanguageName = (languageId: string): string => {
-    const language = languages.value.find(l => l.id === languageId)
-    return language?.name || t('articles.table.unknown')
+    return getLanguageNameUtil(languages.value, languageId, t('articles.table.unknown'))
 }
 
 const getCategoryName = (categoryUid: string | null): string => {
-    if (!categoryUid) return t('articles.table.noCategory')
-    const category = categories.value.find(c => c.uid === categoryUid)
-    return category?.name || t('articles.table.unknown')
+    return getCategoryNameUtil(categories.value, categoryUid, t('articles.table.noCategory'))
 }
 
-const formatDate = (dateString: string): string => {
-    const date = new Date(dateString)
-    return date.toLocaleDateString('ru-RU', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit'
-    })
-}
+
 
 // Action methods
 const getActionItems = (id: string) => [

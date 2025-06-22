@@ -128,7 +128,7 @@ const menu = ref<NavigationGroup[]>([
       {
         name: "Administrators",
         icon: "folder-plus",
-        link: "/administrators",
+        link: useRoutesNames().administrators,
         conditions: [],
       },
     ],

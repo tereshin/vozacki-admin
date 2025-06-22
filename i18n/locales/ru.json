@@ -107,9 +107,62 @@
     }
   },
 
+  "administrators": {
+    "title": "Администраторы",
+    "description": "Управление пользователями системы",
+    "add_new": "Добавить администратора",
+    "search_placeholder": "Поиск по имени или email...",
+    "filter_by_role": "Фильтр по роли",
+    "empty_state_title": "Администраторы не найдены",
+    "empty_state_description": "Нет администраторов, соответствующих критериям поиска",
+    "error_loading": "Ошибка загрузки администраторов",
+    "create_administrator": "Создать администратора",
+    "edit_administrator": "Редактировать администратора",
+    "administrator_details": "Детали администратора",
+    "confirm_delete": "Подтвердить удаление",
+    "delete_confirmation": "Вы уверены, что хотите удалить этого администратора?",
+    "delete_warning": "Это действие нельзя отменить.",
+    "first_name": "Имя",
+    "last_name": "Фамилия",
+    "full_name": "Полное имя",
+    "email": "Email",
+    "role": "Роль",
+    "created_at": "Дата создания",
+    "updated_at": "Дата обновления",
+    "created_successfully": "Администратор успешно создан",
+    "updated_successfully": "Администратор успешно обновлен",
+    "deleted_successfully": "Администратор успешно удален",
+    "error_creating": "Ошибка при создании администратора",
+    "error_updating": "Ошибка при обновлении администратора",
+    "error_deleting": "Ошибка при удалении администратора",
+    "roles": {
+      "admin": "Администратор",
+      "user": "Пользователь",
+      "moderator": "Модератор"
+    },
+    "filters": {
+      "search": "Поиск",
+      "searchPlaceholder": "Поиск по имени или email..."
+    }
+  },
+
   "common": {
     "selectLanguage": "Выберите язык",
     "filters": "Фильтры",
+    "loading": "Загрузка...",
+    "error": "Ошибка",
+    "success": "Успешно",
+    "cancel": "Отмена",
+    "create": "Создать",
+    "update": "Обновить",
+    "delete": "Удалить",
+    "view": "Просмотр",
+    "edit": "Редактировать",
+    "actions": "Действия",
+    "close": "Закрыть",
+    "reset": "Сброс",
+    "apply": "Применить",
+    "not_specified": "Не указано",
     "languages": {
       "en": "Английский",
       "ru": "Русский",
@@ -120,5 +173,39 @@
   "sidebar": {
     "contentLanguage": "Язык контента",
     "selectLanguage": "Выберите язык"
+  },
+
+  "languages": {
+    "title": "Языки",
+    "filters": {
+      "search": "Поиск",
+      "searchPlaceholder": "Поиск по названию или коду...",
+      "isActive": "Активен",
+      "activeOnly": "Только активные"
+    }
+  },
+
+  "dashboard": {
+    "title": "Панель управления",
+    "stats": {
+      "articles": "Статьи",
+      "topics": "Темы",
+      "tests": "Тесты",
+      "administrators": "Администраторы"
+    },
+    "actions": {
+      "goToArticles": "Перейти к статьям",
+      "goToTests": "Перейти к тестам",
+      "goToAdministrators": "Управление",
+      "topicsDescription": "Категории контента",
+      "tryAgain": "Попробовать снова"
+    },
+    "errors": {
+      "loadingStats": "Ошибка загрузки статистики"
+    },
+    "currentLanguage": {
+      "title": "Текущий язык контента",
+      "description": "Статистика показана для этого языка"
+    }
   }
 }

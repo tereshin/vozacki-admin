@@ -40,8 +40,22 @@ export default defineNuxtConfig({
   },
   i18n: i18nConfig,
   vite: {
-    plugins: [tailwindcss()]
+    plugins: [tailwindcss()],
+    build: {
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            // Вендорные библиотеки
+            'vendor-primevue': ['primevue', '@primeuix/themes'],
+            'vendor-supabase': ['@supabase/supabase-js'],
+            'vendor-vue': ['vue', '@vue/runtime-core', '@vue/runtime-dom', '@vue/reactivity'],
+            // Не включаем конкретные файлы проекта, так как Nuxt автоматически их разделяет
+          }
+        }
+      }
+    }
   },
+
   css: [
     "~/assets/css/main.css",
   ],

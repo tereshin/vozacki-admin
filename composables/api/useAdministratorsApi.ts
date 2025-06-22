@@ -14,6 +14,9 @@ export const useAdministratorsApi = () => {
     page?: number;
     per_page?: number;
     search?: string;
+    role?: string;
+    sort_field?: string;
+    sort_order?: 'asc' | 'desc';
   }): Promise<AdministratorResponse> => {
     try {
       let query = supabase
@@ -24,12 +27,21 @@ export const useAdministratorsApi = () => {
         query = query.or(`first_name.ilike.%${params.search}%,last_name.ilike.%${params.search}%,email.ilike.%${params.search}%`)
       }
 
+      if (params?.role) {
+        query = query.eq('role', params.role)
+      }
+
       const page = params?.page || 1
       const perPage = params?.per_page || 10
       const from = (page - 1) * perPage
       const to = from + perPage - 1
 
-      query = query.range(from, to).order('created_at', { ascending: false })
+      // Применяем сортировку
+      const sortField = params?.sort_field || 'created_at'
+      const sortOrder = params?.sort_order || 'desc'
+      const ascending = sortOrder === 'asc'
+
+      query = query.range(from, to).order(sortField, { ascending })
 
       const { data, error, count } = await query
 

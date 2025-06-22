@@ -21,7 +21,7 @@
                         </label>
                         <InputText :model-value="modelValue[field.key]"
                             @input="handleInput(field.key, ($event.target as HTMLInputElement)?.value || '')"
-                            :placeholder="$t(field.placeholder || '')" class="w-full" :icon="field.icon" />
+                            :placeholder="field.placeholder ? $t(field.placeholder) : ''" class="w-full" :icon="field.icon" />
                     </div>
 
                     <!-- Поле выбора (Select) -->
@@ -32,7 +32,7 @@
                         <Select :model-value="modelValue[field.key]"
                             @update:model-value="(value) => handleChange(field.key, value)" :options="field.options"
                             :option-label="field.optionLabel || 'name'" :option-value="field.optionValue || 'id'"
-                            :placeholder="$t(field.placeholder || '')" class="w-full"
+                            :placeholder="field.placeholder ? $t(field.placeholder) : ''" class="w-full"
                             :show-clear="field.showClear !== false" :filter="field.filter" />
                     </div>
 
@@ -43,7 +43,7 @@
                         </label>
                         <DatePicker :model-value="modelValue[field.key]"
                             @update:model-value="(value) => handleChange(field.key, value)"
-                            :placeholder="$t(field.placeholder || '')" class="w-full"
+                            :placeholder="field.placeholder ? $t(field.placeholder) : ''" class="w-full"
                             :show-clear="field.showClear !== false" :date-format="field.dateFormat || 'dd.mm.yy'" />
                     </div>
 
@@ -54,7 +54,7 @@
                         </label>
                         <InputNumber :model-value="modelValue[field.key]"
                             @update:model-value="(value) => handleChange(field.key, value)"
-                            :placeholder="$t(field.placeholder || '')" class="w-full" :min="field.min" :max="field.max"
+                            :placeholder="field.placeholder ? $t(field.placeholder) : ''" class="w-full" :min="field.min" :max="field.max"
                             :step="field.step" />
                     </div>
 
@@ -74,9 +74,9 @@
 
                 <!-- Кнопки действий -->
                 <div class="mt-auto mb-0.5 whitespace-nowrap flex gap-2">
-                    <Button v-if="showResetButton" @click="handleReset" :label="resetButtonLabel || 'Reset Filters'"
+                    <Button v-if="showResetButton" @click="handleReset" :label="resetButtonLabel || $t('common.reset')"
                         size="small" severity="secondary" />
-                    <Button v-if="showApplyButton" @click="handleApply" :label="applyButtonLabel || 'Apply'"
+                    <Button v-if="showApplyButton" @click="handleApply" :label="applyButtonLabel || $t('common.apply')"
                         size="small" severity="primary" />
                 </div>
             </div>

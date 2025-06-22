@@ -107,9 +107,62 @@
     }
   },
 
+  "administrators": {
+    "title": "Administrators",
+    "description": "System user management",
+    "add_new": "Add Administrator",
+    "search_placeholder": "Search by name or email...",
+    "filter_by_role": "Filter by role",
+    "empty_state_title": "No administrators found",
+    "empty_state_description": "No administrators match the search criteria",
+    "error_loading": "Error loading administrators",
+    "create_administrator": "Create Administrator",
+    "edit_administrator": "Edit Administrator",
+    "administrator_details": "Administrator Details",
+    "confirm_delete": "Confirm Delete",
+    "delete_confirmation": "Are you sure you want to delete this administrator?",
+    "delete_warning": "This action cannot be undone.",
+    "first_name": "First Name",
+    "last_name": "Last Name",
+    "full_name": "Full Name",
+    "email": "Email",
+    "role": "Role",
+    "created_at": "Created At",
+    "updated_at": "Updated At",
+    "created_successfully": "Administrator created successfully",
+    "updated_successfully": "Administrator updated successfully",
+    "deleted_successfully": "Administrator deleted successfully",
+    "error_creating": "Error creating administrator",
+    "error_updating": "Error updating administrator",
+    "error_deleting": "Error deleting administrator",
+    "roles": {
+      "admin": "Administrator",
+      "user": "User",
+      "moderator": "Moderator"
+    },
+    "filters": {
+      "search": "Search",
+      "searchPlaceholder": "Search by name or email..."
+    }
+  },
+
   "common": {
     "selectLanguage": "Select language",
     "filters": "Filters",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "cancel": "Cancel",
+    "create": "Create",
+    "update": "Update",
+    "delete": "Delete",
+    "view": "View",
+    "edit": "Edit",
+    "actions": "Actions",
+    "close": "Close",
+    "reset": "Reset",
+    "apply": "Apply",
+    "not_specified": "Not specified",
     "languages": {
       "en": "English",
       "ru": "Russian",
@@ -120,5 +173,39 @@
   "sidebar": {
     "contentLanguage": "Content Language",
     "selectLanguage": "Select language"
+  },
+
+  "languages": {
+    "title": "Languages",
+    "filters": {
+      "search": "Search",
+      "searchPlaceholder": "Search by name or code...",
+      "isActive": "Is Active",
+      "activeOnly": "Active only"
+    }
+  },
+
+  "dashboard": {
+    "title": "Dashboard",
+    "stats": {
+      "articles": "Articles",
+      "topics": "Topics",
+      "tests": "Tests",
+      "administrators": "Administrators"
+    },
+    "actions": {
+      "goToArticles": "Go to Articles",
+      "goToTests": "Go to Tests",
+      "goToAdministrators": "Management",
+      "topicsDescription": "Content categories",
+      "tryAgain": "Try Again"
+    },
+    "errors": {
+      "loadingStats": "Error loading statistics"
+    },
+    "currentLanguage": {
+      "title": "Current Content Language",
+      "description": "Statistics shown for this language"
+    }
   }
 }

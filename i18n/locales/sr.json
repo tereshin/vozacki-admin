@@ -67,9 +67,62 @@
     }
   },
 
+  "administrators": {
+    "title": "Administratori",
+    "description": "Upravljanje korisnicima sistema",
+    "add_new": "Dodaj administratora",
+    "search_placeholder": "Pretraži po imenu ili email-u...",
+    "filter_by_role": "Filter po ulozi",
+    "empty_state_title": "Administratori nisu pronađeni",
+    "empty_state_description": "Nema administratora koji odgovaraju kriterijumima pretrage",
+    "error_loading": "Greška pri učitavanju administratora",
+    "create_administrator": "Kreiraj administratora",
+    "edit_administrator": "Uredi administratora",
+    "administrator_details": "Detalji administratora",
+    "confirm_delete": "Potvrdi brisanje",
+    "delete_confirmation": "Da li ste sigurni da želite da obrišete ovog administratora?",
+    "delete_warning": "Ova akcija se ne može poništiti.",
+    "first_name": "Ime",
+    "last_name": "Prezime",
+    "full_name": "Puno ime",
+    "email": "Email",
+    "role": "Uloga",
+    "created_at": "Datum kreiranja",
+    "updated_at": "Datum ažuriranja",
+    "created_successfully": "Administrator je uspešno kreiran",
+    "updated_successfully": "Administrator je uspešno ažuriran",
+    "deleted_successfully": "Administrator je uspešno obrisan",
+    "error_creating": "Greška pri kreiranju administratora",
+    "error_updating": "Greška pri ažuriranju administratora",
+    "error_deleting": "Greška pri brisanju administratora",
+    "roles": {
+      "admin": "Administrator",
+      "user": "Korisnik",
+      "moderator": "Moderator"
+    },
+    "filters": {
+      "search": "Pretraži",
+      "searchPlaceholder": "Pretraži po imenu ili email-u..."
+    }
+  },
+
   "common": {
     "selectLanguage": "Izaberi jezik",
     "filters": "Filteri",
+    "loading": "Učitavanje...",
+    "error": "Greška",
+    "success": "Uspešno",
+    "cancel": "Otkaži",
+    "create": "Kreiraj",
+    "update": "Ažuriraj",
+    "delete": "Obriši",
+    "view": "Pogledaj",
+    "edit": "Uredi",
+    "actions": "Akcije",
+    "close": "Zatvori",
+    "reset": "Resetuj",
+    "apply": "Primeni",
+    "not_specified": "Nije specificirano",
     "languages": {
       "en": "Engleski",
       "ru": "Ruski",
@@ -118,6 +171,40 @@
       "refresh": "Освежи",
       "deleteConfirm": "Да ли сте сигурни да желите да обришете овај елемент?",
       "deleteError": "Грешка при брисању елемента"
+    }
+  },
+
+  "languages": {
+    "title": "Језици",
+    "filters": {
+      "search": "Претрага",
+      "searchPlaceholder": "Претрага по имену или коду...",
+      "isActive": "Активан",
+      "activeOnly": "Само активни"
+    }
+  },
+
+  "dashboard": {
+    "title": "Контролна табла",
+    "stats": {
+      "articles": "Чланци",
+      "topics": "Теме",
+      "tests": "Тестови",
+      "administrators": "Администратори"
+    },
+    "actions": {
+      "goToArticles": "Иди на чланке",
+      "goToTests": "Иди на тестове",
+      "goToAdministrators": "Управљање",
+      "topicsDescription": "Категорије садржаја",
+      "tryAgain": "Покушај поново"
+    },
+    "errors": {
+      "loadingStats": "Грешка при учитавању статистике"
+    },
+    "currentLanguage": {
+      "title": "Тренутни језик садржаја",
+      "description": "Статистика приказана за овај језик"
     }
   }
 } 
