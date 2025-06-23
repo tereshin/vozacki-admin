@@ -1,13 +1,11 @@
 import type { LanguageResource } from '~/types/languages'
-import type { RoleResource } from '~/types/administrators'
 import { useCacheManager } from './useCacheManager'
 
-export const useCachedData = () => {
+export const useCachedLanguages = () => {
   const cacheManager = useCacheManager()
 
-  // Реактивные данные для кэшированных языков и ролей
+  // Реактивные данные для кэшированных языков
   const cachedLanguages = ref<LanguageResource[]>([])
-  const cachedRoles = ref<RoleResource[]>([])
   const cachedActiveLanguages = ref<LanguageResource[]>([])
 
   const isLoading = ref(false)
@@ -27,26 +25,6 @@ export const useCachedData = () => {
     } catch (err) {
       error.value = 'Failed to load languages'
       console.error('Error loading cached languages:', err)
-      return []
-    } finally {
-      isLoading.value = false
-    }
-  }
-
-  // Загрузка всех ролей
-  const loadRoles = async (force = false): Promise<RoleResource[]> => {
-    if (cachedRoles.value.length > 0 && !force) {
-      return cachedRoles.value
-    }
-
-    try {
-      isLoading.value = true
-      error.value = null
-      cachedRoles.value = await cacheManager.getCachedRoles()
-      return cachedRoles.value
-    } catch (err) {
-      error.value = 'Failed to load roles'
-      console.error('Error loading cached roles:', err)
       return []
     } finally {
       isLoading.value = false
@@ -85,40 +63,24 @@ export const useCachedData = () => {
     return languages.find(lang => lang.id === id) || null
   }
 
-  // Получение роли по коду
-  const getRoleByCode = async (code: string): Promise<RoleResource | null> => {
-    const roles = await loadRoles()
-    return roles.find(role => role.code === code) || null
-  }
-
-  // Получение роли по ID
-  const getRoleById = async (id: string): Promise<RoleResource | null> => {
-    const roles = await loadRoles()
-    return roles.find(role => role.id === id) || null
-  }
-
-  // Принудительное обновление кэша
-  const refreshCache = async (): Promise<void> => {
+  // Принудительное обновление кэша языков
+  const refreshLanguages = async (): Promise<void> => {
     try {
       isLoading.value = true
       error.value = null
       
-      await cacheManager.forceUpdateCache()
-      
       // Очищаем локальные кэши для повторной загрузки
       cachedLanguages.value = []
-      cachedRoles.value = []
       cachedActiveLanguages.value = []
       
       // Загружаем данные заново
       await Promise.all([
         loadLanguages(true),
-        loadRoles(true),
         loadActiveLanguages(true)
       ])
     } catch (err) {
-      error.value = 'Failed to refresh cache'
-      console.error('Error refreshing cache:', err)
+      error.value = 'Failed to refresh languages cache'
+      console.error('Error refreshing languages cache:', err)
     } finally {
       isLoading.value = false
     }
@@ -141,18 +103,9 @@ export const useCachedData = () => {
     }))
   )
 
-  const roleOptions = computed(() => 
-    cachedRoles.value.map(role => ({
-      label: role.name,
-      value: role.id,
-      code: role.code
-    }))
-  )
-
   return {
     // Данные
     cachedLanguages: readonly(cachedLanguages),
-    cachedRoles: readonly(cachedRoles),
     cachedActiveLanguages: readonly(cachedActiveLanguages),
     
     // Состояние
@@ -161,21 +114,17 @@ export const useCachedData = () => {
     
     // Методы загрузки
     loadLanguages,
-    loadRoles,
     loadActiveLanguages,
     
     // Методы поиска
     getLanguageByCode,
     getLanguageById,
-    getRoleByCode,
-    getRoleById,
     
     // Обновление
-    refreshCache,
+    refreshLanguages,
     
     // Опции для селектов
     languageOptions,
-    activeLanguageOptions,
-    roleOptions
+    activeLanguageOptions
   }
 } 

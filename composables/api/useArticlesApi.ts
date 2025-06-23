@@ -3,11 +3,12 @@ import type {
   ArticleRequest, 
   ArticleUpdateRequest,
   ArticleResponse,
-  SingleArticleResponse 
+  SingleArticleResponse,
+  EditorJSData 
 } from '~/types/articles'
 
 export const useArticlesApi = () => {
-  const supabase = useSupabase()
+  const { authenticatedFetch } = useAuthenticatedFetch()
 
   const getArticles = async (params?: {
     page?: number;
@@ -19,54 +20,20 @@ export const useArticlesApi = () => {
     sort_order?: 'asc' | 'desc';
   }): Promise<ArticleResponse> => {
     try {
-      let query = supabase
-        .from('articles')
-        .select('*', { count: 'exact' })
-
-      if (params?.search) {
-        query = query.or(`title.ilike.%${params.search}%,slug.ilike.%${params.search}%`)
-      }
-
-      if (params?.language_id) {
-        query = query.eq('language_id', params.language_id)
-      }
-
-      if (params?.category_uid) {
-        query = query.eq('category_uid', params.category_uid)
-      }
-
-      const page = params?.page || 1
-      const perPage = params?.per_page || 10
-      const from = (page - 1) * perPage
-      const to = from + perPage - 1
-
-      // Сортировка
-      const sortField = params?.sort_field || 'published_at'
-      const sortOrder = params?.sort_order || 'desc'
-      const ascending = sortOrder === 'asc'
-      
-      query = query.range(from, to).order(sortField, { 
-        ascending, 
-        nullsFirst: sortField === 'published_at' ? false : true 
+      const response = await authenticatedFetch<ArticleResponse>('/api/articles', {
+        query: params
       })
 
-      const { data, error, count } = await query
-
-      if (error) throw error
-
-      const collection = (data || []) as ArticleResource[]
+      // Transform content for each article
+      const transformedCollection = response.data.collection.map(item => ({
+        ...item,
+        content: item.content as unknown as EditorJSData
+      })) as ArticleResource[]
 
       return {
         data: {
-          collection,
-          meta: {
-            current_page: page,
-            from: from + 1,
-            last_page: Math.ceil((count || 0) / perPage),
-            per_page: perPage,
-            to: Math.min(to + 1, count || 0),
-            total: count || 0
-          }
+          collection: transformedCollection,
+          meta: response.data.meta
         }
       }
     } catch (error) {
@@ -77,17 +44,8 @@ export const useArticlesApi = () => {
 
   const getSingleArticle = async (id: string): Promise<SingleArticleResponse> => {
     try {
-      const { data, error } = await supabase
-        .from('articles')
-        .select('*')
-        .eq('id', id)
-        .single()
-
-      if (error) throw error
-
-      return {
-        data: data as ArticleResource
-      }
+      const response = await authenticatedFetch<SingleArticleResponse>(`/api/articles/${id}`)
+      return response
     } catch (error) {
       console.error('Error fetching article:', error)
       throw error
@@ -96,17 +54,12 @@ export const useArticlesApi = () => {
 
   const createArticle = async (body: ArticleRequest): Promise<SingleArticleResponse> => {
     try {
-      const { data, error } = await supabase
-        .from('articles')
-        .insert(body)
-        .select()
-        .single()
+      const response = await authenticatedFetch<SingleArticleResponse>('/api/articles', {
+        method: 'POST',
+        body
+      })
 
-      if (error) throw error
-
-      return {
-        data: data as ArticleResource
-      }
+      return response
     } catch (error) {
       console.error('Error creating article:', error)
       throw error
@@ -115,18 +68,12 @@ export const useArticlesApi = () => {
 
   const updateArticle = async (id: string, body: ArticleUpdateRequest): Promise<SingleArticleResponse> => {
     try {
-      const { data, error } = await supabase
-        .from('articles')
-        .update(body)
-        .eq('id', id)
-        .select()
-        .single()
+      const response = await authenticatedFetch<SingleArticleResponse>(`/api/articles/${id}`, {
+        method: 'PUT',
+        body
+      })
 
-      if (error) throw error
-
-      return {
-        data: data as ArticleResource
-      }
+      return response
     } catch (error) {
       console.error('Error updating article:', error)
       throw error
@@ -135,12 +82,9 @@ export const useArticlesApi = () => {
 
   const deleteArticle = async (id: string): Promise<void> => {
     try {
-      const { error } = await supabase
-        .from('articles')
-        .delete()
-        .eq('id', id)
-
-      if (error) throw error
+      await authenticatedFetch(`/api/articles/${id}`, {
+        method: 'DELETE'
+      })
     } catch (error) {
       console.error('Error deleting article:', error)
       throw error

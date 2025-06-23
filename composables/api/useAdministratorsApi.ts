@@ -7,6 +7,8 @@ import type {
 } from '~/types/administrators'
 
 export const useAdministratorsApi = () => {
+  const { authenticatedFetch } = useAuthenticatedFetch()
+
   const getAdministrators = async (params?: {
     page?: number;
     per_page?: number;
@@ -25,7 +27,7 @@ export const useAdministratorsApi = () => {
       if (params?.sort_field) query.append('sort_field', params.sort_field)
       if (params?.sort_order) query.append('sort_order', params.sort_order)
 
-      const response = await $fetch<AdministratorResponse>(`/api/administrators?${query.toString()}`)
+      const response = await authenticatedFetch<AdministratorResponse>(`/api/administrators?${query.toString()}`)
       
       return response
     } catch (error) {
@@ -36,7 +38,7 @@ export const useAdministratorsApi = () => {
 
   const getSingleAdministrator = async (id: string): Promise<SingleAdministratorResponse> => {
     try {
-      const { data } = await $fetch<SingleAdministratorResponse>(`/api/administrators/${id}`)
+      const { data } = await authenticatedFetch<SingleAdministratorResponse>(`/api/administrators/${id}`)
       
       return { data }
     } catch (error) {
@@ -47,7 +49,7 @@ export const useAdministratorsApi = () => {
 
   const createAdministrator = async (body: AdministratorRequest): Promise<SingleAdministratorResponse> => {
     try {
-      const { data } = await $fetch<SingleAdministratorResponse>('/api/administrators', {
+      const { data } = await authenticatedFetch<SingleAdministratorResponse>('/api/administrators', {
         method: 'POST',
         body
       })
@@ -61,7 +63,7 @@ export const useAdministratorsApi = () => {
 
   const updateAdministrator = async (id: string, body: AdministratorUpdateRequest): Promise<SingleAdministratorResponse> => {
     try {
-      const { data } = await $fetch<SingleAdministratorResponse>(`/api/administrators/${id}`, {
+      const { data } = await authenticatedFetch<SingleAdministratorResponse>(`/api/administrators/${id}`, {
         method: 'PUT',
         body
       })
@@ -75,7 +77,7 @@ export const useAdministratorsApi = () => {
 
   const deleteAdministrator = async (id: string): Promise<void> => {
     try {
-      await $fetch(`/api/administrators/${id}`, {
+      await authenticatedFetch(`/api/administrators/${id}`, {
         method: 'DELETE'
       })
     } catch (error) {

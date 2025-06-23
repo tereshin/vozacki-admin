@@ -67,18 +67,9 @@
 // Import interfaces/types
 import type { NavigationItem, NavigationGroup } from "~/types/navigation";
 import type { LanguageResource } from "~/types/languages";
-import Drawer from 'primevue/drawer';
-
-// Import components
-import BaseNavigationGroup from "~/components/base/BaseNavigationGroup.vue";
-
 // Import stores
 import { useGeneralStore } from "~/store/general";
 import { useAuthStore } from '~/store/auth';
-import { useCacheManager } from "~/composables/useCacheManager";
-
-// Import permissions
-import { usePermissions } from "~/composables/usePermissions";
 
 // Stores
 const generalStore = useGeneralStore();
@@ -92,7 +83,7 @@ const { canAccessAdministrators, canManageContent, canViewTests, currentRoleName
 const { contentLanguageId, initSettings } = useAppSettings();
 
 // Languages from cache
-const { loadActiveLanguages } = useCachedData();
+const { loadActiveLanguages } = useCachedLanguages();
 const availableLanguages = ref<LanguageResource[]>([]);
 
 // Menu configuration
@@ -161,7 +152,7 @@ const menu = computed<NavigationGroup[]>(() => {
 
 // Collapsible groups state
 const collapsedGroups = ref<Record<number, boolean>>({});
-
+const router = useRouter();
 // Functions
 function toggleGroup(groupIndex: number) {
   console.log('Toggling group:', groupIndex, 'Current state:', collapsedGroups.value[groupIndex]);
@@ -187,7 +178,7 @@ function loadCollapsedState() {
 }
 
 function goTo(item: NavigationItem) {
-  navigateTo(item.link);
+  navigateTo(router.resolve({ name: item.link }).href);
   if (generalStore.isMobile) {
     generalStore.isMenuOpen = false;
   }

@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import type { MetaResponse } from "~/types/general";
 import type { LanguageResource, LanguageResponse, LanguageRequest, LanguageUpdateRequest } from "~/types/languages";
-import { useCacheManager } from "~/composables/useCacheManager";
+import { useCacheManager } from "~/composables/cache/useCacheManager";
 
 export const useLanguagesStore = defineStore("languages", () => {
   // Cache utilities

@@ -87,11 +87,8 @@ export const useAuthApi = () => {
         };
       }
 
-      const response = await $fetch<{ data: AdministratorUser }>('/api/auth/me', {
-        headers: {
-          'Authorization': `Bearer ${session.access_token}`
-        }
-      });
+      const { authenticatedFetch } = useAuthenticatedFetch()
+      const response = await authenticatedFetch<{ data: AdministratorUser }>('/api/auth/me');
       
       return { user: response.data };
     } catch (error: any) {

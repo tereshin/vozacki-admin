@@ -39,6 +39,13 @@ export default defineNuxtRouteMiddleware(async (to) => {
           return navigateTo('/dashboard');
         }
       }
+      
+      // Проверяем доступ к управлению статьями
+      if (to.path.startsWith('/articles') && to.path !== '/articles') {
+        if (!user.role || (user.role.code !== 'administrator' && user.role.code !== 'moderator')) {
+          return navigateTo('/articles');
+        }
+      }
     } catch (error) {
       console.error('Error checking permissions:', error);
       // В случае ошибки перенаправляем на dashboard

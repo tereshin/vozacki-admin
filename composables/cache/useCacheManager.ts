@@ -1,6 +1,6 @@
 import type { LanguageResource } from '~/types/languages'
 import type { RoleResource } from '~/types/administrators'
-import { useIndexedDB } from './utils/useIndexedDB'
+import { useIndexedDB } from '~/composables/utils/data/useIndexedDB'
 
 // Синглтон для кэш-менеджера
 let cacheManagerInstance: ReturnType<typeof createCacheManager> | null = null

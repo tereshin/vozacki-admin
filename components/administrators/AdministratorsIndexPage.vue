@@ -345,7 +345,7 @@ import { useGeneralStore } from '~/store/general'
 import { useRolesStore } from '~/store/roles'
 
 // Import permissions
-import { usePermissions } from '~/composables/usePermissions'
+import { usePermissions } from '~/composables/core/auth/usePermissions'
 
 // Import libraries and third-party dependencies
 import { useI18n } from 'vue-i18n'

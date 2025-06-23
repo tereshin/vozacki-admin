@@ -14,6 +14,47 @@
   },
   "articles": {
     "title": "Članci",
+    "create": {
+      "title": "Kreiraj članak"
+    },
+    "edit": {
+      "title": "Uredi članak"
+    },
+    "form": {
+      "content": "Sadržaj članka",
+      "settings": "Podešavanja članka",
+      "preview": "Pregled članka",
+      "title": "Naslov",
+      "titlePlaceholder": "Unesite naslov članka...",
+      "slug": "Slug",
+      "slugPlaceholder": "slug-clanka",
+      "content": "Sadržaj",
+      "contentPlaceholder": "Počnite da pišete vaš članak...",
+      "language": "Jezik",
+      "selectLanguage": "Izaberi jezik",
+      "category": "Kategorija",
+      "selectCategory": "Izaberi kategoriju",
+      "status": "Status",
+      "draft": "Nacrt",
+      "published": "Objavljen",
+      "blocks": "Blokova sadržaja",
+      "noTitle": "Bez naslova",
+      "noSlug": "Bez slug-a",
+      "noLanguage": "Jezik nije izabran",
+      "noCategory": "Bez kategorije"
+    },
+    "validation": {
+      "titleRequired": "Naslov je obavezan",
+      "slugRequired": "Slug je obavezan",
+      "slugInvalid": "Slug može sadržati samo mala slova, brojeve i crtice",
+      "languageRequired": "Jezik je obavezan",
+      "contentRequired": "Sadržaj je obavezan"
+    },
+    "messages": {
+      "created": "Članak je uspešno kreiran",
+      "updated": "Članak je uspešno ažuriran",
+      "deleted": "Članak je uspešno obrisan"
+    },
     "filters": {
       "title": "Filteri",
       "filter": "Filter",
@@ -54,6 +95,9 @@
     },
     "actions": {
       "refresh": "Osveži",
+      "create": "Kreiraj članak",
+      "saveAsDraft": "Sačuvaj kao nacrt",
+      "publish": "Objavi",
       "deleteConfirm": "Da li ste sigurni da želite da obrišete ovaj članak?",
       "deleteError": "Greška pri brisanju članka"
     },
@@ -137,6 +181,7 @@
     "created_at": "Datum kreiranja",
     "confirm_delete": "Potvrdi brisanje",
     "search": "Pretraži",
+    "accessDenied": "Pristup odbijen",
     "languages": {
       "en": "Engleski",
       "ru": "Ruski",

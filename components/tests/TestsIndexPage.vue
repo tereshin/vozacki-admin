@@ -145,7 +145,7 @@ const expandedKeys = ref<{ [key: string]: boolean }>({})
 const loadingNodes = ref<Set<string>>(new Set())
 
 // Data
-const { loadLanguages: loadCachedLanguages } = useCachedData()
+const { loadLanguages: loadCachedLanguages } = useCachedLanguages()
 const languages = ref<LanguageResource[]>([])
 const testsByTopic = ref<Map<string, TestResource[]>>(new Map())
 

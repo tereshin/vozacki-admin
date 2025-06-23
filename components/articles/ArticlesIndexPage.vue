@@ -3,6 +3,8 @@
         <!-- Header -->
         <TheHeader :title="$t('articles.title')" :hideBreadcrumb="false" :items="breadcrumbItems">
             <template #actions>
+                <Button @click="createArticle" :label="$t('articles.actions.create')" icon="pi pi-plus" 
+                    class="p-button-success mr-2" />
                 <Button @click="refreshData" :loading="articlesStore.loading" :label="$t('articles.actions.refresh')"
                     icon="pi pi-refresh" class="p-button-primary" />
             </template>
@@ -86,6 +88,7 @@ import { ref, onMounted, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useConfirm } from 'primevue/useconfirm'
 import { useToast } from 'primevue/usetoast'
+import { useRouter } from 'vue-router'
 import { useArticlesStore } from '~/store/articles'
 import { useCategoriesStore } from '~/store/categories'
 import TheHeader from "~/components/TheHeader.vue"
@@ -95,7 +98,9 @@ import type { LanguageResource } from '~/types/languages'
 import type { CategoryResource } from '~/types/categories'
 import type { FilterFieldConfig } from '~/types/filters'
 import type { BaseDataTableColumn } from '~/types/base-data-table'
-import { useAppSettings } from '~/composables/useAppSettings'
+import { useAppSettings } from '~/composables/core/config/useAppSettings'
+import { useFormatDate } from '~/composables/utils/format/useFormatDate'
+import { useGetEntityName } from '~/composables/utils/get/useGetEntityName'
 
 // ==================== COMPOSABLES ====================
 // I18n
@@ -104,6 +109,9 @@ const { t } = useI18n()
 // PrimeVue composables
 const confirm = useConfirm()
 const toast = useToast()
+
+// Router
+const router = useRouter()
 
 // Stores
 const articlesStore = useArticlesStore()
@@ -130,7 +138,7 @@ const sortField = ref<string>('published_at')
 const sortOrder = ref<'asc' | 'desc'>('desc')
 
 // Data for filters
-const { loadLanguages: loadCachedLanguages } = useCachedData()
+const { loadLanguages: loadCachedLanguages } = useCachedLanguages()
 const languages = ref<LanguageResource[]>([])
 const categories = ref<CategoryResource[]>([])
 
@@ -288,32 +296,38 @@ const getCategoryName = (categoryUid: string | null): string => {
     return getCategoryNameUtil(categories.value, categoryUid, t('articles.table.noCategory'))
 }
 
-
-
 // Action methods
-const getActionItems = (id: string) => [
-    {
-        label: t('articles.table.view'),
-        icon: 'pi pi-eye',
-        command: () => viewArticle(id)
-    },
-    {
-        label: t('articles.table.duplicate'),
-        icon: 'pi pi-copy',
-        command: () => duplicateArticle(id)
-    },
-    {
-        separator: true
-    },
-    {
-        label: t('articles.table.delete'),
-        icon: 'pi pi-trash',
-        command: () => deleteArticle(id),
-        class: 'text-red-500'
-    }
-]
+const createArticle = () => {
+    router.push('/articles/create')
+}
 
-const viewArticle = (id: string) => {
+const getActionItems = (idOrData: string | any) => {
+    const id = typeof idOrData === 'string' ? idOrData : idOrData.id
+    return [
+        {
+            label: t('articles.table.view'),
+            icon: 'pi pi-eye',
+            command: () => viewArticle(id)
+        },
+        {
+            label: t('articles.table.duplicate'),
+            icon: 'pi pi-copy',
+            command: () => duplicateArticle(id)
+        },
+        {
+            separator: true
+        },
+        {
+            label: t('articles.table.delete'),
+            icon: 'pi pi-trash',
+            command: () => deleteArticle(id),
+            class: 'text-red-500'
+        }
+    ]
+}
+
+const viewArticle = (idOrData: string | any) => {
+    const id = typeof idOrData === 'string' ? idOrData : idOrData.id
     // TODO: Implement view functionality
     console.log('View article:', id)
     toast.add({
@@ -324,18 +338,18 @@ const viewArticle = (id: string) => {
     })
 }
 
-const editArticle = (id: string) => {
-    // TODO: Implement edit functionality
-    console.log('Edit article:', id)
-    toast.add({
-        severity: 'info',
-        summary: 'Coming Soon',
-        detail: 'Edit functionality will be implemented soon',
-        life: 3000
+const editArticle = (data: any) => {
+    const id = data.id
+    navigateTo({
+        name: 'articles-id',
+        params: {
+            id: id
+        }
     })
 }
 
-const duplicateArticle = (id: string) => {
+const duplicateArticle = (idOrData: string | any) => {
+    const id = typeof idOrData === 'string' ? idOrData : idOrData.id
     // TODO: Implement duplicate functionality
     console.log('Duplicate article:', id)
     toast.add({
@@ -346,7 +360,8 @@ const duplicateArticle = (id: string) => {
     })
 }
 
-const deleteArticle = (id: string) => {
+const deleteArticle = (idOrData: string | any) => {
+    const id = typeof idOrData === 'string' ? idOrData : idOrData.id
     confirm.require({
         message: t('articles.actions.deleteConfirm'),
         header: t('articles.table.delete'),

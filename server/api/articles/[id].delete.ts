@@ -1,37 +1,44 @@
+import { serverSupabaseClient } from '~/server/utils/supabase'
+import { requirePermission } from '~/server/utils/auth'
+import type { Database } from '~/types/database'
 import { getRouterParams } from 'h3'
 
 export default defineEventHandler(async (event) => {
   try {
-    const id = getRouterParams(event).id
+    // Check permissions for content management
+    await requirePermission(event, 'manage_content')
     
+    const id = getRouterParams(event).id
+
     if (!id) {
       throw createError({
         statusCode: 400,
-        statusMessage: 'Administrator ID is required'
+        statusMessage: 'Article ID is required'
       })
     }
 
     const { error } = await serverSupabaseClient
-      .from('administrators')
+      .from('articles')
       .delete()
       .eq('id', id)
 
     if (error) {
       throw createError({
         statusCode: 500,
-        statusMessage: 'Error deleting administrator',
-        data: error
+        statusMessage: 'Failed to delete article'
       })
     }
 
     return {
-      message: 'Administrator deleted successfully'
+      message: 'Article deleted successfully'
     }
   } catch (error: any) {
+    console.error('Error deleting article:', error)
+    
     if (error.statusCode) {
       throw error
     }
-    console.error('Server error:', error)
+    
     throw createError({
       statusCode: 500,
       statusMessage: 'Internal server error'

@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import type { MetaResponse } from "~/types/general";
 import type { RoleResource, RoleResponse } from "~/types/administrators";
-import { useCacheManager } from "~/composables/useCacheManager";
+import { useCacheManager } from "~/composables/cache/useCacheManager";
 
 export const useRolesStore = defineStore("roles", () => {
   // Cache utilities

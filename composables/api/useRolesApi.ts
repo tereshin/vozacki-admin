@@ -4,6 +4,8 @@ import type {
 } from '~/types/administrators'
 
 export const useRolesApi = () => {
+  const { authenticatedFetch } = useAuthenticatedFetch()
+
   const getRoles = async (params?: {
     page?: number;
     per_page?: number;
@@ -20,7 +22,7 @@ export const useRolesApi = () => {
       if (params?.sort_field) query.append('sort_field', params.sort_field)
       if (params?.sort_order) query.append('sort_order', params.sort_order)
 
-      const response = await $fetch<RoleResponse>(`/api/roles?${query.toString()}`)
+      const response = await authenticatedFetch<RoleResponse>(`/api/roles?${query.toString()}`)
       
       return response
     } catch (error) {
@@ -31,7 +33,7 @@ export const useRolesApi = () => {
 
   const getAllRoles = async (): Promise<RoleResource[]> => {
     try {
-      const { data } = await $fetch<{ data: RoleResource[] }>('/api/roles/all')
+      const { data } = await authenticatedFetch<{ data: RoleResource[] }>('/api/roles/all')
       
       return data
     } catch (error) {

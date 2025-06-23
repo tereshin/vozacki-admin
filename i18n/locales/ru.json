@@ -15,6 +15,47 @@
 
   "articles": {
     "title": "Статьи",
+    "create": {
+      "title": "Создать статью"
+    },
+    "edit": {
+      "title": "Редактировать статью"
+    },
+    "form": {
+      "content": "Содержание статьи",
+      "settings": "Настройки статьи",
+      "preview": "Предварительный просмотр",
+      "title": "Заголовок",
+      "titlePlaceholder": "Введите заголовок статьи...",
+      "slug": "Slug",
+      "slugPlaceholder": "slug-stati",
+      "content": "Содержание",
+      "contentPlaceholder": "Начните писать вашу статью...",
+      "language": "Язык",
+      "selectLanguage": "Выберите язык",
+      "category": "Категория",
+      "selectCategory": "Выберите категорию",
+      "status": "Статус",
+      "draft": "Черновик",
+      "published": "Опубликована",
+      "blocks": "Блоков контента",
+      "noTitle": "Без заголовка",
+      "noSlug": "Без slug",
+      "noLanguage": "Язык не выбран",
+      "noCategory": "Без категории"
+    },
+    "validation": {
+      "titleRequired": "Заголовок обязателен",
+      "slugRequired": "Slug обязателен",
+      "slugInvalid": "Slug может содержать только строчные буквы, цифры и дефисы",
+      "languageRequired": "Язык обязателен",
+      "contentRequired": "Содержание обязательно"
+    },
+    "messages": {
+      "created": "Статья успешно создана",
+      "updated": "Статья успешно обновлена",
+      "deleted": "Статья успешно удалена"
+    },
     "filters": {
       "title": "Фильтры",
       "filter": "Фильтр",
@@ -55,6 +96,9 @@
     },
     "actions": {
       "refresh": "Обновить",
+      "create": "Создать статью",
+      "saveAsDraft": "Сохранить как черновик",
+      "publish": "Опубликовать",
       "deleteConfirm": "Вы уверены, что хотите удалить эту статью?",
       "deleteError": "Ошибка при удалении статьи"
     },
@@ -168,6 +212,7 @@
     "created_at": "Дата создания",
     "confirm_delete": "Подтвердить удаление",
     "search": "Поиск",
+    "accessDenied": "Доступ запрещен",
     "languages": {
       "en": "Английский",
       "ru": "Русский",

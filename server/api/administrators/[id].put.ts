@@ -1,6 +1,8 @@
+import { getRouterParams } from 'h3'
+
 export default defineEventHandler(async (event) => {
   try {
-    const id = getRouterParam(event, 'id')
+    const id = getRouterParams(event).id
     const body = await readBody(event)
     
     if (!id) {

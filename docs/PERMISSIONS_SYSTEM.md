@@ -74,7 +74,7 @@ interface AdministratorUser extends User {
 
 ```vue
 <script setup>
-import { usePermissions } from "~/composables/usePermissions";
+import { usePermissions } from "~/composables/core/auth/usePermissions";
 
 const { canAccessAdministrators, canManageContent } = usePermissions();
 
@@ -105,7 +105,7 @@ const menu = computed(() => {
 
 ```vue
 <script setup>
-import { usePermissions } from "~/composables/usePermissions";
+import { usePermissions } from "~/composables/core/auth/usePermissions";
 
 const { isAdministrator } = usePermissions();
 </script>
