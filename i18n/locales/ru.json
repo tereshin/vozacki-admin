@@ -1,0 +1,270 @@
+{
+  "login": {
+    "title": "Вход в систему",
+    "emailLabel": "Email адрес",
+    "emailPlaceholder": "Введите email",
+    "submitButton": "Получить ссылку для входа",
+    "submitting": "Отправка...",
+    "errorTitle": "Ошибка авторизации",
+    "successTitle": "Ссылка отправлена",
+    "successMessage": "Ссылка для входа отправлена на ваш email. Проверьте почту и перейдите по ссылке.",
+    "invalidEmail": "Введите корректный email адрес",
+    "emailRequired": "Введите email адрес",
+    "unexpectedError": "Произошла неожиданная ошибка"
+  },
+
+  "articles": {
+    "title": "Статьи",
+    "create": {
+      "title": "Создать статью"
+    },
+    "edit": {
+      "title": "Редактировать статью"
+    },
+    "form": {
+      "content": "Содержание статьи",
+      "settings": "Настройки статьи",
+      "preview": "Предварительный просмотр",
+      "title": "Заголовок",
+      "titlePlaceholder": "Введите заголовок статьи...",
+      "slug": "Slug",
+      "slugPlaceholder": "slug-stati",
+      "content": "Содержание",
+      "contentPlaceholder": "Начните писать вашу статью...",
+      "language": "Язык",
+      "selectLanguage": "Выберите язык",
+      "category": "Категория",
+      "selectCategory": "Выберите категорию",
+      "status": "Статус",
+      "draft": "Черновик",
+      "published": "Опубликована",
+      "blocks": "Блоков контента",
+      "noTitle": "Без заголовка",
+      "noSlug": "Без slug",
+      "noLanguage": "Язык не выбран",
+      "noCategory": "Без категории"
+    },
+    "validation": {
+      "titleRequired": "Заголовок обязателен",
+      "slugRequired": "Slug обязателен",
+      "slugInvalid": "Slug может содержать только строчные буквы, цифры и дефисы",
+      "languageRequired": "Язык обязателен",
+      "contentRequired": "Содержание обязательно"
+    },
+    "messages": {
+      "created": "Статья успешно создана",
+      "updated": "Статья успешно обновлена",
+      "deleted": "Статья успешно удалена"
+    },
+    "filters": {
+      "title": "Фильтры",
+      "filter": "Фильтр",
+      "search": "Поиск",
+      "searchPlaceholder": "Поиск по названию или slug...",
+      "language": "Язык",
+      "allLanguages": "Все языки",
+      "category": "Категория",
+      "allCategories": "Все категории",
+      "perPage": "Записей на странице",
+      "resetFilters": "Сбросить фильтры"
+    },
+    "table": {
+      "title": "Заголовок",
+      "slug": "Slug",
+      "language": "Язык",
+      "category": "Категория",
+      "status": "Статус",
+      "publishedAt": "Дата публикации",
+      "actions": "Действия",
+      "edit": "Редактировать",
+      "view": "Просмотр",
+      "duplicate": "Дублировать",
+      "delete": "Удалить",
+      "published": "Опубликована",
+      "draft": "Черновик",
+      "noCategory": "Без категории",
+      "unknown": "Неизвестно",
+      "sortAsc": "Сортировка по возрастанию",
+      "sortDesc": "Сортировка по убыванию"
+    },
+    "states": {
+      "loading": "Загрузка статей...",
+      "error": "Ошибка загрузки данных",
+      "tryAgain": "Попробовать снова",
+      "notFound": "Статьи не найдены",
+      "notFoundDescription": "Попробуйте изменить параметры фильтрации"
+    },
+    "actions": {
+      "refresh": "Обновить",
+      "create": "Создать статью",
+      "saveAsDraft": "Сохранить как черновик",
+      "publish": "Опубликовать",
+      "deleteConfirm": "Вы уверены, что хотите удалить эту статью?",
+      "deleteError": "Ошибка при удалении статьи"
+    },
+    "pagination": {
+      "showing": "Показано",
+      "of": "из",
+      "records": "записей",
+      "page": "Страница",
+      "previous": "Назад",
+      "next": "Вперед"
+    }
+  },
+
+  "tests": {
+    "title": "Тестовые материалы",
+    "filters": {
+      "title": "Фильтры",
+      "filter": "Фильтровать",
+      "search": "Поиск",
+      "searchPlaceholder": "Поиск по названию или описанию...",
+      "language": "Язык",
+      "allLanguages": "Все языки",
+      "resetFilters": "Сбросить фильтры"
+    },
+    "tree": {
+      "topic": "Тема",
+      "testTitle": "Название теста",
+      "totalQuestions": "Вопросы",
+      "actions": "Действия",
+      "edit": "Редактировать",
+      "view": "Просмотреть",
+      "delete": "Удалить",
+      "addTest": "Добавить тест",
+      "editTopic": "Редактировать тему",
+      "deleteTopic": "Удалить тему",
+      "expandAll": "Развернуть все",
+      "collapseAll": "Свернуть все"
+    },
+    "states": {
+      "loading": "Загрузка тестовых материалов...",
+      "error": "Ошибка загрузки данных",
+      "tryAgain": "Попробовать снова",
+      "notFound": "Тестовые материалы не найдены",
+      "notFoundDescription": "Попробуйте изменить параметры фильтра или проверьте соединение"
+    },
+    "actions": {
+      "refresh": "Обновить",
+      "deleteConfirm": "Вы действительно хотите удалить этот элемент?",
+      "deleteError": "Ошибка удаления элемента"
+    }
+  },
+
+  "administrators": {
+    "title": "Администраторы",
+    "description": "Управление пользователями системы",
+    "add_new": "Добавить администратора",
+    "search_placeholder": "Поиск по имени или email...",
+    "filter_by_role": "Фильтр по роли",
+    "empty_state_title": "Администраторы не найдены",
+    "empty_state_description": "Нет администраторов, соответствующих критериям поиска",
+    "error_loading": "Ошибка загрузки администраторов",
+    "create_administrator": "Создать администратора",
+    "edit_administrator": "Редактировать администратора",
+    "administrator_details": "Детали администратора",
+    "confirm_delete": "Подтвердить удаление",
+    "delete_confirmation": "Вы уверены, что хотите удалить этого администратора?",
+    "delete_warning": "Это действие нельзя отменить.",
+    "first_name": "Имя",
+    "last_name": "Фамилия",
+    "full_name": "Полное имя",
+    "display_name": "Отображаемое имя",
+    "email": "Email",
+    "role": "Роль",
+    "select_role": "Выберите роль",
+    "created_at": "Дата создания",
+    "updated_at": "Дата обновления",
+    "created_successfully": "Администратор успешно создан",
+    "updated_successfully": "Администратор успешно обновлен",
+    "deleted_successfully": "Администратор успешно удален",
+    "error_creating": "Ошибка при создании администратора",
+    "error_updating": "Ошибка при обновлении администратора",
+    "error_deleting": "Ошибка при удалении администратора",
+    "roles": {
+      "admin": "Администратор",
+      "user": "Пользователь",
+      "moderator": "Модератор"
+    },
+    "filters": {
+      "search": "Поиск",
+      "searchPlaceholder": "Поиск по имени или email..."
+    }
+  },
+
+  "common": {
+    "selectLanguage": "Выберите язык",
+    "filters": "Фильтры",
+    "loading": "Загрузка...",
+    "error": "Ошибка",
+    "success": "Успешно",
+    "cancel": "Отмена",
+    "create": "Создать",
+    "update": "Обновить",
+    "delete": "Удалить",
+    "view": "Просмотр",
+    "edit": "Редактировать",
+    "actions": "Действия",
+    "close": "Закрыть",
+    "reset": "Сброс",
+    "apply": "Применить",
+    "not_specified": "Не указано",
+    "created_at": "Дата создания",
+    "confirm_delete": "Подтвердить удаление",
+    "search": "Поиск",
+    "accessDenied": "Доступ запрещен",
+    "languages": {
+      "en": "Английский",
+      "ru": "Русский",
+      "sr": "Сербский"
+    }
+  },
+
+  "sidebar": {
+    "contentLanguage": "Язык контента",
+    "selectLanguage": "Выберите язык"
+  },
+
+  "languages": {
+    "title": "Языки",
+    "filters": {
+      "search": "Поиск",
+      "searchPlaceholder": "Поиск по названию или коду...",
+      "isActive": "Активен",
+      "activeOnly": "Только активные"
+    }
+  },
+
+  "roles": {
+    "title": "Роли",
+    "name": "Название",
+    "code": "Код",
+    "search_placeholder": "Поиск по названию или коду...",
+    "empty_state_title": "Роли не найдены",
+    "empty_state_description": "Нет ролей, соответствующих критериям поиска"
+  },
+
+  "dashboard": {
+    "title": "Панель управления",
+    "stats": {
+      "articles": "Статьи",
+      "topics": "Темы",
+      "tests": "Тесты",
+      "administrators": "Администраторы"
+    },
+    "actions": {
+      "goToArticles": "Перейти к статьям",
+      "goToTests": "Перейти к тестам",
+      "goToAdministrators": "Управление",
+      "topicsDescription": "Категории контента",
+      "tryAgain": "Попробовать снова"
+    },
+    "errors": {
+      "loadingStats": "Ошибка загрузки статистики"
+    },
+    "currentLanguage": {
+      "title": "Текущий язык контента",
+      "description": "Статистика показана для этого языка"
+    }
+  }
+}

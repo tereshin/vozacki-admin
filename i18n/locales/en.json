@@ -1,0 +1,270 @@
+{
+  "login": {
+    "title": "Log in to system",
+    "emailLabel": "Email address",
+    "emailPlaceholder": "Enter your email",
+    "submitButton": "Get login link",
+    "submitting": "Sending...",
+    "errorTitle": "Authorization error",
+    "successTitle": "Link sent",
+    "successMessage": "Login link has been sent to your email. Check your inbox and click the link.",
+    "invalidEmail": "Enter a valid email address",
+    "emailRequired": "Enter email address",
+    "unexpectedError": "An unexpected error occurred"
+  },
+
+  "articles": {
+    "title": "Articles",
+    "create": {
+      "title": "Create Article"
+    },
+    "edit": {
+      "title": "Edit Article"
+    },
+    "form": {
+      "content": "Article Content",
+      "settings": "Article Settings",
+      "preview": "Article Preview",
+      "title": "Title",
+      "titlePlaceholder": "Enter article title...",
+      "slug": "Slug",
+      "slugPlaceholder": "article-slug",
+      "content": "Content",
+      "contentPlaceholder": "Start writing your article...",
+      "language": "Language",
+      "selectLanguage": "Select language",
+      "category": "Category",
+      "selectCategory": "Select category",
+      "status": "Status",
+      "draft": "Draft",
+      "published": "Published",
+      "blocks": "Content blocks",
+      "noTitle": "No title",
+      "noSlug": "No slug",
+      "noLanguage": "No language",
+      "noCategory": "No category"
+    },
+    "validation": {
+      "titleRequired": "Title is required",
+      "slugRequired": "Slug is required",
+      "slugInvalid": "Slug can only contain lowercase letters, numbers, and hyphens",
+      "languageRequired": "Language is required",
+      "contentRequired": "Content is required"
+    },
+    "messages": {
+      "created": "Article created successfully",
+      "updated": "Article updated successfully",
+      "deleted": "Article deleted successfully"
+    },
+    "filters": {
+      "title": "Filters",
+      "filter": "Filter",
+      "search": "Search",
+      "searchPlaceholder": "Search by title or slug...",
+      "language": "Language",
+      "allLanguages": "All languages",
+      "category": "Category",
+      "allCategories": "All categories",
+      "perPage": "Records per page",
+      "resetFilters": "Reset filters"
+    },
+    "table": {
+      "title": "Title",
+      "slug": "Slug",
+      "language": "Language",
+      "category": "Category",
+      "status": "Status",
+      "publishedAt": "Published At",
+      "actions": "Actions",
+      "edit": "Edit",
+      "view": "View",
+      "duplicate": "Duplicate",
+      "delete": "Delete",
+      "published": "Published",
+      "draft": "Draft",
+      "noCategory": "No category",
+      "unknown": "Unknown",
+      "sortAsc": "Sort ascending",
+      "sortDesc": "Sort descending"
+    },
+    "states": {
+      "loading": "Loading articles...",
+      "error": "Error loading data",
+      "tryAgain": "Try again",
+      "notFound": "Articles not found",
+      "notFoundDescription": "Try changing the filter parameters"
+    },
+    "actions": {
+      "refresh": "Refresh",
+      "create": "Create Article",
+      "saveAsDraft": "Save as Draft",
+      "publish": "Publish",
+      "deleteConfirm": "Are you sure you want to delete this article?",
+      "deleteError": "Error deleting article"
+    },
+    "pagination": {
+      "showing": "Showing",
+      "of": "of",
+      "records": "records",
+      "page": "Page",
+      "previous": "Previous",
+      "next": "Next"
+    }
+  },
+
+  "tests": {
+    "title": "Test Materials",
+    "filters": {
+      "title": "Filters",
+      "filter": "Filter",
+      "search": "Search",
+      "searchPlaceholder": "Search by name or description...",
+      "language": "Language",
+      "allLanguages": "All languages",
+      "resetFilters": "Reset filters"
+    },
+    "tree": {
+      "topic": "Topic",
+      "testTitle": "Test Title",
+      "totalQuestions": "Questions",
+      "actions": "Actions",
+      "edit": "Edit",
+      "view": "View",
+      "delete": "Delete",
+      "addTest": "Add Test",
+      "editTopic": "Edit Topic",
+      "deleteTopic": "Delete Topic",
+      "expandAll": "Expand All",
+      "collapseAll": "Collapse All"
+    },
+    "states": {
+      "loading": "Loading test materials...",
+      "error": "Error loading data",
+      "tryAgain": "Try again",
+      "notFound": "Test materials not found",
+      "notFoundDescription": "Try changing the filter parameters or check your connection"
+    },
+    "actions": {
+      "refresh": "Refresh",
+      "deleteConfirm": "Are you sure you want to delete this item?",
+      "deleteError": "Error deleting item"
+    }
+  },
+
+  "administrators": {
+    "title": "Administrators",
+    "description": "System user management",
+    "add_new": "Add Administrator",
+    "search_placeholder": "Search by name or email...",
+    "filter_by_role": "Filter by role",
+    "empty_state_title": "No administrators found",
+    "empty_state_description": "No administrators match the search criteria",
+    "error_loading": "Error loading administrators",
+    "create_administrator": "Create Administrator",
+    "edit_administrator": "Edit Administrator",
+    "administrator_details": "Administrator Details",
+    "confirm_delete": "Confirm Delete",
+    "delete_confirmation": "Are you sure you want to delete this administrator?",
+    "delete_warning": "This action cannot be undone.",
+    "first_name": "First Name",
+    "last_name": "Last Name",
+    "full_name": "Full Name",
+    "display_name": "Display Name",
+    "email": "Email",
+    "role": "Role",
+    "select_role": "Select role",
+    "created_at": "Created At",
+    "updated_at": "Updated At",
+    "created_successfully": "Administrator created successfully",
+    "updated_successfully": "Administrator updated successfully",
+    "deleted_successfully": "Administrator deleted successfully",
+    "error_creating": "Error creating administrator",
+    "error_updating": "Error updating administrator",
+    "error_deleting": "Error deleting administrator",
+    "roles": {
+      "admin": "Administrator",
+      "user": "User",
+      "moderator": "Moderator"
+    },
+    "filters": {
+      "search": "Search",
+      "searchPlaceholder": "Search by name or email..."
+    }
+  },
+
+  "common": {
+    "selectLanguage": "Select language",
+    "filters": "Filters",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "cancel": "Cancel",
+    "create": "Create",
+    "update": "Update",
+    "delete": "Delete",
+    "view": "View",
+    "edit": "Edit",
+    "actions": "Actions",
+    "close": "Close",
+    "reset": "Reset",
+    "apply": "Apply",
+    "not_specified": "Not specified",
+    "created_at": "Created At",
+    "confirm_delete": "Confirm Delete",
+    "search": "Search",
+    "accessDenied": "Access denied",
+    "languages": {
+      "en": "English",
+      "ru": "Russian",
+      "sr": "Serbian"
+    }
+  },
+
+  "sidebar": {
+    "contentLanguage": "Content Language",
+    "selectLanguage": "Select language"
+  },
+
+  "languages": {
+    "title": "Languages",
+    "filters": {
+      "search": "Search",
+      "searchPlaceholder": "Search by name or code...",
+      "isActive": "Is Active",
+      "activeOnly": "Active only"
+    }
+  },
+
+  "roles": {
+    "title": "Roles",
+    "name": "Name",
+    "code": "Code",
+    "search_placeholder": "Search by name or code...",
+    "empty_state_title": "No roles found",
+    "empty_state_description": "No roles match the search criteria"
+  },
+
+  "dashboard": {
+    "title": "Dashboard",
+    "stats": {
+      "articles": "Articles",
+      "topics": "Topics",
+      "tests": "Tests",
+      "administrators": "Administrators"
+    },
+    "actions": {
+      "goToArticles": "Go to Articles",
+      "goToTests": "Go to Tests",
+      "goToAdministrators": "Management",
+      "topicsDescription": "Content categories",
+      "tryAgain": "Try Again"
+    },
+    "errors": {
+      "loadingStats": "Error loading statistics"
+    },
+    "currentLanguage": {
+      "title": "Current Content Language",
+      "description": "Statistics shown for this language"
+    }
+  }
+}
