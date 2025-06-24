@@ -148,28 +148,6 @@
                         </template>
                     </Card>
                 </div>
-
-                <!-- Current language info -->
-                <Card>
-                    <template #header>
-                        <div class="p-4 pb-0">
-                            <h3 class="font-medium text-gray-900">{{ $t('dashboard.currentLanguage.title') }}</h3>
-                        </div>
-                    </template>
-                    <template #content>
-                        <div>
-                            <div class="flex items-center space-x-3">
-                                <div class="p-2 bg-blue-100 rounded">
-                                    <BaseIcon name="flag" class="w-5 h-5 text-blue-600" />
-                                </div>
-                                <div>
-                                    <p class="font-medium text-gray-900">{{ contentLanguageCode }}</p>
-                                    <p class="text-sm text-gray-500">{{ $t('dashboard.currentLanguage.description') }}</p>
-                                </div>
-                            </div>
-                        </div>
-                    </template>
-                </Card>
             </div>
         </div>
     </div>
@@ -188,7 +166,7 @@ const breadcrumbItems = ref([
 ])
 
 // App settings для получения текущего языка
-const { contentLanguageId, contentLanguageCode, initSettings } = useAppSettings()
+const { contentLanguageId, initSettings } = useAppSettings()
 
 // API для получения статистики
 const { getDashboardStats } = useDashboardApi()

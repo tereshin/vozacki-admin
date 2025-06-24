@@ -2,11 +2,9 @@
     <div class="surface-ground min-h-screen">
         <!-- Header -->
         <TheHeader :title="$t('articles.title')" :hideBreadcrumb="false" :items="breadcrumbItems">
-            <template #actions>
+            <template #header-actions>
                 <Button @click="createArticle" :label="$t('articles.actions.create')" icon="pi pi-plus" 
-                    class="p-button-success mr-2" />
-                <Button @click="refreshData" :loading="articlesStore.loading" :label="$t('articles.actions.refresh')"
-                    icon="pi pi-refresh" class="p-button-primary" />
+                    size="small" />
             </template>
         </TheHeader>
 
@@ -48,7 +46,7 @@
             >
                 <!-- Custom column templates -->
                 <template #column-title="{ data }">
-                    <div class="font-medium text-900">{{ data.title }}</div>
+                    <div class="text-900 cursor-pointer hover:text-blue-600 transition-colors underline decoration-dotted hover:decoration-solid"  @click="editArticle(data)">{{ data.title }}</div>
                 </template>
 
                 <template #column-language="{ data }">
@@ -56,7 +54,15 @@
                 </template>
 
                 <template #column-category="{ data }">
-                    <div class="text-900">{{ getCategoryName(data.category_uid) }}</div>
+                    <div v-if="data.category_uid" 
+                         class="text-900 cursor-pointer hover:text-blue-600 transition-colors underline decoration-dotted hover:decoration-solid" 
+                         @click="editCategory(data.category_uid)"
+                         :title="$t('articles.table.clickToEditCategory')">
+                        {{ getCategoryName(data.category_uid) }}
+                    </div>
+                    <div v-else class="text-gray-400">
+                        {{ getCategoryName(data.category_uid) }}
+                    </div>
                 </template>
 
                 <template #column-status="{ data }">
@@ -79,6 +85,14 @@
 
         <!-- Delete Confirmation Dialog -->
         <ConfirmDialog />
+
+        <!-- Category Edit Dialog -->
+        <CategoriesFormDialog 
+            v-model:visible="showCategoryDialog"
+            :category="selectedCategory"
+            :is-edit-mode="isEditMode"
+            @saved="onCategorySaved"
+        />
     </div>
 </template>
 
@@ -94,6 +108,7 @@ import { useCategoriesStore } from '~/store/categories'
 import TheHeader from "~/components/TheHeader.vue"
 import BaseFilter from "~/components/base/BaseFilter.vue"
 import BaseDataTable from "~/components/base/BaseDataTable.vue"
+import CategoriesFormDialog from "~/components/categories/CategoriesFormDialog.vue"
 import type { LanguageResource } from '~/types/languages'
 import type { CategoryResource } from '~/types/categories'
 import type { FilterFieldConfig } from '~/types/filters'
@@ -101,6 +116,7 @@ import type { BaseDataTableColumn } from '~/types/base-data-table'
 import { useAppSettings } from '~/composables/core/config/useAppSettings'
 import { useFormatDate } from '~/composables/utils/format/useFormatDate'
 import { useGetEntityName } from '~/composables/utils/get/useGetEntityName'
+import { useCachedLanguages } from '~/composables/cache/useCachedLanguages'
 
 // ==================== COMPOSABLES ====================
 // I18n
@@ -141,6 +157,11 @@ const sortOrder = ref<'asc' | 'desc'>('desc')
 const { loadLanguages: loadCachedLanguages } = useCachedLanguages()
 const languages = ref<LanguageResource[]>([])
 const categories = ref<CategoryResource[]>([])
+
+// Category dialog state
+const showCategoryDialog = ref(false)
+const selectedCategory = ref<CategoryResource | null>(null)
+const isEditMode = ref(true)
 
 // ==================== COMPUTED PROPERTIES ====================
 // Breadcrumb items
@@ -229,17 +250,56 @@ const filterFields = computed<FilterFieldConfig[]>(() => {
 
 // ==================== METHODS ====================
 // Filter handlers
-const onFilterChange = (field: string, value: any) => {
+const onFilterChange = async (field: string, value: any) => {
     if (field === 'search') {
         // Debounce for search is already built into BaseFilter
         filters.value.page = 1
     }
+    
+    // When language changes, reload categories for the selected language
+    if (field === 'language_id') {
+        // Reset category filter since categories may be different for the new language
+        filters.value.category_uid = ''
+        
+        try {
+            // Load categories for the selected language
+            const categoriesResponse = await categoriesStore.getCategories({ 
+                per_page: 100,
+                language_id: value || undefined
+            })
+            categories.value = categoriesResponse.data.collection
+        } catch (error) {
+            console.error('Error loading categories for language:', error)
+            toast.add({
+                severity: 'error',
+                summary: t('articles.states.error'),
+                detail: 'Failed to load categories for selected language',
+                life: 5000
+            })
+        }
+    }
+    
     applyFilters()
 }
 
-const onFilterReset = () => {
+const onFilterReset = async () => {
     sortField.value = 'published_at'
     sortOrder.value = 'desc'
+    
+    // Reload all categories when filters are reset
+    try {
+        const categoriesResponse = await categoriesStore.getCategories({ per_page: 100 })
+        categories.value = categoriesResponse.data.collection
+    } catch (error) {
+        console.error('Error loading categories on reset:', error)
+        toast.add({
+            severity: 'error',
+            summary: t('articles.states.error'),
+            detail: 'Failed to load categories',
+            life: 5000
+        })
+    }
+    
     applyFilters()
 }
 
@@ -301,18 +361,12 @@ const createArticle = () => {
     router.push('/articles/create')
 }
 
-const getActionItems = (idOrData: string | any) => {
-    const id = typeof idOrData === 'string' ? idOrData : idOrData.id
+const getActionItems = (data: any) => {
     return [
         {
             label: t('articles.table.view'),
             icon: 'pi pi-eye',
-            command: () => viewArticle(id)
-        },
-        {
-            label: t('articles.table.duplicate'),
-            icon: 'pi pi-copy',
-            command: () => duplicateArticle(id)
+            command: () => editArticle(data)
         },
         {
             separator: true
@@ -320,22 +374,10 @@ const getActionItems = (idOrData: string | any) => {
         {
             label: t('articles.table.delete'),
             icon: 'pi pi-trash',
-            command: () => deleteArticle(id),
+            command: () => deleteArticle(data),
             class: 'text-red-500'
         }
     ]
-}
-
-const viewArticle = (idOrData: string | any) => {
-    const id = typeof idOrData === 'string' ? idOrData : idOrData.id
-    // TODO: Implement view functionality
-    console.log('View article:', id)
-    toast.add({
-        severity: 'info',
-        summary: 'Coming Soon',
-        detail: 'View functionality will be implemented soon',
-        life: 3000
-    })
 }
 
 const editArticle = (data: any) => {
@@ -348,20 +390,9 @@ const editArticle = (data: any) => {
     })
 }
 
-const duplicateArticle = (idOrData: string | any) => {
-    const id = typeof idOrData === 'string' ? idOrData : idOrData.id
-    // TODO: Implement duplicate functionality
-    console.log('Duplicate article:', id)
-    toast.add({
-        severity: 'info',
-        summary: 'Coming Soon',
-        detail: 'Duplicate functionality will be implemented soon',
-        life: 3000
-    })
-}
 
-const deleteArticle = (idOrData: string | any) => {
-    const id = typeof idOrData === 'string' ? idOrData : idOrData.id
+const deleteArticle = (data: any) => {
+    const id = data.id
     confirm.require({
         message: t('articles.actions.deleteConfirm'),
         header: t('articles.table.delete'),
@@ -398,20 +429,88 @@ const deleteArticle = (idOrData: string | any) => {
     })
 }
 
+// Category editing methods
+const editCategory = async (categoryUid: string | null) => {
+    if (!categoryUid) {
+        toast.add({
+            severity: 'warn',
+            summary: t('articles.states.error'),
+            detail: 'This article has no category',
+            life: 3000
+        })
+        return
+    }
+
+    try {
+        // Find category in current categories list first
+        let category = categories.value.find(cat => cat.uid === categoryUid)
+        
+        // If not found in current list, try to fetch it from the store
+        if (!category) {
+            // Load all categories to find the one we need
+            const allCategoriesResponse = await categoriesStore.getCategories({ per_page: 1000 })
+            category = allCategoriesResponse.data.collection.find(cat => cat.uid === categoryUid)
+        }
+
+        if (!category) {
+            toast.add({
+                severity: 'error',
+                summary: t('articles.states.error'),
+                detail: 'Category not found',
+                life: 3000
+            })
+            return
+        }
+
+        selectedCategory.value = category
+        isEditMode.value = true
+        showCategoryDialog.value = true
+    } catch (error) {
+        console.error('Error loading category for editing:', error)
+        toast.add({
+            severity: 'error',
+            summary: t('articles.states.error'),
+            detail: 'Failed to load category details',
+            life: 5000
+        })
+    }
+}
+
+const onCategorySaved = async () => {
+    showCategoryDialog.value = false
+    selectedCategory.value = null
+    
+    // Refresh categories list to reflect the changes
+    try {
+        const categoriesResponse = await categoriesStore.getCategories({ 
+            per_page: 100,
+            language_id: filters.value.language_id || undefined
+        })
+        categories.value = categoriesResponse.data.collection
+        
+        // Also refresh articles to show updated category names
+        await applyFilters()
+        
+        toast.add({
+            severity: 'success',
+            summary: t('common.success'),
+            detail: 'Category updated successfully',
+            life: 3000
+        })
+    } catch (error) {
+        console.error('Error refreshing data after category update:', error)
+    }
+}
+
 // ==================== LIFECYCLE ====================
 onMounted(async () => {
     try {
         // Initialize app settings
         initSettings()
         
-        // Load languages and categories for filters
-        const [languagesData, categoriesResponse] = await Promise.all([
-            loadCachedLanguages(),
-            categoriesStore.getCategories({ per_page: 100 })
-        ])
-
+        // Load languages first
+        const languagesData = await loadCachedLanguages()
         languages.value = languagesData
-        categories.value = categoriesResponse.data.collection
 
         // Auto-select language from settings if not selected
         if (!filters.value.language_id && contentLanguageId.value) {
@@ -421,6 +520,13 @@ onMounted(async () => {
                 filters.value.language_id = contentLanguageId.value
             }
         }
+
+        // Load categories for the selected language (or all if no language selected)
+        const categoriesResponse = await categoriesStore.getCategories({ 
+            per_page: 100,
+            language_id: filters.value.language_id || undefined
+        })
+        categories.value = categoriesResponse.data.collection
 
         // Load articles
         await applyFilters()

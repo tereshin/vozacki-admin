@@ -85,7 +85,8 @@
       "noCategory": "Без категории",
       "unknown": "Неизвестно",
       "sortAsc": "Сортировка по возрастанию",
-      "sortDesc": "Сортировка по убыванию"
+      "sortDesc": "Сортировка по убыванию",
+      "clickToEditCategory": "Нажмите для редактирования категории"
     },
     "states": {
       "loading": "Загрузка статей...",
@@ -189,6 +190,77 @@
     "filters": {
       "search": "Поиск",
       "searchPlaceholder": "Поиск по имени или email..."
+    }
+  },
+
+  "categories": {
+    "title": "Категории",
+    "form": {
+      "createTitle": "Создать категорию",
+      "editTitle": "Редактировать категорию",
+      "name": "Название",
+      "namePlaceholder": "Введите название категории...",
+      "slug": "Слаг",
+      "slugPlaceholder": "category-slug",
+      "description": "Описание",
+      "descriptionPlaceholder": "Введите описание категории...",
+      "language": "Язык",
+      "selectLanguage": "Выберите язык",
+      "languageEditNotice": "Нельзя изменить",
+      "languageEditHint": "Язык нельзя изменить у существующих категорий для сохранения целостности данных",
+      "parent": "Родительская категория",
+      "selectParent": "Выберите родительскую категорию",
+      "create": "Создать",
+      "update": "Обновить",
+      "errors": {
+        "nameRequired": "Название обязательно",
+        "slugRequired": "Слаг обязателен",
+        "languageRequired": "Язык обязателен"
+      }
+    },
+    "table": {
+      "name": "Название",
+      "slug": "Слаг",
+      "language": "Язык",
+      "parent": "Родитель",
+      "description": "Описание",
+      "actions": "Действия",
+      "edit": "Редактировать",
+      "delete": "Удалить",
+      "noParent": "Корневая категория",
+      "unknown": "Неизвестно"
+    },
+    "filters": {
+      "search": "Поиск",
+      "searchPlaceholder": "Поиск по названию или слагу...",
+      "language": "Язык",
+      "allLanguages": "Все языки",
+      "parent": "Родительская категория",
+      "allParents": "Все категории",
+      "resetFilters": "Сбросить фильтры",
+      "filter": "Фильтр"
+    },
+    "states": {
+      "loading": "Загрузка категорий...",
+      "error": "Ошибка загрузки данных",
+      "notFound": "Категории не найдены",
+      "notFoundDescription": "Попробуйте изменить параметры фильтра"
+    },
+    "actions": {
+      "create": "Создать категорию",
+      "refresh": "Обновить",
+      "deleteConfirm": "Вы уверены, что хотите удалить эту категорию?",
+      "deleteError": "Ошибка удаления категории"
+    },
+    "messages": {
+      "created": "Категория успешно создана",
+      "updated": "Категория успешно обновлена",
+      "deleted": "Категория успешно удалена"
+    },
+    "pagination": {
+      "showing": "Показано",
+      "of": "из",
+      "records": "записей"
     }
   },
 

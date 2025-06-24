@@ -2,9 +2,8 @@
     <div class="surface-ground min-h-screen">
         <!-- Header -->
         <TheHeader :title="$t('tests.title')" :items="breadcrumbItems">
-            <template #actions>
-                <Button @click="refreshData" :loading="generalStore.isLoading" :label="$t('tests.actions.refresh')"
-                    icon="pi pi-refresh" class="p-button-primary" />
+            <template #header-actions>
+               
             </template>
         </TheHeader>
 
@@ -17,14 +16,6 @@
                 <!-- TreeTable -->
                 <Card>
                     <template #content>
-                        <div class="flex justify-between items-center mb-4">
-                            <div class="flex gap-2">
-                                <Button :label="$t('tests.tree.expandAll')" size="small" severity="secondary"
-                                    @click="expandAll" />
-                                <Button :label="$t('tests.tree.collapseAll')" size="small" severity="secondary"
-                                    @click="collapseAll" />
-                            </div>
-                        </div>
                         <TreeTable v-model:expandedKeys="expandedKeys" :value="treeData" :loading="generalStore.isLoading"
                             class="p-treetable-sm" stripedRows showGridlines responsiveLayout="scroll"
                             @node-expand="onNodeExpand">
@@ -333,22 +324,6 @@ const onNodeExpand = async (node: any) => {
         // Remove loading state
         loadingNodes.value.delete(topicKey)
     }
-}
-
-const refreshData = () => {
-    loadData()
-}
-
-// Tree methods
-const expandAll = () => {
-    expandedKeys.value = {}
-    treeData.value.forEach(node => {
-        expandNode(node)
-    })
-}
-
-const collapseAll = () => {
-    expandedKeys.value = {}
 }
 
 const expandNode = (node: any) => {

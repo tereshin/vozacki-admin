@@ -106,7 +106,7 @@ const menu = computed<NavigationGroup[]>(() => {
   // Добавляем раздел Management только если есть права на управление контентом
   if (canManageContent.value) {
     menuItems.push({
-      name: "Management",
+      name: "Knowledge base",
       conditions: [],
       nav: [
         {
@@ -116,7 +116,19 @@ const menu = computed<NavigationGroup[]>(() => {
           conditions: [],
         },
         {
-          name: "Test materials",
+          name: "Categories",
+          icon: "folder",
+          link: useRoutesNames().categories,
+          conditions: [],
+        }
+      ],
+    });
+    menuItems.push({
+      name: "Materials",
+      conditions: [],
+      nav: [
+        {
+          name: "Topics",
           icon: "folder-plus",
           link: useRoutesNames().tests,
           conditions: [],

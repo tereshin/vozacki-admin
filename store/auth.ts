@@ -26,8 +26,12 @@ export const useAuthStore = defineStore("auth", () => {
         return { error: response.error };
       }
 
-      user.value = response.user;
-      session.value = response.session;
+      // При magic link авторизации user и session будут null до перехода по ссылке
+      // Это нормально и означает что письмо отправлено успешно
+      if (response.user && response.session) {
+        user.value = response.user;
+        session.value = response.session;
+      }
 
       return {};
     } catch (err: any) {

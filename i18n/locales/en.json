@@ -85,7 +85,8 @@
       "noCategory": "No category",
       "unknown": "Unknown",
       "sortAsc": "Sort ascending",
-      "sortDesc": "Sort descending"
+      "sortDesc": "Sort descending",
+      "clickToEditCategory": "Click to edit category"
     },
     "states": {
       "loading": "Loading articles...",
@@ -189,6 +190,77 @@
     "filters": {
       "search": "Search",
       "searchPlaceholder": "Search by name or email..."
+    }
+  },
+
+  "categories": {
+    "title": "Categories",
+    "form": {
+      "createTitle": "Create Category",
+      "editTitle": "Edit Category",
+      "name": "Name",
+      "namePlaceholder": "Enter category name...",
+      "slug": "Slug",
+      "slugPlaceholder": "category-slug",
+      "description": "Description",
+      "descriptionPlaceholder": "Enter category description...",
+      "language": "Language",
+      "selectLanguage": "Select language",
+      "languageEditNotice": "Cannot be changed",
+      "languageEditHint": "Language cannot be changed for existing categories to maintain data integrity",
+      "parent": "Parent Category",
+      "selectParent": "Select parent category",
+      "create": "Create",
+      "update": "Update",
+      "errors": {
+        "nameRequired": "Name is required",
+        "slugRequired": "Slug is required",
+        "languageRequired": "Language is required"
+      }
+    },
+    "table": {
+      "name": "Name",
+      "slug": "Slug",
+      "language": "Language",
+      "parent": "Parent",
+      "description": "Description",
+      "actions": "Actions",
+      "edit": "Edit",
+      "delete": "Delete",
+      "noParent": "Root category",
+      "unknown": "Unknown"
+    },
+    "filters": {
+      "search": "Search",
+      "searchPlaceholder": "Search by name or slug...",
+      "language": "Language",
+      "allLanguages": "All languages",
+      "parent": "Parent Category",
+      "allParents": "All categories",
+      "resetFilters": "Reset filters",
+      "filter": "Filter"
+    },
+    "states": {
+      "loading": "Loading categories...",
+      "error": "Error loading data",
+      "notFound": "Categories not found",
+      "notFoundDescription": "Try changing the filter parameters"
+    },
+    "actions": {
+      "create": "Create Category",
+      "refresh": "Refresh",
+      "deleteConfirm": "Are you sure you want to delete this category?",
+      "deleteError": "Error deleting category"
+    },
+    "messages": {
+      "created": "Category created successfully",
+      "updated": "Category updated successfully",
+      "deleted": "Category deleted successfully"
+    },
+    "pagination": {
+      "showing": "Showing",
+      "of": "of",
+      "records": "records"
     }
   },
 

@@ -1,6 +1,5 @@
 import { serverSupabaseClient } from '~/server/utils/supabase'
 import { requirePermission } from '~/server/utils/auth'
-import type { Database } from '~/types/database'
 
 export default defineEventHandler(async (event) => {
   try {
@@ -12,8 +11,8 @@ export default defineEventHandler(async (event) => {
     // Validate required fields
     const errors: Record<string, string[]> = {}
     
-    if (!body.title?.trim()) {
-      errors.title = ['Title is required']
+    if (!body.name?.trim()) {
+      errors.name = ['Name is required']
     }
     
     if (!body.slug?.trim()) {
@@ -24,10 +23,6 @@ export default defineEventHandler(async (event) => {
     
     if (!body.language_id) {
       errors.language_id = ['Language is required']
-    }
-    
-    if (!body.content?.blocks?.length) {
-      errors.content = ['Content is required']
     }
 
     if (Object.keys(errors).length > 0) {
@@ -41,14 +36,14 @@ export default defineEventHandler(async (event) => {
     const supabase = serverSupabaseClient
 
     // Use provided uid or generate new one
-    const articleUid = body.uid || crypto.randomUUID()
+    const categoryUid = body.uid || crypto.randomUUID()
 
     // Create content_uid record first
     const { error: contentUidError } = await supabase
       .from('content_uids')
       .insert({
-        uid: articleUid,
-        content_type: 'article'
+        uid: categoryUid,
+        content_type: 'category'
       })
 
     if (contentUidError) {
@@ -62,18 +57,16 @@ export default defineEventHandler(async (event) => {
       }
     }
 
-    // Create article record
+    // Create category record
     const { data, error } = await supabase
-      .from('articles')
+      .from('categories')
       .insert({
-        id: body.id || crypto.randomUUID(),
-        title: body.title,
-        slug: body.slug,
-        content: body.content,
+        name: body.name.trim(),
+        slug: body.slug.trim(),
+        description: body.description?.trim() || null,
         language_id: body.language_id,
-        category_uid: body.category_uid || null,
-        published_at: body.published_at || null,
-        uid: articleUid
+        parent_category_uid: body.parent_category_uid || null,
+        uid: categoryUid
       })
       .select()
       .single()
@@ -81,7 +74,7 @@ export default defineEventHandler(async (event) => {
     if (error) {
       throw createError({
         statusCode: 500,
-        statusMessage: 'Failed to create article',
+        statusMessage: 'Failed to create category',
         data: error
       })
     }
@@ -90,7 +83,7 @@ export default defineEventHandler(async (event) => {
       data
     }
   } catch (error: any) {
-    console.error('Error creating article:', error)
+    console.error('Error creating category:', error)
     
     if (error.statusCode) {
       throw error
