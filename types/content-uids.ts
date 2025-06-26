@@ -14,7 +14,9 @@ export interface SingleContentUidResponse {
   data: ContentUidResource;
 }
 
-export interface ContentUidRequest extends TablesInsert<'content_uids'> {}
+export interface ContentUidRequest extends Omit<TablesInsert<'content_uids'>, 'uid'> {
+  uid?: string;
+}
 
 export interface ContentUidUpdateRequest extends TablesUpdate<'content_uids'> {}
 

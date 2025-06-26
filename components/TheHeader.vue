@@ -7,7 +7,7 @@
             <BaseIcon v-else name="sidebar-close" class="w-6 h-6 text-inherit" />
           </button>
           <div class="flex flex-col gap-0.5">
-            <div v-if="title" class="lg:text-xl font-semibold lg:pt-2">{{ title }}</div>
+            <div v-if="title" class="lg:text-xl font-semibold lg:pt-2 whitespace-nowrap max-w-[200px] lg:max-w-[700px] overflow-hidden text-ellipsis">{{ title }}</div>
             <!-- Breadcrumbs -->
             <BaseBreadcrumb v-if="!hideBreadcrumb && !generalStore.isMobile" :items="items" />
           </div>

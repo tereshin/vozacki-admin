@@ -91,13 +91,11 @@ export const useAnswersApi = () => {
 
   const createAnswer = async (body: AnswerRequest): Promise<SingleAnswerResponse> => {
     try {
-      const { data, error } = await supabase
-        .from('answers')
-        .insert(body)
-        .select()
-        .single()
-
-      if (error) throw error
+      const { authenticatedFetch } = useAuthenticatedFetch()
+      const { data } = await authenticatedFetch('/api/answers', {
+        method: 'POST',
+        body
+      })
 
       return {
         data: data as AnswerResource
@@ -110,14 +108,11 @@ export const useAnswersApi = () => {
 
   const updateAnswer = async (id: string, body: AnswerUpdateRequest): Promise<SingleAnswerResponse> => {
     try {
-      const { data, error } = await supabase
-        .from('answers')
-        .update(body)
-        .eq('id', id)
-        .select()
-        .single()
-
-      if (error) throw error
+      const { authenticatedFetch } = useAuthenticatedFetch()
+      const { data } = await authenticatedFetch(`/api/answers/${id}`, {
+        method: 'PUT',
+        body
+      })
 
       return {
         data: data as AnswerResource
@@ -130,12 +125,10 @@ export const useAnswersApi = () => {
 
   const deleteAnswer = async (id: string): Promise<void> => {
     try {
-      const { error } = await supabase
-        .from('answers')
-        .delete()
-        .eq('id', id)
-
-      if (error) throw error
+      const { authenticatedFetch } = useAuthenticatedFetch()
+      await authenticatedFetch(`/api/answers/${id}`, {
+        method: 'DELETE'
+      })
     } catch (error) {
       console.error('Error deleting answer:', error)
       throw error

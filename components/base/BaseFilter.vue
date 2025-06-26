@@ -21,6 +21,7 @@
                         </label>
                         <InputText :model-value="modelValue[field.key]"
                             @input="handleInput(field.key, ($event.target as HTMLInputElement)?.value || '')"
+                            @keydown.enter="handleEnter(field.key)"
                             :placeholder="field.placeholder ? $t(field.placeholder) : ''" class="w-full" :icon="field.icon" />
                     </div>
 
@@ -125,6 +126,14 @@ const handleInput = (field: string, value: string) => {
     inputTimeout = setTimeout(() => {
         handleChange(field, value)
     }, props.debounceTimeout)
+}
+
+const handleEnter = (field: string) => {
+    // При нажатии Enter сразу применяем фильтр без debounce
+    clearTimeout(inputTimeout)
+    const currentValue = props.modelValue[field]
+    handleChange(field, currentValue)
+    emit('apply')
 }
 
 const handleChange = (field: string, value: any) => {

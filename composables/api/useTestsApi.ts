@@ -65,12 +65,13 @@ export const useTestsApi = () => {
     }
   }
 
-  const getSingleTest = async (id: string): Promise<SingleTestResponse> => {
+  const getSingleTest = async (id: string, language_id: string): Promise<SingleTestResponse> => {
     try {
       const { data, error } = await supabase
         .from('tests')
         .select('*')
-        .eq('id', id)
+        .eq('uid', id)
+        .eq('language_id', language_id)
         .single()
 
       if (error) throw error
@@ -86,13 +87,11 @@ export const useTestsApi = () => {
 
   const createTest = async (body: TestRequest): Promise<SingleTestResponse> => {
     try {
-      const { data, error } = await supabase
-        .from('tests')
-        .insert(body)
-        .select()
-        .single()
-
-      if (error) throw error
+      const { authenticatedFetch } = useAuthenticatedFetch()
+      const { data } = await authenticatedFetch('/api/tests', {
+        method: 'POST',
+        body
+      })
 
       return {
         data: data as TestResource
@@ -125,12 +124,35 @@ export const useTestsApi = () => {
 
   const deleteTest = async (id: string): Promise<void> => {
     try {
-      const { error } = await supabase
+      // First, get the test to retrieve its UID
+      const { data: testData, error: getError } = await supabase
+        .from('tests')
+        .select('uid')
+        .eq('id', id)
+        .single()
+
+      if (getError) throw getError
+
+      // Delete the test
+      const { error: deleteError } = await supabase
         .from('tests')
         .delete()
         .eq('id', id)
 
-      if (error) throw error
+      if (deleteError) throw deleteError
+
+      // Delete the content_uid entry
+      if (testData?.uid) {
+        const { error: contentUidError } = await supabase
+          .from('content_uids')
+          .delete()
+          .eq('uid', testData.uid)
+
+        if (contentUidError) {
+          console.warn('Error deleting content_uid:', contentUidError)
+          // Don't throw here as the main record is already deleted
+        }
+      }
     } catch (error) {
       console.error('Error deleting test:', error)
       throw error

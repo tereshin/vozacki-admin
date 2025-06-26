@@ -3,7 +3,12 @@
         <!-- Header -->
         <TheHeader :title="$t('tests.title')" :items="breadcrumbItems">
             <template #header-actions>
-               
+                <Button 
+                    :label="$t('tests.tree.addTopic')" 
+                    icon="pi pi-plus" 
+                    @click="openCreateTopicDialog"
+                    size="small"
+                />
             </template>
         </TheHeader>
 
@@ -39,8 +44,17 @@
                                         <BaseIcon v-else :name="node.data.type === 'topic' ? 'folder' : 'folder'"
                                             :class="node.data.type === 'topic' ? 'text-blue-600' : 'text-green-600'"
                                             class="min-w-6" />
-                                        <div class="">
-                                            <div class="font-medium text-900">{{ node.data.name }}</div>
+                                        <div class="flex-1">
+                                            <!-- Test with link -->
+                                            <NuxtLink 
+                                                v-if="node.data.type === 'test'"
+                                                :to="`/tests/${node.data.uid}`"
+                                                class="block font-medium text-900 hover:text-primary-500 transition-colors duration-200"
+                                            >
+                                                {{ node.data.name }}
+                                            </NuxtLink>
+                                            <!-- Topic without link -->
+                                            <div v-else class="font-medium text-900">{{ node.data.name }}</div>
                                             <div v-if="node.data.description" class="text-sm text-600 mt-1">
                                                 {{ node.data.description }}
                                             </div>
@@ -94,6 +108,14 @@
 
         <!-- Delete Confirmation Dialog -->
         <ConfirmDialog />
+
+        <!-- Topic Form Dialog -->
+        <TopicsFormDialog 
+            v-model:visible="topicDialogVisible" 
+            :topic="selectedTopic" 
+            :is-edit-mode="isEditMode"
+            @saved="onTopicSaved"
+        />
     </div>
 </template>
 
@@ -114,6 +136,7 @@ import { useGeneralStore } from '~/store/general'
 import TheHeader from "~/components/TheHeader.vue"
 import BaseFilter from "~/components/base/BaseFilter.vue"
 import BaseIcon from "~/components/base/BaseIcon.vue"
+import TopicsFormDialog from "~/components/topics/TopicsFormDialog.vue"
 
 // ==================== COMPOSABLES ====================
 // I18n
@@ -145,6 +168,11 @@ const filters = ref({
     search: '',
     language_id: ''
 })
+
+// Topic Dialog State
+const topicDialogVisible = ref(false)
+const selectedTopic = ref<TopicResource | null>(null)
+const isEditMode = ref(false)
 
 // ==================== COMPUTED PROPERTIES ====================
 // Breadcrumb items
@@ -397,7 +425,30 @@ const addTest = (topic: TopicResource) => {
 }
 
 const editItem = (item: TopicResource | TestResource) => {
-    // TODO: Implement edit functionality
+    const itemType = 'type' in item ? item.type : 'unknown'
+    
+    if (itemType === 'topic') {
+        openEditTopicDialog(item as TopicResource)
+    } else {
+        // TODO: Implement test edit functionality
+    }
+}
+
+// Topic Dialog Methods
+const openCreateTopicDialog = () => {
+    selectedTopic.value = null
+    isEditMode.value = false
+    topicDialogVisible.value = true
+}
+
+const openEditTopicDialog = (topic: TopicResource) => {
+    selectedTopic.value = topic
+    isEditMode.value = true
+    topicDialogVisible.value = true
+}
+
+const onTopicSaved = async () => {
+    await loadData()
 }
 
 const deleteItem = (item: TopicResource | TestResource) => {

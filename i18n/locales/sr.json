@@ -266,6 +266,42 @@
     "selectLanguage": "Izaberi jezik"
   },
 
+  "topics": {
+    "form": {
+      "createTitle": "Креирај тему",
+      "editTitle": "Уреди тему",
+      "name": "Назив",
+      "namePlaceholder": "Унесите назив теме...",
+      "description": "Опис",
+      "descriptionPlaceholder": "Унесите опис теме...",
+      "language": "Језик",
+      "selectLanguage": "Одаберите језик",
+      "languageEditNotice": "Не може се променити",
+      "languageEditHint": "Језик се не може променити код постојећих тема ради одржавања интегритета података",
+      "externalId": "Спољашње ID",
+      "externalIdPlaceholder": "Унесите спољашње ID...",
+      "externalIdHint": "Опциони идентификатор за интеграцију са спољним системима",
+      "create": "Креирај",
+      "update": "Ажурирај"
+    },
+    "validation": {
+      "nameRequired": "Назив је обавезан",
+      "languageRequired": "Језик је обавезан"
+    },
+    "messages": {
+      "created": "Тема је успешно креирана",
+      "updated": "Тема је успешно ажурирана",
+      "deleted": "Тема је успешно обрисана"
+    },
+    "states": {
+      "error": "Грешка"
+    },
+    "actions": {
+      "createError": "Грешка при креирању теме",
+      "updateError": "Грешка при ажурирању теме"
+    }
+  },
+
   "tests": {
     "title": "Тест материјали",
     "filters": {
@@ -277,6 +313,11 @@
       "allLanguages": "Сви језици",
       "resetFilters": "Ресетуј филтере"
     },
+    "validation": {
+      "questionTextRequired": "Текст питања је обавезан",
+      "answerTextRequired": "Текст одговора је обавезан",
+      "correctAnswerRequired": "Потребно је изабрати најмање један тачан одговор"
+    },
     "tree": {
       "topic": "Тема",
       "testTitle": "Назив теста",
@@ -286,6 +327,7 @@
       "view": "Погледај",
       "delete": "Обриши",
       "addTest": "Додај тест",
+      "addTopic": "Додај тему",
       "editTopic": "Уреди тему",
       "deleteTopic": "Обриши тему",
       "expandAll": "Прошири све",
@@ -302,6 +344,65 @@
       "refresh": "Освежи",
       "deleteConfirm": "Да ли сте сигурни да желите да обришете овај елемент?",
       "deleteError": "Грешка при брисању елемента"
+    },
+    "single": {
+      "loading": "Учитавање теста...",
+      "testTitle": "Назив теста",
+      "description": "Опис",
+      "language": "Језик",
+      "totalQuestions": "Укупно питања",
+      "addQuestion": "Додај питање",
+      "editTest": "Уреди тест",
+      "questionText": "Текст питања",
+      "points": "Поени",
+      "createdAt": "Датум креирања",
+      "actions": "Акције",
+      "editQuestion": "Уреди питање",
+      "deleteQuestion": "Обриши питање",
+      "noQuestions": "Питања нису пронађена",
+      "noQuestionsDescription": "Овај тест још увек нема питања. Додајте прво питање да почнете.",
+      "searchQuestions": "Претрага питања",
+      "searchQuestionsPlaceholder": "Претрага по тексту питања...",
+      "filterByPoints": "Поени",
+      "pointsPlaceholder": "Филтер по поенима",
+      "loadError": "Грешка при учитавању теста",
+      "questionsLoadError": "Грешка при учитавању питања",
+      "featureNotImplemented": "Ова функција ће бити имплементирана ускоро",
+      "deleteQuestionConfirm": "Да ли сте сигурни да желите да обришете питање: {text}?",
+      "deleteQuestionTitle": "Обриши питање",
+      "questionDeleted": "Питање је успешно обрисано",
+      "deleteQuestionError": "Грешка при брисању питања",
+      "questionDetails": "Детаљи питања",
+      "questionTextPlaceholder": "Унесите текст питања...",
+      "imageUrl": "URL слике",
+      "imageUrlPlaceholder": "Унесите URL слике (опционо)...",
+      "answers": "Одговори",
+      "addAnswer": "Додај одговор",
+      "answerNumber": "Одговор {number}",
+      "removeAnswer": "Уклони одговор",
+      "answerText": "Текст одговора",
+      "answerTextPlaceholder": "Унесите текст одговора...",
+      "correctAnswer": "Тачан одговор",
+      "answersLoadError": "Грешка при учитавању одговора",
+      "createQuestion": "Креирај питање",
+      "questionCreated": "Питање је успешно креирано",
+      "questionCreateError": "Грешка при креирању питања",
+      "questionUpdated": "Питање је успешно ажурирано",
+      "questionUpdateError": "Грешка при ажурирању питања",
+      "testTitlePlaceholder": "Унесите назив теста...",
+      "descriptionPlaceholder": "Унесите опис теста...",
+      "topic": "Тема",
+      "selectTopic": "Одаберите тему",
+      "noTopic": "Без теме",
+      "testUpdated": "Тест је успешно ажуриран",
+      "testUpdateError": "Грешка при ажурирању теста"
+    },
+    "form": {
+      "languageEditNotice": "Не може се променити након креирања"
+    },
+    "validation": {
+      "titleRequired": "Назив теста је обавезан",
+      "languageRequired": "Језик је обавезан"
     }
   },
 
@@ -309,7 +410,7 @@
     "title": "Језици",
     "filters": {
       "search": "Претрага",
-      "searchPlaceholder": "Претрага по имену или коду...",
+      "searchPlaceholder": "Претрага po imenu ili kodu...",
       "isActive": "Активан",
       "activeOnly": "Само активни"
     }
