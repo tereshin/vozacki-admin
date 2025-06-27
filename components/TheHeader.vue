@@ -24,7 +24,7 @@
         <slot name="header-actions" />
 
         <!-- Avatar -->
-        <Avatar :label="authStore.user?.email?.slice(0, 1)" class="cursor-pointer !w-[33px] !h-[33px]" shape="circle"
+        <Avatar :label="userData?.full_name?.slice(0, 1)" class="cursor-pointer !w-[33px] !h-[33px]" shape="circle"
           @click="toggle" aria-haspopup="true" aria-controls="overlay_menu" v-ripple />
 
         <!-- Avatar menu -->
@@ -52,6 +52,7 @@ import { useGeneralStore } from "@/store/general";
 import { useAuthStore } from "@/store/auth";
 import { useLanguage } from "@/composables/core/i18n/useLanguage";
 import type { MenuItem } from "primevue/menuitem";
+
 interface Props {
   hideBreadcrumb?: boolean;
   items: {
@@ -66,6 +67,7 @@ interface Props {
 // ==================== STORES ====================
 const generalStore = useGeneralStore();
 const authStore = useAuthStore();
+const { userData } = useUserData();
 const { currentLanguage, changeLanguage, availableLanguages, getLanguageName, getLanguageFlag } = useLanguage();
 
 // ==================== PROPS ====================

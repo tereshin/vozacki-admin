@@ -61,7 +61,7 @@ export const useAuthApi = () => {
         handleError(error, 'fetching current user')
         return { user: null, error: error.message };
       }
-
+     
       return { user: user as AdministratorUser | null };
     } catch (error: any) {
       handleError(error, 'fetching current user')
@@ -101,7 +101,7 @@ export const useAuthApi = () => {
 
       const { authenticatedFetch } = useAuthenticatedFetch()
       const response = await authenticatedFetch<{ data: AdministratorUser }>('/api/auth/me');
-      
+      console.log(response.data)
       return { user: response.data };
     } catch (error: any) {
       handleError(error, 'fetching administrator data')

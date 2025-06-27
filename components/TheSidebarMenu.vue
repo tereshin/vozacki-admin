@@ -50,7 +50,7 @@
                 <span class="w-4 h-4 text-gray-600 pi pi-user" />
               </div>
               <div class="flex flex-col">
-                <span class="text-sm font-medium text-gray-900">{{ user?.email || 'User' }}</span>
+                <span class="text-sm font-medium text-gray-900">{{ userData?.full_name || 'User' }}</span>
                 <span class="text-xs text-gray-500">{{ currentRoleName || 'Admin' }}</span>
               </div>
             </div>
@@ -74,7 +74,7 @@ import { useAuthStore } from '~/store/auth';
 // Stores
 const generalStore = useGeneralStore();
 const authStore = useAuthStore();
-const { user } = storeToRefs(authStore);
+const { userData } = useUserData();
 
 // Permissions
 const { canAccessAdministrators, canManageContent, canViewTests, currentRoleName } = usePermissions();
