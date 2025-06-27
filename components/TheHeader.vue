@@ -50,6 +50,7 @@
 // ==================== INTERFACES/TYPES ====================
 import { useGeneralStore } from "@/store/general";
 import { useAuthStore } from "@/store/auth";
+import { useLanguage } from "@/composables/core/i18n/useLanguage";
 import type { MenuItem } from "primevue/menuitem";
 interface Props {
   hideBreadcrumb?: boolean;
@@ -65,6 +66,7 @@ interface Props {
 // ==================== STORES ====================
 const generalStore = useGeneralStore();
 const authStore = useAuthStore();
+const { currentLanguage, changeLanguage, availableLanguages, getLanguageName, getLanguageFlag } = useLanguage();
 
 // ==================== PROPS ====================
 const props = withDefaults(defineProps<Props>(), {
@@ -75,12 +77,19 @@ const props = withDefaults(defineProps<Props>(), {
 const avatarMenu = ref();
 const avatarItems = ref([
   {
+    label: "Language",
+    items: availableLanguages.map(lang => ({
+      label: lang.localName,
+      icon: "pi pi-globe",
+      data: lang.code,
+      disabled: currentLanguage.value === lang.code
+    }))
+  },
+  {
+    separator: true
+  },
+  {
     items: [
-      //For future
-      //   {
-      //     label: "Profile",
-      //     icon: "pi pi-user",
-      //   },
       {
         label: "Logout",
         icon: "pi pi-sign-out",
@@ -94,7 +103,15 @@ function toggle(event: Event) {
   avatarMenu.value.toggle(event);
 }
 
-function avatarItemsHeandler(item: MenuItem) {
+async function avatarItemsHeandler(item: MenuItem) {
+  // Обработка смены языка
+  if (item.data && availableLanguages.some(lang => lang.code === item.data)) {
+    await changeLanguage(item.data);
+    // Обновляем меню после смены языка
+    updateAvatarItems();
+    return;
+  }
+
   switch (item.label) {
     case "Profile":
       navigateTo({ name: useRoutesNames().dashboard });
@@ -104,6 +121,31 @@ function avatarItemsHeandler(item: MenuItem) {
       logout();
       return;
   }
+}
+
+function updateAvatarItems() {
+  avatarItems.value = [
+    {
+      label: "Language",
+      items: availableLanguages.map(lang => ({
+        label: lang.localName,
+        icon: "pi pi-globe",
+        data: lang.code,
+        disabled: currentLanguage.value === lang.code
+      }))
+    },
+    {
+      separator: true
+    },
+    {
+      items: [
+        {
+          label: "Logout",
+          icon: "pi pi-sign-out",
+        },
+      ],
+    },
+  ];
 }
 
 async function logout() {
