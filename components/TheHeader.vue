@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-col w-full p-4">
-    <div class="flex justify-between items-start w-full">
+    <div class="flex justify-between items-center w-full">
       <div :class="generalStore.isMobile ? 'flex gap-1 items-center' : 'flex gap-1 items-start'">
         <button v-ripple
           class="p-3 rounded-full cursor-pointer hover:bg-gray-100 flex duration-150 lg:ml-0 -ml-3 text-slate-500 hover:text-slate-700 hover:text-slate-700"

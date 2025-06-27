@@ -263,7 +263,27 @@
 
   "sidebar": {
     "contentLanguage": "Jezik sadržaja",
-    "selectLanguage": "Izaberi jezik"
+    "selectLanguage": "Izaberi jezik",
+    "menu": {
+      "groups": {
+        "dashboard": "Kontrolna tabla",
+        "knowledgeBase": "Baza znanja",
+        "materials": "Materijali",
+        "users": "Korisnici"
+      },
+      "items": {
+        "dashboard": "Kontrolna tabla",
+        "articles": "Članci",
+        "categories": "Kategorije",
+        "topics": "Teme",
+        "administrators": "Administratori",
+        "roles": "Uloge"
+      }
+    },
+    "user": {
+      "defaultName": "Korisnik",
+      "defaultRole": "Admin"
+    }
   },
 
   "topics": {
@@ -418,6 +438,8 @@
 
   "dashboard": {
     "title": "Контролна табла",
+    "greeting": "Здраво, {name}! 👋🏻",
+    "greetingDefault": "Здраво, корисниче! 👋🏻",
     "stats": {
       "articles": "Чланци",
       "topics": "Теме",

@@ -398,7 +398,27 @@
 
   "sidebar": {
     "contentLanguage": "Content Language",
-    "selectLanguage": "Select language"
+    "selectLanguage": "Select language",
+    "menu": {
+      "groups": {
+        "dashboard": "Dashboard",
+        "knowledgeBase": "Knowledge base",
+        "materials": "Materials",
+        "users": "Users"
+      },
+      "items": {
+        "dashboard": "Dashboard",
+        "articles": "Articles",
+        "categories": "Categories",
+        "topics": "Topics",
+        "administrators": "Administrators",
+        "roles": "Roles"
+      }
+    },
+    "user": {
+      "defaultName": "User",
+      "defaultRole": "Admin"
+    }
   },
 
   "languages": {
@@ -422,6 +442,8 @@
 
   "dashboard": {
     "title": "Dashboard",
+    "greeting": "Hello, {name}! 👋🏻",
+    "greetingDefault": "Hello, User! 👋🏻",
     "stats": {
       "articles": "Articles",
       "topics": "Topics",

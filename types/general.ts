@@ -41,4 +41,8 @@ export type IconName =
     | 'flag'
     | 'folder'
     | 'folder-plus'
-    | 'user-square';
+    | 'user-square'
+    | 'home'
+    | 'book-1'
+    | 'book-2'
+    | 'users-1';

@@ -12,7 +12,8 @@
             </div>
           </span>
           <span class="lg:hidden">
-            <Button type="button" @click="generalStore.isMenuOpen = false" variant="link" size="small" severity="secondary" icon="pi pi-times" class="!text-gray-500" />
+            <Button type="button" @click="generalStore.isMenuOpen = false" variant="link" size="small"
+              severity="secondary" icon="pi pi-times" class="!text-gray-500" />
           </span>
         </div>
 
@@ -29,16 +30,9 @@
         <div class="px-4 py-3 border-t border-gray-200">
           <div class="flex flex-col space-y-2">
             <label class="text-xs font-medium text-gray-700">{{ $t('sidebar.contentLanguage') }}</label>
-            <Select 
-              v-model="contentLanguageId" 
-              :options="availableLanguages" 
-              option-label="name"
-              option-value="id" 
-              :placeholder="$t('sidebar.selectLanguage')" 
-              class="w-full text-sm"
-              size="small"
-              @change="onLanguageChange"
-            />
+            <Select v-model="contentLanguageId" :options="availableLanguages" option-label="name" option-value="id"
+              :placeholder="$t('sidebar.selectLanguage')" class="w-full text-sm" size="small"
+              @change="onLanguageChange" />
           </div>
         </div>
 
@@ -50,8 +44,9 @@
                 <span class="w-4 h-4 text-gray-600 pi pi-user" />
               </div>
               <div class="flex flex-col">
-                <span class="text-sm font-medium text-gray-900">{{ userData?.full_name || 'User' }}</span>
-                <span class="text-xs text-gray-500">{{ currentRoleName || 'Admin' }}</span>
+                <span class="text-sm font-medium text-gray-900">{{ userData?.full_name || $t('sidebar.user.defaultName')
+                  }}</span>
+                <span class="text-xs text-gray-500">{{ currentRoleName || $t('sidebar.user.defaultRole') }}</span>
               </div>
             </div>
             <Button variant="text" size="small" @click="handleLogout" :loading="authStore.loading"
@@ -77,7 +72,7 @@ const authStore = useAuthStore();
 const { userData } = useUserData();
 
 // Permissions
-const { canAccessAdministrators, canManageContent, canViewTests, currentRoleName } = usePermissions();
+const { canAccessAdministrators, canViewTests, currentRoleName } = usePermissions();
 
 // App settings
 const { contentLanguageId, initSettings } = useAppSettings();
@@ -85,17 +80,19 @@ const { contentLanguageId, initSettings } = useAppSettings();
 // Languages from cache
 const { loadActiveLanguages } = useCachedLanguages();
 const availableLanguages = ref<LanguageResource[]>([]);
+const { t } = useI18n();
 
 // Menu configuration
 const menu = computed<NavigationGroup[]>(() => {
+
   const menuItems: NavigationGroup[] = [
     {
-      name: "Dashboard",
+      name: t('sidebar.menu.groups.dashboard'),
       conditions: [],
       nav: [
         {
-          name: "Dashboard",
-          icon: "sidebar-open",
+          name: t('sidebar.menu.items.dashboard'),
+          icon: "home",
           link: useRoutesNames().dashboard,
           conditions: [],
         },
@@ -106,29 +103,29 @@ const menu = computed<NavigationGroup[]>(() => {
   // Добавляем раздел Management только если есть права на управление контентом
   if (canViewTests.value) {
     menuItems.push({
-      name: "Knowledge base",
+      name: t('sidebar.menu.groups.knowledgeBase'),
       conditions: [],
       nav: [
         {
-          name: "Articles",
-          icon: "folder-plus",
+          name: t('sidebar.menu.items.articles'),
+          icon: "book-1",
           link: useRoutesNames().articles,
           conditions: [],
         },
         {
-          name: "Categories",
-          icon: "folder",
+          name: t('sidebar.menu.items.categories'),
+          icon: "book-2",
           link: useRoutesNames().categories,
           conditions: [],
         }
       ],
     });
     menuItems.push({
-      name: "Materials",
+      name: t('sidebar.menu.groups.materials'),
       conditions: [],
       nav: [
         {
-          name: "Topics",
+          name: t('sidebar.menu.items.topics'),
           icon: "folder-plus",
           link: useRoutesNames().tests,
           conditions: [],
@@ -140,18 +137,18 @@ const menu = computed<NavigationGroup[]>(() => {
   // Добавляем раздел Users только если есть права на доступ к администраторам
   if (canAccessAdministrators.value) {
     menuItems.push({
-      name: "Users",
+      name: t('sidebar.menu.groups.users'),
       conditions: [],
       nav: [
         {
-          name: "Administrators",
-          icon: "folder-plus",
+          name: t('sidebar.menu.items.administrators'),
+          icon: "user-square",
           link: useRoutesNames().administrators,
           conditions: [],
         },
         {
-          name: "Roles",
-          icon: "user-square",
+          name: t('sidebar.menu.items.roles'),
+          icon: "users-1",
           link: useRoutesNames().roles,
           conditions: [],
         },
@@ -215,7 +212,7 @@ async function loadLanguages() {
     // Инициализируем кэш если он еще не инициализирован
     const { initializeCache } = useCacheManager()
     await initializeCache()
-    
+
     availableLanguages.value = await loadActiveLanguages();
   } catch (error) {
     console.error('Failed to load languages from cache:', error);
@@ -226,10 +223,10 @@ async function loadLanguages() {
 onMounted(async () => {
   generalStore.initMobileDetection();
   loadCollapsedState();
-  
+
   // Инициализируем настройки приложения
   initSettings();
-  
+
   // Загружаем доступные языки из кэша
   await loadLanguages();
 });
