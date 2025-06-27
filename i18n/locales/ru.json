@@ -85,7 +85,8 @@
       "noCategory": "Без категории",
       "unknown": "Неизвестно",
       "sortAsc": "Сортировка по возрастанию",
-      "sortDesc": "Сортировка по убыванию"
+      "sortDesc": "Сортировка по убыванию",
+      "clickToEditCategory": "Нажмите для редактирования категории"
     },
     "states": {
       "loading": "Загрузка статей...",
@@ -112,16 +113,57 @@
     }
   },
 
+  "topics": {
+    "form": {
+      "createTitle": "Создать тему",
+      "editTitle": "Редактировать тему",
+      "name": "Название",
+      "namePlaceholder": "Введите название темы...",
+      "description": "Описание",
+      "descriptionPlaceholder": "Введите описание темы...",
+      "language": "Язык",
+      "selectLanguage": "Выберите язык",
+      "languageEditNotice": "Нельзя изменить",
+      "languageEditHint": "Язык нельзя изменить у существующих тем для сохранения целостности данных",
+      "externalId": "Внешний ID",
+      "externalIdPlaceholder": "Введите внешний ID...",
+      "externalIdHint": "Необязательный идентификатор для интеграции с внешними системами",
+      "create": "Создать",
+      "update": "Обновить"
+    },
+    "validation": {
+      "nameRequired": "Название обязательно",
+      "languageRequired": "Язык обязателен"
+    },
+    "messages": {
+      "created": "Тема успешно создана",
+      "updated": "Тема успешно обновлена",
+      "deleted": "Тема успешно удалена"
+    },
+    "states": {
+      "error": "Ошибка"
+    },
+    "actions": {
+      "createError": "Ошибка создания темы",
+      "updateError": "Ошибка обновления темы"
+    }
+  },
+
   "tests": {
     "title": "Тестовые материалы",
     "filters": {
       "title": "Фильтры",
-      "filter": "Фильтровать",
+      "filter": "Фильтр",
       "search": "Поиск",
       "searchPlaceholder": "Поиск по названию или описанию...",
       "language": "Язык",
       "allLanguages": "Все языки",
       "resetFilters": "Сбросить фильтры"
+    },
+    "validation": {
+      "questionTextRequired": "Текст вопроса обязателен",
+      "answerTextRequired": "Текст ответа обязателен",
+      "correctAnswerRequired": "Необходимо выбрать хотя бы один правильный ответ"
     },
     "tree": {
       "topic": "Тема",
@@ -132,6 +174,7 @@
       "view": "Просмотреть",
       "delete": "Удалить",
       "addTest": "Добавить тест",
+      "addTopic": "Добавить тему",
       "editTopic": "Редактировать тему",
       "deleteTopic": "Удалить тему",
       "expandAll": "Развернуть все",
@@ -148,6 +191,65 @@
       "refresh": "Обновить",
       "deleteConfirm": "Вы действительно хотите удалить этот элемент?",
       "deleteError": "Ошибка удаления элемента"
+    },
+    "single": {
+      "loading": "Загрузка теста...",
+      "testTitle": "Название теста",
+      "description": "Описание",
+      "language": "Язык",
+      "totalQuestions": "Всего вопросов",
+      "addQuestion": "Добавить вопрос",
+      "editTest": "Редактировать тест",
+      "questionText": "Текст вопроса",
+      "points": "Баллы",
+      "createdAt": "Дата создания",
+      "actions": "Действия",
+      "editQuestion": "Редактировать вопрос",
+      "deleteQuestion": "Удалить вопрос",
+      "noQuestions": "Вопросы не найдены",
+      "noQuestionsDescription": "В этом тесте пока нет вопросов. Добавьте первый вопрос для начала.",
+      "searchQuestions": "Поиск вопросов",
+      "searchQuestionsPlaceholder": "Поиск по тексту вопроса...",
+      "filterByPoints": "Баллы",
+      "pointsPlaceholder": "Фильтр по баллам",
+      "loadError": "Ошибка загрузки теста",
+      "questionsLoadError": "Ошибка загрузки вопросов",
+      "featureNotImplemented": "Эта функция будет реализована в ближайшее время",
+      "deleteQuestionConfirm": "Вы уверены, что хотите удалить вопрос: {text}?",
+      "deleteQuestionTitle": "Удалить вопрос",
+      "questionDeleted": "Вопрос успешно удален",
+      "deleteQuestionError": "Ошибка удаления вопроса",
+      "questionDetails": "Детали вопроса",
+      "questionTextPlaceholder": "Введите текст вопроса...",
+      "imageUrl": "URL изображения",
+      "imageUrlPlaceholder": "Введите URL изображения (необязательно)...",
+      "answers": "Ответы",
+      "addAnswer": "Добавить ответ",
+      "answerNumber": "Ответ {number}",
+      "removeAnswer": "Удалить ответ",
+      "answerText": "Текст ответа",
+      "answerTextPlaceholder": "Введите текст ответа...",
+      "correctAnswer": "Правильный ответ",
+      "answersLoadError": "Ошибка загрузки ответов",
+      "createQuestion": "Создать вопрос",
+      "questionCreated": "Вопрос успешно создан",
+      "questionCreateError": "Ошибка создания вопроса",
+      "questionUpdated": "Вопрос успешно обновлен",
+      "questionUpdateError": "Ошибка обновления вопроса",
+      "testTitlePlaceholder": "Введите название теста...",
+      "descriptionPlaceholder": "Введите описание теста...",
+      "topic": "Тема",
+      "selectTopic": "Выберите тему",
+      "noTopic": "Без темы",
+      "testUpdated": "Тест успешно обновлен",
+      "testUpdateError": "Ошибка обновления теста"
+    },
+    "form": {
+      "languageEditNotice": "Нельзя изменить после создания"
+    },
+    "validation": {
+      "titleRequired": "Название теста обязательно",
+      "languageRequired": "Язык обязателен"
     }
   },
 
@@ -189,6 +291,77 @@
     "filters": {
       "search": "Поиск",
       "searchPlaceholder": "Поиск по имени или email..."
+    }
+  },
+
+  "categories": {
+    "title": "Категории",
+    "form": {
+      "createTitle": "Создать категорию",
+      "editTitle": "Редактировать категорию",
+      "name": "Название",
+      "namePlaceholder": "Введите название категории...",
+      "slug": "Слаг",
+      "slugPlaceholder": "category-slug",
+      "description": "Описание",
+      "descriptionPlaceholder": "Введите описание категории...",
+      "language": "Язык",
+      "selectLanguage": "Выберите язык",
+      "languageEditNotice": "Нельзя изменить",
+      "languageEditHint": "Язык нельзя изменить у существующих категорий для сохранения целостности данных",
+      "parent": "Родительская категория",
+      "selectParent": "Выберите родительскую категорию",
+      "create": "Создать",
+      "update": "Обновить",
+      "errors": {
+        "nameRequired": "Название обязательно",
+        "slugRequired": "Слаг обязателен",
+        "languageRequired": "Язык обязателен"
+      }
+    },
+    "table": {
+      "name": "Название",
+      "slug": "Слаг",
+      "language": "Язык",
+      "parent": "Родитель",
+      "description": "Описание",
+      "actions": "Действия",
+      "edit": "Редактировать",
+      "delete": "Удалить",
+      "noParent": "Корневая категория",
+      "unknown": "Неизвестно"
+    },
+    "filters": {
+      "search": "Поиск",
+      "searchPlaceholder": "Поиск по названию или слагу...",
+      "language": "Язык",
+      "allLanguages": "Все языки",
+      "parent": "Родительская категория",
+      "allParents": "Все категории",
+      "resetFilters": "Сбросить фильтры",
+      "filter": "Фильтр"
+    },
+    "states": {
+      "loading": "Загрузка категорий...",
+      "error": "Ошибка загрузки данных",
+      "notFound": "Категории не найдены",
+      "notFoundDescription": "Попробуйте изменить параметры фильтра"
+    },
+    "actions": {
+      "create": "Создать категорию",
+      "refresh": "Обновить",
+      "deleteConfirm": "Вы уверены, что хотите удалить эту категорию?",
+      "deleteError": "Ошибка удаления категории"
+    },
+    "messages": {
+      "created": "Категория успешно создана",
+      "updated": "Категория успешно обновлена",
+      "deleted": "Категория успешно удалена"
+    },
+    "pagination": {
+      "showing": "Показано",
+      "of": "из",
+      "records": "записей"
     }
   },
 

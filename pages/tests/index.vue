@@ -10,6 +10,6 @@
   
   // Page meta
   useHead({
-    title: 'Test materials - Vozacki Admin'
+    title: 'Topics - Vozacki Admin'
   });
   </script>

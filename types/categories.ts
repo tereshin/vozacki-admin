@@ -16,7 +16,7 @@ export interface SingleCategoryResponse {
 
 export interface CategoryRequest extends TablesInsert<'categories'> {}
 
-export interface CategoryUpdateRequest extends TablesUpdate<'categories'> {}
+export interface CategoryUpdateRequest extends Omit<TablesUpdate<'categories'>, 'language_id'> {}
 
 export interface ErrorDetailsCategory {
   name?: string[];

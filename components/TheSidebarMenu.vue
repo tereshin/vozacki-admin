@@ -50,7 +50,7 @@
                 <span class="w-4 h-4 text-gray-600 pi pi-user" />
               </div>
               <div class="flex flex-col">
-                <span class="text-sm font-medium text-gray-900">{{ user?.email || 'User' }}</span>
+                <span class="text-sm font-medium text-gray-900">{{ userData?.full_name || 'User' }}</span>
                 <span class="text-xs text-gray-500">{{ currentRoleName || 'Admin' }}</span>
               </div>
             </div>
@@ -74,7 +74,7 @@ import { useAuthStore } from '~/store/auth';
 // Stores
 const generalStore = useGeneralStore();
 const authStore = useAuthStore();
-const { user } = storeToRefs(authStore);
+const { userData } = useUserData();
 
 // Permissions
 const { canAccessAdministrators, canManageContent, canViewTests, currentRoleName } = usePermissions();
@@ -104,9 +104,9 @@ const menu = computed<NavigationGroup[]>(() => {
   ];
 
   // Добавляем раздел Management только если есть права на управление контентом
-  if (canManageContent.value) {
+  if (canViewTests.value) {
     menuItems.push({
-      name: "Management",
+      name: "Knowledge base",
       conditions: [],
       nav: [
         {
@@ -116,7 +116,19 @@ const menu = computed<NavigationGroup[]>(() => {
           conditions: [],
         },
         {
-          name: "Test materials",
+          name: "Categories",
+          icon: "folder",
+          link: useRoutesNames().categories,
+          conditions: [],
+        }
+      ],
+    });
+    menuItems.push({
+      name: "Materials",
+      conditions: [],
+      nav: [
+        {
+          name: "Topics",
           icon: "folder-plus",
           link: useRoutesNames().tests,
           conditions: [],

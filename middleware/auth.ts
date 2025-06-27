@@ -42,7 +42,7 @@ export default defineNuxtRouteMiddleware(async (to) => {
       
       // Проверяем доступ к управлению статьями
       if (to.path.startsWith('/articles') && to.path !== '/articles') {
-        if (!user.role || (user.role.code !== 'administrator' && user.role.code !== 'moderator')) {
+        if (!user.role || (user.role.code !== 'administrator' && user.role.code !== 'moderator' && user.role.code !== 'guest')) {
           return navigateTo('/articles');
         }
       }

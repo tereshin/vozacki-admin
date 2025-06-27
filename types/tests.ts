@@ -14,7 +14,9 @@ export interface SingleTestResponse {
   data: TestResource;
 }
 
-export interface TestRequest extends TablesInsert<'tests'> {}
+export interface TestRequest extends Omit<TablesInsert<'tests'>, 'uid'> {
+  uid?: string;
+}
 
 export interface TestUpdateRequest extends TablesUpdate<'tests'> {}
 

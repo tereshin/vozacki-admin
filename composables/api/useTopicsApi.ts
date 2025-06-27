@@ -5,138 +5,60 @@ import type {
   TopicResponse,
   SingleTopicResponse 
 } from '~/types/topics'
+import type { TopicFilterParams, EntityParams } from '~/types/api'
 
 export const useTopicsApi = () => {
-  const supabase = useSupabase()
+  const crudMixin = useCrudMixin<
+    TopicResource,
+    TopicRequest,
+    TopicUpdateRequest,
+    TopicResponse,
+    SingleTopicResponse,
+    TopicFilterParams
+  >('topics', ['name', 'description'])
 
-  const getTopics = async (params?: {
-    page?: number;
-    per_page?: number;
-    search?: string;
-    language_id?: string;
-  }): Promise<TopicResponse> => {
+  // Специальная версия getTopics с Supabase для дополнительной фильтрации
+  const getTopics = async (params?: EntityParams<TopicFilterParams>): Promise<TopicResponse> => {
     try {
-      let query = supabase
-        .from('topics')
-        .select('*', { count: 'exact' })
-
+      let query = crudMixin.baseApi.buildSupabaseQuery(params)
+      
+      // Применяем поиск
       if (params?.search) {
         query = query.or(`name.ilike.%${params.search}%,description.ilike.%${params.search}%`)
       }
 
-      if (params?.language_id) {
-        query = query.eq('language_id', params.language_id)
+      // Применяем фильтры
+      if (params?.filters?.language_id) {
+        query = query.eq('language_id', params.filters.language_id)
       }
 
-      const page = params?.page || 1
-      const perPage = params?.per_page || 10
-      const from = (page - 1) * perPage
-      const to = from + perPage - 1
-
-      query = query.range(from, to).order('name', { ascending: true })
+      // Сортировка по умолчанию по name
+      if (!params?.sort_field) {
+        query = query.order('name', { ascending: true })
+      }
 
       const { data, error, count } = await query
 
-      if (error) throw error
-
-      const collection = (data || []) as TopicResource[]
-
-      return {
-        data: {
-          collection,
-          meta: {
-            current_page: page,
-            from: from + 1,
-            last_page: Math.ceil((count || 0) / perPage),
-            per_page: perPage,
-            to: Math.min(to + 1, count || 0),
-            total: count || 0
-          }
-        }
+      if (error) {
+        crudMixin.baseApi.handleError(error, 'fetching topics')
       }
+
+      return crudMixin.baseApi.formatResponse(
+        (data || []) as unknown as TopicResource[], 
+        count || 0, 
+        params
+      ) as TopicResponse
     } catch (error) {
-      console.error('Error fetching topics:', error)
-      throw error
-    }
-  }
-
-  const getSingleTopic = async (id: string): Promise<SingleTopicResponse> => {
-    try {
-      const { data, error } = await supabase
-        .from('topics')
-        .select('*')
-        .eq('id', id)
-        .single()
-
-      if (error) throw error
-
-      return {
-        data: data as TopicResource
-      }
-    } catch (error) {
-      console.error('Error fetching topic:', error)
-      throw error
-    }
-  }
-
-  const createTopic = async (body: TopicRequest): Promise<SingleTopicResponse> => {
-    try {
-      const { data, error } = await supabase
-        .from('topics')
-        .insert(body)
-        .select()
-        .single()
-
-      if (error) throw error
-
-      return {
-        data: data as TopicResource
-      }
-    } catch (error) {
-      console.error('Error creating topic:', error)
-      throw error
-    }
-  }
-
-  const updateTopic = async (id: string, body: TopicUpdateRequest): Promise<SingleTopicResponse> => {
-    try {
-      const { data, error } = await supabase
-        .from('topics')
-        .update(body)
-        .eq('id', id)
-        .select()
-        .single()
-
-      if (error) throw error
-
-      return {
-        data: data as TopicResource
-      }
-    } catch (error) {
-      console.error('Error updating topic:', error)
-      throw error
-    }
-  }
-
-  const deleteTopic = async (id: string): Promise<void> => {
-    try {
-      const { error } = await supabase
-        .from('topics')
-        .delete()
-        .eq('id', id)
-
-      if (error) throw error
-    } catch (error) {
-      console.error('Error deleting topic:', error)
+      crudMixin.baseApi.handleError(error, 'fetching topics')
       throw error
     }
   }
 
   return {
     getTopics,
-    getSingleTopic,
-    createTopic,
-    updateTopic,
-    deleteTopic
+    getSingleTopic: crudMixin.getSingleItem,
+    createTopic: crudMixin.createItem,
+    updateTopic: crudMixin.updateItem,
+    deleteTopic: crudMixin.deleteItem
   }
 } 

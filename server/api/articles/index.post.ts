@@ -38,17 +38,42 @@ export default defineEventHandler(async (event) => {
       })
     }
 
-    const { data, error } = await serverSupabaseClient
+    const supabase = serverSupabaseClient
+
+    // Use provided uid or generate new one
+    const articleUid = body.uid || crypto.randomUUID()
+
+    // Create content_uid record first
+    const { error: contentUidError } = await supabase
+      .from('content_uids')
+      .insert({
+        uid: articleUid,
+        content_type: 'article'
+      })
+
+    if (contentUidError) {
+      // If uid already exists, it's okay for update operations
+      if (contentUidError.code !== '23505') { // 23505 is duplicate key error
+        throw createError({
+          statusCode: 500,
+          statusMessage: 'Failed to create content uid',
+          data: contentUidError
+        })
+      }
+    }
+
+    // Create article record
+    const { data, error } = await supabase
       .from('articles')
       .insert({
-        id: body.id,
+        id: body.id || crypto.randomUUID(),
         title: body.title,
         slug: body.slug,
         content: body.content,
         language_id: body.language_id,
         category_uid: body.category_uid || null,
         published_at: body.published_at || null,
-        uid: body.uid
+        uid: articleUid
       })
       .select()
       .single()
@@ -56,7 +81,8 @@ export default defineEventHandler(async (event) => {
     if (error) {
       throw createError({
         statusCode: 500,
-        statusMessage: 'Failed to create article'
+        statusMessage: 'Failed to create article',
+        data: error
       })
     }
 

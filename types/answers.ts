@@ -14,7 +14,9 @@ export interface SingleAnswerResponse {
   data: AnswerResource;
 }
 
-export interface AnswerRequest extends TablesInsert<'answers'> {}
+export interface AnswerRequest extends Omit<TablesInsert<'answers'>, 'uid'> {
+  uid?: string;
+}
 
 export interface AnswerUpdateRequest extends TablesUpdate<'answers'> {}
 

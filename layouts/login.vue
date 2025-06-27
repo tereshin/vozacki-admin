@@ -34,8 +34,6 @@
 </template>
 
 <script setup lang="ts">
-import Select from 'primevue/select';
-
 // Language composable
 const { 
   currentLanguage, 

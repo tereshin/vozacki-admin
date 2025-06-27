@@ -241,14 +241,9 @@ const loadInitialData = async () => {
     // Initialize app settings
     initSettings()
 
-    // Load languages and categories
-    const [languagesData, categoriesResponse] = await Promise.all([
-      loadCachedLanguages(),
-      categoriesStore.getCategories({ per_page: 100 })
-    ])
-
+    // Load languages
+    const languagesData = await loadCachedLanguages()
     languages.value = languagesData
-    categories.value = categoriesResponse.data.collection
 
     // Auto-select language from settings if not selected
     if (!form.value.language_id && contentLanguageId.value) {
@@ -262,6 +257,9 @@ const loadInitialData = async () => {
     if (isEditMode.value && articleId.value) {
       await loadArticle(articleId.value)
     }
+
+    // Load categories for selected language
+    await loadCategoriesForLanguage(form.value.language_id)
   } catch (error) {
     console.error('Error loading initial data:', error)
     toast.add({
@@ -272,6 +270,32 @@ const loadInitialData = async () => {
     })
   } finally {
     generalStore.isLoading = false
+  }
+}
+
+const loadCategoriesForLanguage = async (languageId: string | null) => {
+  if (!languageId) {
+    categories.value = []
+    return
+  }
+
+  try {
+    categoriesLoading.value = true
+    const categoriesResponse = await categoriesStore.getCategories({ 
+      per_page: 100,
+      language_id: languageId 
+    })
+    categories.value = categoriesResponse.data.collection
+  } catch (error) {
+    console.error('Error loading categories:', error)
+    toast.add({
+      severity: 'error',
+      summary: t('common.error'),
+      detail: 'Failed to load categories',
+      life: 5000
+    })
+  } finally {
+    categoriesLoading.value = false
   }
 }
 
@@ -385,6 +409,9 @@ const handleSubmit = async () => {
         detail: t('articles.messages.created'),
         life: 3000
       })
+      
+      // Redirect to edit page after successful creation
+      await navigateTo(`/articles/${form.value.id}`)
     }
 
   } catch (error: any) {
@@ -417,6 +444,17 @@ const getCategoryName = (categoryUid: string | null | undefined): string => {
 watch(() => form.value.title, (newTitle) => {
   if (newTitle && !form.value.slug) {
     form.value.slug = generateSlug(newTitle)
+  }
+})
+
+watch(() => form.value.language_id, async (newLanguageId, oldLanguageId) => {
+  // Only reload categories if language actually changed and it's not the initial load
+  if (newLanguageId !== oldLanguageId && oldLanguageId !== undefined) {
+    // Clear current category selection since it might not exist in new language
+    form.value.category_uid = null
+    
+    // Load categories for new language
+    await loadCategoriesForLanguage(newLanguageId)
   }
 })
 

@@ -83,4 +83,7 @@
     .p-treetable-node-toggle-button {
         min-width: var(--p-treetable-node-toggle-button-size);
     }
+    .p-select-option-label {
+        @apply max-w-[340px] whitespace-normal;
+    }
 }

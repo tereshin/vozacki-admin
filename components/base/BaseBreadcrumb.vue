@@ -7,7 +7,7 @@
         }}</span>
       </NuxtLink>
       <a v-else :href="item.url" :target="item.target" v-bind="props.action">
-        <span class="text-gray-400 font-medium">{{ item.label }}</span>
+        <span class="text-gray-400 font-medium block whitespace-nowrap max-w-[200px] lg:max-w-[700px] overflow-hidden text-ellipsis">{{ item.label }}</span>
       </a>
     </template>
     <template #separator>

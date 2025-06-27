@@ -6,32 +6,27 @@ import type {
   SingleAdministratorResponse 
 } from '~/types/administrators'
 
+interface AdministratorFilterParams {
+  role_id?: string;
+}
+
 export const useAdministratorsApi = () => {
   const { authenticatedFetch } = useAuthenticatedFetch()
+  const { handleError } = useApiErrorHandler()
 
-  const getAdministrators = async (params?: {
+  const getAdministrators = async (params?: AdministratorFilterParams & {
     page?: number;
     per_page?: number;
     search?: string;
-    role_id?: string;
     sort_field?: string;
     sort_order?: 'asc' | 'desc';
   }): Promise<AdministratorResponse> => {
     try {
-      const query = new URLSearchParams()
-      
-      if (params?.page) query.append('page', params.page.toString())
-      if (params?.per_page) query.append('per_page', params.per_page.toString())
-      if (params?.search) query.append('search', params.search)
-      if (params?.role_id) query.append('role_id', params.role_id)
-      if (params?.sort_field) query.append('sort_field', params.sort_field)
-      if (params?.sort_order) query.append('sort_order', params.sort_order)
-
-      const response = await authenticatedFetch<AdministratorResponse>(`/api/administrators?${query.toString()}`)
-      
-      return response
+      return await authenticatedFetch<AdministratorResponse>('/api/administrators', {
+        query: params
+      })
     } catch (error) {
-      console.error('Error fetching administrators:', error)
+      handleError(error, 'fetching administrators')
       throw error
     }
   }
@@ -39,10 +34,9 @@ export const useAdministratorsApi = () => {
   const getSingleAdministrator = async (id: string): Promise<SingleAdministratorResponse> => {
     try {
       const { data } = await authenticatedFetch<SingleAdministratorResponse>(`/api/administrators/${id}`)
-      
       return { data }
     } catch (error) {
-      console.error('Error fetching administrator:', error)
+      handleError(error, 'fetching administrator')
       throw error
     }
   }
@@ -53,10 +47,9 @@ export const useAdministratorsApi = () => {
         method: 'POST',
         body
       })
-      
       return { data }
     } catch (error) {
-      console.error('Error creating administrator:', error)
+      handleError(error, 'creating administrator')
       throw error
     }
   }
@@ -67,10 +60,9 @@ export const useAdministratorsApi = () => {
         method: 'PUT',
         body
       })
-      
       return { data }
     } catch (error) {
-      console.error('Error updating administrator:', error)
+      handleError(error, 'updating administrator')
       throw error
     }
   }
@@ -81,7 +73,7 @@ export const useAdministratorsApi = () => {
         method: 'DELETE'
       })
     } catch (error) {
-      console.error('Error deleting administrator:', error)
+      handleError(error, 'deleting administrator')
       throw error
     }
   }

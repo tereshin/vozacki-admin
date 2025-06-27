@@ -17,7 +17,6 @@ export * from './navigation/useRoutesNames'
 // Utils composables - data
 export * from './utils/data/useIndexedDB'
 export * from './utils/data/useFilters'
-export * from './utils/data/usePageFilters'
 
 // Utils composables - format
 export * from './utils/format/useFormatDate'
@@ -33,7 +32,13 @@ export * from './utils/get/useGetRoleSeverity'
 export * from './utils/is/useIsEmpty'
 export * from './utils/is/useIsLoading'
 
-// API composables
+// API Base Infrastructure (новое)
+export * from './api/base/useBaseApi'
+export * from './api/mixins/useCrudMixin'
+export * from './api/utils/useApiErrorHandler'
+export * from './api/config/apiConfig'
+
+// API composables (обновленные экспорты)
 export * from './api/useAuthApi'
 export * from './api/useLanguagesApi'
 export * from './api/useRolesApi'

@@ -1,6 +1,6 @@
 // Database types
 export * from './database'
-export * from './general'
+export * from './api'
 
 // Navigation types
 export * from './navigation'

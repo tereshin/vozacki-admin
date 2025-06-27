@@ -135,6 +135,8 @@ async function handleLogin() {
     if (result.error) {
       error.value = result.error;
     } else {
+      // При успешной отправке magic link, Supabase возвращает пустые user и session
+      // но это означает что письмо отправлено успешно
       successMessage.value = t('login.successMessage');
       formData.email = '';
     }
@@ -149,9 +151,6 @@ async function handleLogin() {
 watch(() => formData.email, () => {
   if (error.value) {
     error.value = null;
-  }
-  if (successMessage.value) {
-    successMessage.value = null;
   }
 });
 
