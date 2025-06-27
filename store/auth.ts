@@ -38,7 +38,7 @@ export const useAuthStore = defineStore("auth", () => {
         if (response.user?.id) {
           try {
             const administratorResponse = await getSingleAdministrator(response.user.id);
-            if (administratorResponse.data) {
+            if (administratorResponse.data && typeof window !== 'undefined') {
               localStorage.setItem('user', JSON.stringify(administratorResponse.data));
             }
           } catch (adminError: any) {
@@ -72,7 +72,9 @@ export const useAuthStore = defineStore("auth", () => {
       session.value = null;
 
       // Очищаем данные администратора из localStorage
-      localStorage.removeItem('user');
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('user');
+      }
 
       // Redirect to login page
       await navigateTo('/login');
@@ -103,7 +105,7 @@ export const useAuthStore = defineStore("auth", () => {
         if (userResponse.user?.id) {
           try {
             const administratorResponse = await getSingleAdministrator(userResponse.user.id);
-            if (administratorResponse.data) {
+            if (administratorResponse.data && typeof window !== 'undefined') {
               localStorage.setItem('user', JSON.stringify(administratorResponse.data));
             }
           } catch (adminError: any) {
@@ -145,7 +147,9 @@ export const useAuthStore = defineStore("auth", () => {
     error.value = null;
     
     // Очищаем данные администратора из localStorage
-    localStorage.removeItem('user');
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('user');
+    }
   }
 
       return {
