@@ -80,7 +80,7 @@ export async function requirePermission(event: any, permission: 'manage_content'
       break
     
     case 'view_content':
-      if (roleCode !== 'administrator' && roleCode !== 'moderator' && roleCode !== 'user') {
+      if (roleCode !== 'administrator' && roleCode !== 'moderator' && roleCode !== 'user' && roleCode !== 'guest') {
         throw createError({
           statusCode: 403,
           statusMessage: 'Insufficient permissions. Content access requires valid role.'

@@ -104,7 +104,7 @@ const menu = computed<NavigationGroup[]>(() => {
   ];
 
   // Добавляем раздел Management только если есть права на управление контентом
-  if (canManageContent.value) {
+  if (canViewTests.value) {
     menuItems.push({
       name: "Knowledge base",
       conditions: [],

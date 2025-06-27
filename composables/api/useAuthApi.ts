@@ -1,7 +1,9 @@
 import type { LoginRequest, LoginResponse, User, AdministratorUser } from "~/types/auth";
+import { useApiErrorHandler } from './utils/useApiErrorHandler'
 
 export const useAuthApi = () => {
   const supabase = useSupabase();
+  const { handleError } = useApiErrorHandler()
 
   const login = async (payload: LoginRequest): Promise<LoginResponse> => {
     try {
@@ -13,6 +15,7 @@ export const useAuthApi = () => {
       });
 
       if (error) {
+        handleError(error, 'logging in')
         return {
           user: null,
           session: null,
@@ -25,6 +28,7 @@ export const useAuthApi = () => {
         session: data.session,
       };
     } catch (error: any) {
+      handleError(error, 'logging in')
       return {
         user: null,
         session: null,
@@ -38,11 +42,13 @@ export const useAuthApi = () => {
       const { error } = await supabase.auth.signOut();
       
       if (error) {
+        handleError(error, 'logging out')
         return { error: error.message };
       }
 
       return {};
     } catch (error: any) {
+      handleError(error, 'logging out')
       return { error: error.message || "Произошла ошибка при выходе" };
     }
   };
@@ -52,11 +58,13 @@ export const useAuthApi = () => {
       const { data: { user }, error } = await supabase.auth.getUser();
       
       if (error) {
+        handleError(error, 'fetching current user')
         return { user: null, error: error.message };
       }
 
       return { user: user as AdministratorUser | null };
     } catch (error: any) {
+      handleError(error, 'fetching current user')
       return { user: null, error: error.message || "Произошла ошибка при получении пользователя" };
     }
   };
@@ -66,11 +74,13 @@ export const useAuthApi = () => {
       const { data: { session }, error } = await supabase.auth.getSession();
       
       if (error) {
+        handleError(error, 'fetching current session')
         return { session: null, error: error.message };
       }
 
       return { session };
     } catch (error: any) {
+      handleError(error, 'fetching current session')
       return { session: null, error: error.message || "Произошла ошибка при получении сессии" };
     }
   };
@@ -81,9 +91,11 @@ export const useAuthApi = () => {
       const { data: { session }, error: sessionError } = await supabase.auth.getSession();
       
       if (sessionError || !session?.access_token) {
+        const errorMessage = "No valid session found"
+        handleError(sessionError || new Error(errorMessage), 'fetching administrator data')
         return { 
           user: null, 
-          error: "No valid session found" 
+          error: errorMessage
         };
       }
 
@@ -92,6 +104,7 @@ export const useAuthApi = () => {
       
       return { user: response.data };
     } catch (error: any) {
+      handleError(error, 'fetching administrator data')
       return { 
         user: null, 
         error: error.message || "Произошла ошибка при получении данных администратора" 

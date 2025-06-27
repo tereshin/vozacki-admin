@@ -70,7 +70,7 @@
         <TestsQuestionEditDialog 
             v-model:visible="questionEditDialogVisible" 
             :question="selectedQuestion"
-            :testId="props.testId"
+            :testUid="test?.uid"
             :isCreateMode="isCreateQuestionMode"
             @saved="onQuestionSaved"
         />
@@ -230,11 +230,12 @@ const loadData = async (options: { resetPage?: boolean } = {}) => {
 
         // Load test and questions in parallel
         const [testResult] = await Promise.all([
-            testsStore.getSingleTest(props.testId, languageId),
-            loadQuestions(languageId)
+            testsStore.getSingleTest(props.testId),
+            
         ])
 
         test.value = testResult
+        loadQuestions(languageId)
     } catch (error) {
         console.error('Error loading data:', error)
         toast.add({
@@ -253,13 +254,15 @@ const loadQuestions = async (languageId?: string) => {
     if (!props.testId) return
 
     const params = {
-        test_uid: props.testId,
+        filters: {
+            test_uid: test.value?.uid,
+            language_id: languageId || filters.value.language_id || undefined,
+            points: filters.value.points ? parseInt(filters.value.points) : undefined
+        },
         page: currentPage.value,
         per_page: 10,
         search: filters.value.search || undefined,
-        language_id: languageId || filters.value.language_id || undefined,
-        points: filters.value.points || undefined,
-        ...(sortField.value && { sort: `${sortField.value}:${sortOrder.value}` })
+        ...(sortField.value && { sort_field: sortField.value, sort_order: sortOrder.value })
     }
 
     await questionsStore.getQuestions(params)

@@ -6,7 +6,15 @@ export default defineEventHandler(async (event) => {
     // Check permissions for content management
     await requirePermission(event, 'manage_content')
     
+    const id = getRouterParam(event, 'id')
     const body = await readBody(event)
+    
+    if (!id) {
+      throw createError({
+        statusCode: 400,
+        statusMessage: 'Test ID is required'
+      })
+    }
 
     // Validate required fields
     const errors: Record<string, string[]> = {}
@@ -15,10 +23,6 @@ export default defineEventHandler(async (event) => {
       errors.title = ['Title is required']
     }
     
-    if (!body.language_id) {
-      errors.language_id = ['Language is required']
-    }
-
     if (Object.keys(errors).length > 0) {
       throw createError({
         statusCode: 422,
@@ -27,58 +31,47 @@ export default defineEventHandler(async (event) => {
       })
     }
 
-    const supabase = serverSupabaseClient
+    // Check if test exists
+    const { data: existingTest, error: fetchError } = await serverSupabaseClient
+      .from('tests')
+      .select('*')
+      .eq('id', id)
+      .single()
 
-    // Generate UID using database function
-    const { data: uidData, error: uidError } = await supabase.rpc('generate_content_uid', {
-      content_type: 'test'
-    })
-
-    if (uidError) {
-      throw createError({
-        statusCode: 500,
-        statusMessage: 'Failed to generate UID',
-        data: uidError
-      })
-    }
-
-    // Create content_uid record first
-    const { error: contentUidError } = await supabase
-      .from('content_uids')
-      .insert({
-        uid: uidData,
-        content_type: 'test'
-      })
-
-    if (contentUidError) {
-      // If uid already exists, it's okay for update operations
-      if (contentUidError.code !== '23505') { // 23505 is duplicate key error
+    if (fetchError) {
+      if (fetchError.code === 'PGRST116') {
         throw createError({
-          statusCode: 500,
-          statusMessage: 'Failed to create content uid',
-          data: contentUidError
+          statusCode: 404,
+          statusMessage: 'Test not found'
         })
       }
+      
+      throw createError({
+        statusCode: 500,
+        statusMessage: 'Failed to fetch test',
+        data: fetchError
+      })
     }
 
-    // Create test record
-    const { data, error } = await supabase
+    // Update test record
+    const { data, error } = await serverSupabaseClient
       .from('tests')
-      .insert({
+      .update({
         title: body.title.trim(),
         description: body.description?.trim() || null,
         language_id: body.language_id,
         topic_uid: body.topic_uid || null,
         external_id: body.external_id || null,
-        uid: uidData
+        total_questions: body.total_questions || null
       })
+      .eq('id', id)
       .select()
       .single()
 
     if (error) {
       throw createError({
         statusCode: 500,
-        statusMessage: 'Failed to create test',
+        statusMessage: 'Failed to update test',
         data: error
       })
     }
@@ -87,7 +80,7 @@ export default defineEventHandler(async (event) => {
       data
     }
   } catch (error: any) {
-    console.error('Error creating test:', error)
+    console.error('Error updating test:', error)
     
     if (error.statusCode) {
       throw error
@@ -98,4 +91,4 @@ export default defineEventHandler(async (event) => {
       statusMessage: 'Internal server error'
     })
   }
-}) 
+})

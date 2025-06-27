@@ -98,17 +98,8 @@
 
 <script setup lang="ts">
 // ==================== IMPORTS ====================
-import { ref, onMounted, computed } from 'vue'
-import { useI18n } from 'vue-i18n'
-import { useConfirm } from 'primevue/useconfirm'
-import { useToast } from 'primevue/usetoast'
-import { useRouter } from 'vue-router'
 import { useArticlesStore } from '~/store/articles'
 import { useCategoriesStore } from '~/store/categories'
-import TheHeader from "~/components/TheHeader.vue"
-import BaseFilter from "~/components/base/BaseFilter.vue"
-import BaseDataTable from "~/components/base/BaseDataTable.vue"
-import CategoriesFormDialog from "~/components/categories/CategoriesFormDialog.vue"
 import type { LanguageResource } from '~/types/languages'
 import type { CategoryResource } from '~/types/categories'
 import type { FilterFieldConfig } from '~/types/filters'

@@ -37,13 +37,13 @@ export const useTestsStore = defineStore("tests", () => {
     }
   }
 
-  async function getSingleTest(id: string, language_id: string): Promise<TestResource> {
+  async function getSingleTest(id: string): Promise<TestResource> {
     loading.value = true;
     error.value = null;
     
     try {
       const { getSingleTest } = useTestsApi();
-      const response = await getSingleTest(id, language_id);
+      const response = await getSingleTest(id);
       
       return response.data;
     } catch (err) {

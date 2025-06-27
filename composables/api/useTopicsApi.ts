@@ -5,78 +5,60 @@ import type {
   TopicResponse,
   SingleTopicResponse 
 } from '~/types/topics'
+import type { TopicFilterParams, EntityParams } from '~/types/api'
 
 export const useTopicsApi = () => {
-  const { authenticatedFetch } = useAuthenticatedFetch()
+  const crudMixin = useCrudMixin<
+    TopicResource,
+    TopicRequest,
+    TopicUpdateRequest,
+    TopicResponse,
+    SingleTopicResponse,
+    TopicFilterParams
+  >('topics', ['name', 'description'])
 
-  const getTopics = async (params?: {
-    page?: number;
-    per_page?: number;
-    search?: string;
-    language_id?: string;
-  }): Promise<TopicResponse> => {
+  // Специальная версия getTopics с Supabase для дополнительной фильтрации
+  const getTopics = async (params?: EntityParams<TopicFilterParams>): Promise<TopicResponse> => {
     try {
-      return await authenticatedFetch('/api/topics', {
-        method: 'GET',
-        query: params
-      })
-    } catch (error) {
-      console.error('Error fetching topics:', error)
-      throw error
-    }
-  }
+      let query = crudMixin.baseApi.buildSupabaseQuery(params)
+      
+      // Применяем поиск
+      if (params?.search) {
+        query = query.or(`name.ilike.%${params.search}%,description.ilike.%${params.search}%`)
+      }
 
-  const getSingleTopic = async (id: string): Promise<SingleTopicResponse> => {
-    try {
-      return await authenticatedFetch(`/api/topics/${id}`, {
-        method: 'GET'
-      })
-    } catch (error) {
-      console.error('Error fetching topic:', error)
-      throw error
-    }
-  }
+      // Применяем фильтры
+      if (params?.filters?.language_id) {
+        query = query.eq('language_id', params.filters.language_id)
+      }
 
-  const createTopic = async (body: TopicRequest): Promise<SingleTopicResponse> => {
-    try {
-      return await authenticatedFetch('/api/topics', {
-        method: 'POST',
-        body
-      })
-    } catch (error) {
-      console.error('Error creating topic:', error)
-      throw error
-    }
-  }
+      // Сортировка по умолчанию по name
+      if (!params?.sort_field) {
+        query = query.order('name', { ascending: true })
+      }
 
-  const updateTopic = async (id: string, body: TopicUpdateRequest): Promise<SingleTopicResponse> => {
-    try {
-      return await authenticatedFetch(`/api/topics/${id}`, {
-        method: 'PUT',
-        body
-      })
-    } catch (error) {
-      console.error('Error updating topic:', error)
-      throw error
-    }
-  }
+      const { data, error, count } = await query
 
-  const deleteTopic = async (id: string): Promise<void> => {
-    try {
-      await authenticatedFetch(`/api/topics/${id}`, {
-        method: 'DELETE'
-      })
+      if (error) {
+        crudMixin.baseApi.handleError(error, 'fetching topics')
+      }
+
+      return crudMixin.baseApi.formatResponse(
+        (data || []) as unknown as TopicResource[], 
+        count || 0, 
+        params
+      ) as TopicResponse
     } catch (error) {
-      console.error('Error deleting topic:', error)
+      crudMixin.baseApi.handleError(error, 'fetching topics')
       throw error
     }
   }
 
   return {
     getTopics,
-    getSingleTopic,
-    createTopic,
-    updateTopic,
-    deleteTopic
+    getSingleTopic: crudMixin.getSingleItem,
+    createTopic: crudMixin.createItem,
+    updateTopic: crudMixin.updateItem,
+    deleteTopic: crudMixin.deleteItem
   }
 } 

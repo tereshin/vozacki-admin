@@ -86,13 +86,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+// ==================== INTERFACES/TYPES ====================
 import type { FilterFieldConfig } from '~/types/filters'
 
-// Состояние для мобильных фильтров
-const showFilters = ref(false)
-
-// Props
 interface Props {
     modelValue: Record<string, any>
     filterFields: FilterFieldConfig[]
@@ -104,23 +100,27 @@ interface Props {
     debounceTimeout?: number
 }
 
+interface Emits {
+    'update:modelValue': [value: Record<string, any>]
+    'change': [field: string, value: any]
+    'reset': []
+    'apply': []
+}
+
+// ==================== PROPS & EMITS ====================
 const props = withDefaults(defineProps<Props>(), {
     showResetButton: true,
     showApplyButton: false,
     debounceTimeout: 300
 })
 
-// Emits
-const emit = defineEmits<{
-    'update:modelValue': [value: Record<string, any>]
-    'change': [field: string, value: any]
-    'reset': []
-    'apply': []
-}>()
+const emit = defineEmits<Emits>()
 
-// Debounced input для поиска
+// ==================== REACTIVE DATA ====================
+const showFilters = ref(false)
 let inputTimeout: NodeJS.Timeout
 
+// ==================== METHODS ====================
 const handleInput = (field: string, value: string) => {
     clearTimeout(inputTimeout)
     inputTimeout = setTimeout(() => {

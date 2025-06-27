@@ -15,7 +15,7 @@
         <div class="pt-2 p-4">
             <!-- Filters -->
             <BaseFilter :model-value="filters" :filter-fields="filterConfigs" @update:model-value="updateFilters"
-                @apply="onFilterApply" @reset="onFilterReset" />
+                @apply="onFilterApply" @change="onFilterChange" @reset="onFilterReset" />
 
             <div class="flex flex-col gap-4">
                 <!-- TreeTable -->
@@ -48,7 +48,7 @@
                                             <!-- Test with link -->
                                             <NuxtLink 
                                                 v-if="node.data.type === 'test'"
-                                                :to="`/tests/${node.data.uid}`"
+                                                :to="`/tests/${node.data.id}`"
                                                 class="block font-medium text-900 hover:text-primary-500 transition-colors duration-200"
                                             >
                                                 {{ node.data.name }}
@@ -116,6 +116,15 @@
             :is-edit-mode="isEditMode"
             @saved="onTopicSaved"
         />
+
+        <!-- Test Edit/Create Dialog -->
+        <TestsEditDialog 
+            v-model:visible="testEditDialogVisible" 
+            :test="selectedTest" 
+            :is-create-mode="isCreateTestMode"
+            :topic="selectedTopicForTest"
+            @saved="onTestSaved"
+        />
     </div>
 </template>
 
@@ -132,12 +141,6 @@ import { useTopicsStore } from '~/store/topics'
 import { useTestsStore } from '~/store/tests'
 import { useGeneralStore } from '~/store/general'
 
-// Components
-import TheHeader from "~/components/TheHeader.vue"
-import BaseFilter from "~/components/base/BaseFilter.vue"
-import BaseIcon from "~/components/base/BaseIcon.vue"
-import TopicsFormDialog from "~/components/topics/TopicsFormDialog.vue"
-
 // ==================== COMPOSABLES ====================
 // I18n
 const { t } = useI18n()
@@ -150,6 +153,9 @@ const toast = useToast()
 const topicsStore = useTopicsStore()
 const testsStore = useTestsStore()
 const generalStore = useGeneralStore()
+
+// API
+const testsApi = useTestsApi()
 
 // App settings
 const { contentLanguageId, initSettings } = useAppSettings()
@@ -173,6 +179,13 @@ const filters = ref({
 const topicDialogVisible = ref(false)
 const selectedTopic = ref<TopicResource | null>(null)
 const isEditMode = ref(false)
+
+// Test Dialog State
+const testEditDialogVisible = ref(false)
+const selectedTest = ref<TestResource | null>(null)
+const isCreateTestMode = ref(false)
+const selectedTopicForTest = ref<TopicResource | null>(null)
+const loadingTestData = ref(false)
 
 // ==================== COMPUTED PROPERTIES ====================
 // Breadcrumb items
@@ -228,8 +241,9 @@ const treeData = computed(() => {
         }
 
         // If topic is expanded and we have tests for it, add them
-        if (expandedKeys.value[topicKey] && testsByTopic.value.has(topic.uid)) {
-            const topicTests = testsByTopic.value.get(topic.uid)!
+        const cacheKey = `${topic.uid}-${filters.value.language_id}`
+        if (expandedKeys.value[topicKey] && testsByTopic.value.has(cacheKey)) {
+            const topicTests = testsByTopic.value.get(cacheKey)!
             topicTests.forEach((test, testIndex) => {
                 const testNode = {
                     key: `test-${test.id}`,
@@ -267,10 +281,13 @@ const treeData = computed(() => {
 // ==================== METHODS ====================
 // Filter methods
 const updateFilters = (newFilters: Record<string, any>) => {
+    const oldLanguageId = filters.value.language_id
     filters.value = { ...filters.value, ...newFilters }
 
     // Auto-reload data when language changes
-    if ('language_id' in newFilters) {
+    if ('language_id' in newFilters && newFilters.language_id !== oldLanguageId) {
+        // Clear tests cache when language changes
+        testsByTopic.value.clear()
         loadData()
     }
 }
@@ -279,10 +296,27 @@ const onFilterApply = () => {
     loadData()
 }
 
+const onFilterChange = () => {
+    loadData()
+}
+
 const onFilterReset = () => {
+    let languageId = contentLanguageId.value
+    
+    // Если contentLanguageId содержит дефис, это код - нужно конвертировать в ID
+    if (languageId.includes('-')) {
+        languageId = getLanguageIdByCode(languageId) || languageId
+    }
+    
+    // Проверяем, что язык существует в загруженных языках
+    const languageExists = languages.value.find(lang => lang.id === languageId)
+    if (!languageExists && languages.value.length > 0) {
+        languageId = languages.value[0].id
+    }
+    
     filters.value = {
         search: '',
-        language_id: getLanguageIdByCode(contentLanguageId.value) || ''
+        language_id: languageId || ''
     }
     loadData()
 }
@@ -298,7 +332,9 @@ const loadData = async () => {
 
         // Load only topics initially - tests will be loaded dynamically
         await topicsStore.getTopics({
-            language_id: filters.value.language_id || undefined,
+            filters: {
+                language_id: filters.value.language_id || undefined
+            },
             search: filters.value.search || undefined,
             per_page: 100 // Load all topics
         })
@@ -324,23 +360,28 @@ const onNodeExpand = async (node: any) => {
 
     const topicKey = node.key
     const topicUid = node.data.uid
+    const cacheKey = `${topicUid}-${filters.value.language_id}`
 
-    // Skip if already loading or already loaded
-    if (loadingNodes.value.has(topicKey) || testsByTopic.value.has(topicUid)) return
+    // Skip if already loading or already loaded for current language
+    if (loadingNodes.value.has(topicKey) || testsByTopic.value.has(cacheKey)) return
 
     // Mark as loading
     loadingNodes.value.add(topicKey)
 
     try {
-        // Load tests for this specific topic
-        const response = await testsStore.getTests({
-            topic_uid: topicUid,
-            language_id: filters.value.language_id || undefined,
+        // Load tests for this specific topic with current language
+        const params = {
+            filters: {
+                topic_uid: topicUid,
+                language_id: filters.value.language_id || undefined
+            },
             per_page: 1000 // Load all tests for this topic
-        })
+        }
+        
+        const response = await testsStore.getTests(params)
 
-        // Store tests in our Map
-        testsByTopic.value.set(topicUid, response.data.collection)
+        // Store tests in our Map with language-specific key
+        testsByTopic.value.set(cacheKey, response.data.collection)
     } catch (error) {
         toast.add({
             severity: 'error',
@@ -374,6 +415,9 @@ const getLanguageIdByCode = (code: string): string | undefined => {
 
 // Action methods
 const getPrimaryActionLabel = (item: any): string => {
+    if (loadingTestData.value && item.type === 'test') {
+        return t('common.loading') || 'Loading...'
+    }
     if (item.type === 'topic') {
         return t('tests.tree.editTopic')
     } else {
@@ -381,8 +425,8 @@ const getPrimaryActionLabel = (item: any): string => {
     }
 }
 
-const handlePrimaryAction = (item: any) => {
-    editItem(item)
+const handlePrimaryAction = async (item: any) => {
+    await editItem(item)
 }
 
 const getActionItems = (item: any) => {
@@ -401,7 +445,7 @@ const getActionItems = (item: any) => {
     actions.push({
         label: item.type === 'topic' ? t('tests.tree.editTopic') : t('tests.tree.edit'),
         icon: 'pi pi-pencil',
-        command: () => editItem(item)
+        command: async () => await editItem(item)
     })
 
     // Separator before delete
@@ -421,16 +465,19 @@ const getActionItems = (item: any) => {
 }
 
 const addTest = (topic: TopicResource) => {
-    // TODO: Implement add test functionality
+    selectedTopicForTest.value = topic
+    selectedTest.value = null
+    isCreateTestMode.value = true
+    testEditDialogVisible.value = true
 }
 
-const editItem = (item: TopicResource | TestResource) => {
+const editItem = async (item: TopicResource | TestResource) => {
     const itemType = 'type' in item ? item.type : 'unknown'
     
     if (itemType === 'topic') {
         openEditTopicDialog(item as TopicResource)
-    } else {
-        // TODO: Implement test edit functionality
+    } else if (itemType === 'test') {
+        await openEditTestDialog(item as TestResource)
     }
 }
 
@@ -447,7 +494,47 @@ const openEditTopicDialog = (topic: TopicResource) => {
     topicDialogVisible.value = true
 }
 
+// Test Dialog Methods
+const openEditTestDialog = async (test: TestResource) => {
+    // Показываем состояние загрузки
+    loadingTestData.value = true
+    
+    try {
+        // Загружаем полные данные теста из backend API
+        const response = await testsApi.getSingleTest(test.id)
+        
+        // Устанавливаем загруженные данные
+        selectedTest.value = response.data
+        isCreateTestMode.value = false
+        selectedTopicForTest.value = null
+        
+        // Открываем диалог после успешной загрузки
+        testEditDialogVisible.value = true
+        
+    } catch (error) {
+        console.error('Error loading test data:', error)
+        toast.add({
+            severity: 'error',
+            summary: t('tests.states.error'),
+            detail: t('tests.actions.loadError') || 'Failed to load test data',
+            life: 5000
+        })
+        
+        // В случае ошибки используем данные из дерева
+        selectedTest.value = test
+        isCreateTestMode.value = false
+        selectedTopicForTest.value = null
+        testEditDialogVisible.value = true
+    } finally {
+        loadingTestData.value = false
+    }
+}
+
 const onTopicSaved = async () => {
+    await loadData()
+}
+
+const onTestSaved = async () => {
     await loadData()
 }
 
@@ -490,9 +577,23 @@ const deleteItem = (item: TopicResource | TestResource) => {
 
 // ==================== WATCHERS ====================
 // Watch for language changes and update filters accordingly
-watch(contentLanguageId, (newCode) => {
-    const languageId = getLanguageIdByCode(newCode)
-    if (languageId && languageId !== filters.value.language_id) {
+watch(contentLanguageId, (newValue) => {
+    let languageId = newValue
+    
+    // Если новое значение содержит дефис, это код - нужно конвертировать в ID
+    if (languageId.includes('-')) {
+        const convertedId = getLanguageIdByCode(languageId)
+        if (convertedId) {
+            languageId = convertedId
+        }
+    }
+    
+    // Проверяем, что язык существует в загруженных языках
+    const languageExists = languages.value.find(lang => lang.id === languageId)
+    if (languageExists && languageId !== filters.value.language_id) {
+        console.log('Language changed from', filters.value.language_id, 'to', languageId)
+        // Clear tests cache when language changes
+        testsByTopic.value.clear()
         filters.value.language_id = languageId
         loadData()
     }
@@ -501,26 +602,42 @@ watch(contentLanguageId, (newCode) => {
 // Watch for language list changes (when languages are loaded)
 watch(languages, (newLanguages, oldLanguages) => {
     if (newLanguages.length > 0 && !filters.value.language_id) {
-        let languageId = getLanguageIdByCode(contentLanguageId.value)
-
+        let languageId = contentLanguageId.value
+        
+        // Если contentLanguageId содержит дефис, это код - нужно конвертировать в ID
+        if (languageId.includes('-')) {
+            const convertedId = getLanguageIdByCode(languageId)
+            if (convertedId) {
+                languageId = convertedId
+            }
+        }
+        
+        // Проверяем, что язык существует в загруженных языках
+        let languageExists = newLanguages.find(lang => lang.id === languageId)
+        
         // Try alternatives if not found
-        if (!languageId) {
+        if (!languageExists) {
             const alternatives = ['sr', 'sr-lat', 'sr-latn', 'serbian']
             for (const alt of alternatives) {
-                languageId = getLanguageIdByCode(alt)
-                if (languageId) {
-                    break
+                const altLanguageId = getLanguageIdByCode(alt)
+                if (altLanguageId) {
+                    languageExists = newLanguages.find(lang => lang.id === altLanguageId)
+                    if (languageExists) {
+                        languageId = altLanguageId
+                        break
+                    }
                 }
             }
         }
 
         // Use first available if still not found
-        if (!languageId && newLanguages.length > 0) {
+        if (!languageExists && newLanguages.length > 0) {
             languageId = newLanguages[0].id
         }
 
         if (languageId) {
             filters.value.language_id = languageId
+            console.log('Set language_id from languages watcher:', languageId)
         }
     }
 }, { immediate: true })
@@ -533,26 +650,42 @@ onMounted(async () => {
     languages.value = await loadCachedLanguages()
 
     // Set correct language_id after languages are loaded
-    let languageId = getLanguageIdByCode(contentLanguageId.value)
-
-    // If not found, try some common alternatives
-    if (!languageId) {
-        const alternatives = ['sr', 'sr-lat', 'sr-latn', 'serbian']
-        for (const alt of alternatives) {
-            languageId = getLanguageIdByCode(alt)
-            if (languageId) {
-                break
+    // contentLanguageId может быть кодом или ID, поэтому нужно проверить
+    let languageId = contentLanguageId.value
+    
+    // Если contentLanguageId содержит дефис, это код - нужно конвертировать в ID
+    if (languageId.includes('-')) {
+        languageId = getLanguageIdByCode(languageId) || languageId
+    }
+    
+    // Если все еще не найден среди доступных языков, попробуем найти по коду
+    const languageExists = languages.value.find(lang => lang.id === languageId)
+    if (!languageExists) {
+        // Если не найден, пробуем получить ID по коду
+        const foundLanguageId = getLanguageIdByCode(contentLanguageId.value)
+        if (foundLanguageId) {
+            languageId = foundLanguageId
+        } else {
+            // Try some common alternatives
+            const alternatives = ['sr', 'sr-lat', 'sr-latn', 'serbian']
+            for (const alt of alternatives) {
+                const altLanguageId = getLanguageIdByCode(alt)
+                if (altLanguageId) {
+                    languageId = altLanguageId
+                    break
+                }
             }
         }
     }
 
     // If still not found, use first available language
-    if (!languageId && languages.value.length > 0) {
+    if (!languageExists && !languages.value.find(lang => lang.id === languageId) && languages.value.length > 0) {
         languageId = languages.value[0].id
     }
 
     if (languageId) {
-        filters.value.language_id = contentLanguageId.value
+        filters.value.language_id = languageId
+        console.log('Set language_id for filters:', languageId)
     }
 
     // Now load data with correct language_id

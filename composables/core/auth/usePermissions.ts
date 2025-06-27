@@ -21,6 +21,8 @@ export const usePermissions = () => {
   // Проверка на обычного пользователя
   const isUser = computed(() => hasRole('user'))
 
+  const isGuest = computed(() => hasRole('guest'))
+
   // Проверка доступа к разделу администраторов
   const canAccessAdministrators = computed(() => isAdministrator.value)
 
@@ -31,7 +33,7 @@ export const usePermissions = () => {
   const canManageContent = computed(() => isAdministrator.value || isModerator.value)
 
   // Проверка доступа к просмотру тестов
-  const canViewTests = computed(() => isAdministrator.value || isModerator.value || isUser.value)
+  const canViewTests = computed(() => isAdministrator.value || isModerator.value || isUser.value || isGuest.value)
 
   // Получение текущей роли пользователя
   const currentRole = computed(() => user.value?.role?.code || null)

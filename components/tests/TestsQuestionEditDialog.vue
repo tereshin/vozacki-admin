@@ -107,7 +107,7 @@ import { useAnswersStore } from '~/store/answers'
 interface Props {
     visible: boolean
     question: QuestionResource | null
-    testId?: string
+    testUid?: string
     isCreateMode?: boolean
 }
 
@@ -195,11 +195,15 @@ const loadQuestionData = async () => {
     try {
         const languageId = await getActualLanguageId(contentLanguageId.value)
 
-        const response = await answersStore.getAnswers({
-            question_uid: props.question.uid,
-            language_id: languageId,
+        const params = {
+            filters: {
+                question_uid: props.question.uid,
+                language_id: languageId
+            },
             per_page: 100 // Load all answers
-        })
+        }
+        
+        const response = await answersStore.getAnswers(params)
 
         originalAnswers.value = [...answersStore.items]
         formData.value.answers = answersStore.items.map(answer => ({
@@ -276,7 +280,7 @@ const saveQuestion = async () => {
     if (!validateForm()) return
     
     if (!props.isCreateMode && !props.question) return
-    if (props.isCreateMode && !props.testId) return
+    if (props.isCreateMode && !props.testUid) return
 
     saving.value = true
 
@@ -291,7 +295,7 @@ const saveQuestion = async () => {
                 points: formData.value.question.points || 0,
                 image_url: formData.value.question.image_url || null,
                 language_id: languageId,
-                test_uid: props.testId!
+                test_uid: props.testUid!
             }
 
             const newQuestion = await questionsStore.createQuestion(questionCreate)
