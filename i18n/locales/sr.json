@@ -13,7 +13,8 @@
     "invalidEmail": "Unesite ispravnu email adresu",
     "emailRequired": "Unesite email adresu",
     "passwordRequired": "Unesite lozinku",
-    "unexpectedError": "Došlo je do neočekivane greške"
+    "unexpectedError": "Došlo je do neočekivane greške",
+    "demoButton": "Demo nalog"
   },
   "articles": {
     "title": "Članci",
@@ -308,7 +309,7 @@
       "languageEditHint": "Језик се не може променити код постојећих тема ради одржавања интегритета података",
       "externalId": "Спољашње ID",
       "externalIdPlaceholder": "Унесите спољашње ID...",
-      "externalIdHint": "Опциони идентификатор за интеграцију са спољним системима",
+      "externalIdHint": "Опциони идентификатор за интеграцију са спољним системама",
       "create": "Креирај",
       "update": "Ажурирај"
     },
@@ -462,10 +463,11 @@
       "tryAgain": "Покушај поново"
     },
     "errors": {
-      "loadingStats": "Грешка при учитавању статистике"
+      "loadingStats": "Грешка при учитавању статистике",
+      "guestAccess": "Гостујући приступ је само за читање."
     },
     "currentLanguage": {
-      "title": "Тренутни језик садржаја",
+      "title": "Тренутni језик садржаја",
       "description": "Статистика приказана за овај језик"
     }
   }

@@ -26,14 +26,17 @@
               :is-collapsed="collapsedGroups[groupKey]" @toggle="toggleGroup" @item-click="goTo" />
           </nav>
         </div>
-
+        <div v-if="userData?.role?.code === 'guest'">
+          <Message severity="warn" icon="pi pi-info-circle" class="m-4 w-fit" size="small">
+            <p>{{ $t('dashboard.errors.guestAccess') }}</p>
+          </Message>
+        </div>
         <!-- Content Language Selector -->
         <div class="px-4 py-3 border-t border-gray-200">
           <div class="flex flex-col space-y-2">
             <label class="text-xs font-medium text-gray-700">{{ $t('sidebar.contentLanguage') }}</label>
             <Select v-model="contentLanguageId" :options="availableLanguages" option-label="name" option-value="id"
-              :placeholder="$t('sidebar.selectLanguage')" class="w-full text-sm" size="small"
-              />
+              :placeholder="$t('sidebar.selectLanguage')" class="w-full text-sm" size="small" />
           </div>
         </div>
 
@@ -46,7 +49,7 @@
               </div>
               <div class="flex flex-col">
                 <span class="text-sm font-medium text-gray-900">{{ userData?.full_name || $t('sidebar.user.defaultName')
-                  }}</span>
+                }}</span>
                 <span class="text-xs text-gray-500">{{ currentRoleName || $t('sidebar.user.defaultRole') }}</span>
               </div>
             </div>

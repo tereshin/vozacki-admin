@@ -13,7 +13,8 @@
     "invalidEmail": "Введите корректный email адрес",
     "emailRequired": "Введите email адрес",
     "passwordRequired": "Введите пароль",
-    "unexpectedError": "Произошла неожиданная ошибка"
+    "unexpectedError": "Произошла неожиданная ошибка",
+    "demoButton": "Демо-аккаунт"
   },
 
   "articles": {
@@ -463,7 +464,8 @@
       "tryAgain": "Попробовать снова"
     },
     "errors": {
-      "loadingStats": "Ошибка загрузки статистики"
+      "loadingStats": "Ошибка загрузки статистики",
+      "guestAccess": "Гостевой доступ работает только в режиме чтения."
     },
     "currentLanguage": {
       "title": "Текущий язык контента",

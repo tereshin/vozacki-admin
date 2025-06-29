@@ -102,7 +102,9 @@ export default defineNuxtConfig({
     public: {
       supabaseUrl: process.env.SUPABASE_URL || 'https://vemilyrevahvusnpoghi.supabase.co',
       supabasePublishableKey: process.env.SUPABASE_ANON_KEY || '',
-      appUrl: process.env.NUXT_PUBLIC_APP_URL || 'http://localhost:3000'
+      appUrl: process.env.NUXT_PUBLIC_APP_URL || 'http://localhost:3000',
+      demoEmail: process.env.DEMO_EMAIL || 'demo@vozacki.rs',
+      demoPassword: process.env.DEMO_PASSWORD || 'password'
     }
   },
 })

@@ -6,6 +6,9 @@ export interface User {
 }
 
 export interface AdministratorUser extends User {
+  first_name?: string;
+  last_name?: string;
+  full_name?: string;
   role?: {
     id: string;
     name: string;
