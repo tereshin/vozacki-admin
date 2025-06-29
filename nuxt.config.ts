@@ -11,7 +11,7 @@ export default defineNuxtConfig({
     head: {
       title: "Vozacki Admin",
       viewport:
-        "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no",
+        "width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover, max-image-preview:large, user-scalable=no",
       link: [
         {
           rel: "icon",

@@ -22,7 +22,7 @@
             </div>
 
             <!-- Error state -->
-            <div v-else-if="error" class="p-6">
+            <div v-else-if="error" class="p-4 lg:p-6">
                 <Card class="bg-red-50 border border-red-200">
                     <template #content>
                         <div>
@@ -42,7 +42,7 @@
             </div>
 
             <!-- Stats Dashboard -->
-            <div v-else class="p-6">
+            <div v-else class="p-4 lg:p-6">
                 <div>
                     <h1 class="text-2xl lg:text-4xl mb-4 lg:mb-8 font-bold">
                         {{ userData?.first_name 
@@ -52,7 +52,7 @@
                     </h1>
                 </div>
                 <!-- Stats cards -->
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mb-8">
                     <!-- Articles card -->
                     <Card class="hover:shadow-lg transition-shadow duration-300 cursor-pointer" @click="navigateTo('/articles')">
                         <template #content>

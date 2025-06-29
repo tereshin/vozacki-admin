@@ -2,14 +2,15 @@
   <Drawer :visible="generalStore.isMenuOpen" :modal="generalStore.isMobile" :dismissable="false" position="left"
     class="!w-64" @update:visible="generalStore.isMenuOpen = $event">
     <template #container="{ closeCallback }">
-      <div class="flex flex-col h-full bg-white">
+      <div class="flex flex-col h-full bg-white border-r border-gray-200">
         <!-- Sidebar header -->
         <div class="flex items-center justify-between px-3 pt-5 pb-12 shrink-0">
-          <span class="inline-flex items-center gap-4">
+          <span class="inline-flex items-center gap-2">
             <!-- Logo -->
             <div class="mx-auto w-10 h-10 shadow-sm rounded-xl flex items-center justify-center">
               <img src="/favicon/apple-touch-icon.png" alt="logo" class="w-full rounded-xl">
             </div>
+            <div class="text-base  lg:text-lg font-bold">Vozacki SRB</div>
           </span>
           <span class="lg:hidden">
             <Button type="button" @click="generalStore.isMenuOpen = false" variant="link" size="small"

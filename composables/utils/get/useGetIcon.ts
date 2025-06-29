@@ -8,10 +8,12 @@ import Home from '@/assets/icons/home.svg';
 import Book1 from '@/assets/icons/book-1.svg';
 import Book2 from '@/assets/icons/book-2.svg';
 import Users1 from '@/assets/icons/users-1.svg';
+import Menu from '@/assets/icons/menu.svg';
 import type { IconName } from '@/types/general';
 
 export const useGetIcon = (value: IconName): Component | undefined => {
     const icons = {
+        menu: Menu,
         'sidebar-open': SidebarOpen,
         'sidebar-close': SidebarClose,
         flag: Flag,

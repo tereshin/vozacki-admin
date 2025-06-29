@@ -36,6 +36,7 @@ export interface BreadcrumbItem {
 export type IconSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
 export type IconColor = 'default' | 'primary' | 'secondary' | 'white' | 'gray';
 export type IconName =
+    | 'menu'
     | 'sidebar-open'
     | 'sidebar-close'
     | 'flag'

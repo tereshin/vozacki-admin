@@ -46,6 +46,7 @@
                 :empty-state-icon="'pi pi-users'"
                 :loading-text="$t('common.loading')"
                 :actions-column="actionsColumn"
+                :default-actions="defaultActions"
                 @page-change="onPageChange"
                 @sort="onSort"
             >
@@ -77,41 +78,6 @@
                     <span class="text-sm text-gray-600">
                         {{ formatDateLong(data.created_at) }}
                     </span>
-                </template>
-
-                <!-- Actions -->
-                <template #actions="{ data }">
-                    <div class="flex items-center gap-1">
-                        <Button 
-                            icon="pi pi-eye" 
-                            @click="viewAdministrator(data)"
-                            size="small"
-                            text
-                            rounded
-                            :title="$t('common.view')"
-                            class="text-gray-600 hover:text-gray-900"
-                        />
-                        <Button 
-                            v-if="canAccessAdministrators"
-                            icon="pi pi-pencil" 
-                            @click="editAdministrator(data)"
-                            size="small"
-                            text
-                            rounded
-                            :title="$t('common.edit')"
-                            class="text-blue-600 hover:text-blue-900"
-                        />
-                        <Button 
-                            v-if="canAccessAdministrators"
-                            icon="pi pi-trash" 
-                            @click="confirmDeleteAdministrator(data)"
-                            size="small"
-                            text
-                            rounded
-                            :title="$t('common.delete')"
-                            class="text-red-600 hover:text-red-900"
-                        />
-                    </div>
                 </template>
             </BaseDataTable>
         </div>
@@ -296,11 +262,11 @@
                 </div>
             </div>
 
-            <div class="flex justify-end pt-6 border-t border-gray-200">
+            <div class="flex justify-end pt-6 border-t mt-6 border-gray-200">
                 <Button 
                     :label="$t('common.close')"
                     @click="showViewDialog = false"
-                    text
+                    severity="secondary"
                 />
             </div>
         </Dialog>
@@ -476,6 +442,36 @@ const actionsColumn = computed((): BaseDataTableActionsColumn => ({
   style: 'width: 150px'
 }))
 
+const getActionItems = (data: AdministratorResource) => {
+  const actions = []
+  if (canAccessAdministrators.value) {
+    actions.push({
+      label: t('common.edit'),
+      icon: 'pi pi-pencil',
+      command: () => editAdministrator(data)
+    })
+    actions.push({ separator: true })
+    actions.push({
+      label: t('common.delete'),
+      icon: 'pi pi-trash',
+      command: () => confirmDeleteAdministrator(data),
+      class: 'text-red-500'
+    })
+  }
+  return actions
+}
+
+const viewAdministrator = (administrator: AdministratorResource) => {
+  viewingAdministrator.value = administrator
+  showViewDialog.value = true
+}
+
+const defaultActions = {
+  primaryLabel: t('common.view'),
+  primaryAction: viewAdministrator,
+  menuItems: getActionItems
+}
+
 // Methods
 const loadAdministrators = async () => {
   try {
@@ -604,11 +600,6 @@ const submitForm = async () => {
       })
     }
   }
-}
-
-const viewAdministrator = (administrator: AdministratorResource) => {
-  viewingAdministrator.value = administrator
-  showViewDialog.value = true
 }
 
 const editAdministrator = (administrator: AdministratorResource) => {

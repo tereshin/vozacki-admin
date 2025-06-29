@@ -5,8 +5,7 @@
         <button v-ripple
           class="p-3 rounded-full cursor-pointer hover:bg-gray-100 flex duration-150 lg:ml-0 -ml-3 text-slate-500 hover:text-slate-700 hover:text-slate-700"
           aria-label="Menu" @click="generalStore.isMenuOpen = !generalStore.isMenuOpen">
-          <BaseIcon v-if="!generalStore.isMenuOpen" name="sidebar-open" class="w-6 h-6 text-inherit" />
-          <BaseIcon v-else name="sidebar-close" class="w-6 h-6 text-inherit" />
+          <BaseIcon name="menu" class="w-6 h-6 text-inherit" />
         </button>
         <div class="flex flex-col gap-0.5">
           <div v-if="title"
