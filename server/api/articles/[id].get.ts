@@ -25,18 +25,18 @@ export default defineEventHandler(async (event) => {
     if (error) {
       throw createError({
         statusCode: 404,
-        statusMessage: 'Article not found'
+        statusMessage: error.message || 'Article not found'
       })
     }
 
     return {
       data
     }
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error fetching article:', error)
     throw createError({
       statusCode: 500,
-      statusMessage: 'Internal server error'
+      statusMessage: error.message || 'Internal server error'
     })
   }
 }) 

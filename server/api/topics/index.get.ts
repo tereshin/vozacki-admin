@@ -43,7 +43,7 @@ export default defineEventHandler(async (event) => {
     if (error) {
       throw createError({
         statusCode: 500,
-        statusMessage: 'Failed to fetch topics',
+        statusMessage: error.message || 'Failed to fetch topics',
         data: error
       })
     }
@@ -70,7 +70,7 @@ export default defineEventHandler(async (event) => {
     
     throw createError({
       statusCode: 500,
-      statusMessage: 'Internal server error'
+      statusMessage: error.message || 'Internal server error'
     })
   }
 }) 

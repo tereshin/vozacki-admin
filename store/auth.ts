@@ -10,7 +10,11 @@ export const useAuthStore = defineStore("auth", () => {
   const error = ref<string | null>(null);
 
   // Getters
-  const isAuthenticated = computed(() => !!user.value && !!session.value);
+  const isAuthenticated = computed(() => {
+    // Проверяем наличие JWT токена в cookies
+    const token = useCookie('access_token');
+    return !!token.value && !!user.value;
+  });
 
   // Actions
   const { login: apiLogin, logout: apiLogout, getCurrentUser, getCurrentSession, getCurrentAdministrator } = useAuthApi();
@@ -28,22 +32,37 @@ export const useAuthStore = defineStore("auth", () => {
         return { error: response.error };
       }
 
-      // При magic link авторизации user и session будут null до перехода по ссылке
-      // Это нормально и означает что письмо отправлено успешно
-      if (response.user && response.session) {
+      // Устанавливаем токен в cookie (если ещё не установлен сервером)
+      if (response.session?.access_token) {
+        const token = useCookie('access_token');
+        token.value = response.session.access_token;
+      }
+
+      // Получаем расширенные данные администратора через getSingleAdministrator
+      let adminData = null;
+      if (response.user && response.user.id) {
+        try {
+          const { data } = await getSingleAdministrator(response.user.id);
+          if (data) {
+            adminData = data;
+          }
+        } catch (e) {
+          // fallback ниже
+        }
+      }
+
+      if (adminData) {
+        user.value = adminData;
+        session.value = response.session;
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('user', JSON.stringify(adminData));
+        }
+      } else {
+        // fallback: если не удалось получить администратора, сохраняем supabase user
         user.value = response.user;
         session.value = response.session;
-
-        // Получаем полный объект администратора по API и сохраняем в localStorage
-        if (response.user?.id) {
-          try {
-            const administratorResponse = await getSingleAdministrator(response.user.id);
-            if (administratorResponse.data && typeof window !== 'undefined') {
-              localStorage.setItem('user', JSON.stringify(administratorResponse.data));
-            }
-          } catch (adminError: any) {
-            console.error('Ошибка получения данных администратора:', adminError);
-          }
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('user', JSON.stringify(response.user));
         }
       }
 
@@ -68,8 +87,13 @@ export const useAuthStore = defineStore("auth", () => {
         return { error: response.error };
       }
 
+      // Очищаем состояние
       user.value = null;
       session.value = null;
+
+      // Очищаем токен из cookie
+      const token = useCookie('access_token');
+      token.value = null;
 
       // Очищаем данные администратора из localStorage
       if (typeof window !== 'undefined') {
@@ -92,29 +116,67 @@ export const useAuthStore = defineStore("auth", () => {
     loading.value = true;
 
     try {
-      const [userResponse, sessionResponse] = await Promise.all([
-        getCurrentAdministrator(),
-        getCurrentSession(),
-      ]);
+      // Проверяем наличие токена в cookies
+      const token = useCookie('access_token');
+      
+      if (!token.value) {
+        // Нет токена - очищаем состояние
+        user.value = null;
+        session.value = null;
+        return;
+      }
 
-      if (userResponse.user && sessionResponse.session) {
-        user.value = userResponse.user;
-        session.value = sessionResponse.session;
-
-        // Получаем полный объект администратора по API и сохраняем в localStorage
-        if (userResponse.user?.id) {
+      // Получаем id администратора из localStorage или через getCurrentUser
+      let adminId: string | null = null;
+      if (typeof window !== 'undefined') {
+        const stored = localStorage.getItem('user');
+        if (stored) {
           try {
-            const administratorResponse = await getSingleAdministrator(userResponse.user.id);
-            if (administratorResponse.data && typeof window !== 'undefined') {
-              localStorage.setItem('user', JSON.stringify(administratorResponse.data));
+            const parsed = JSON.parse(stored);
+            if (parsed && parsed.id) {
+              adminId = parsed.id;
             }
-          } catch (adminError: any) {
-            console.error('Ошибка получения данных администратора:', adminError);
-          }
+          } catch {}
         }
       }
+      if (!adminId) {
+        // fallback: получаем текущего пользователя через getCurrentUser
+        const userResponse = await getCurrentUser();
+        if (userResponse.user && userResponse.user.id) {
+          adminId = userResponse.user.id;
+        }
+      }
+
+      if (adminId) {
+        try {
+          const { data } = await getSingleAdministrator(adminId);
+          if (data) {
+            user.value = data;
+            // Создаем объект session для совместимости
+            session.value = {
+              access_token: token.value,
+              expires_in: 86400
+            };
+            // Сохраняем в localStorage для кеша
+            if (typeof window !== 'undefined') {
+              localStorage.setItem('user', JSON.stringify(data));
+            }
+            loading.value = false;
+            return;
+          }
+        } catch {}
+      }
+      // fallback: очищаем состояние
+      token.value = null;
+      user.value = null;
+      session.value = null;
     } catch (err: any) {
       console.error("Ошибка инициализации авторизации:", err);
+      // При ошибке очищаем состояние
+      const token = useCookie('access_token');
+      token.value = null;
+      user.value = null;
+      session.value = null;
     } finally {
       loading.value = false;
     }
@@ -146,7 +208,10 @@ export const useAuthStore = defineStore("auth", () => {
     loading.value = false;
     error.value = null;
     
-    // Очищаем данные администратора из localStorage
+    // Очищаем токен и данные из cookies/localStorage
+    const token = useCookie('access_token');
+    token.value = null;
+    
     if (typeof window !== 'undefined') {
       localStorage.removeItem('user');
     }

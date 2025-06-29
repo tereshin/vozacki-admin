@@ -1,14 +1,26 @@
 @import "tailwindcss";
 @import 'primeicons/primeicons.css';
-:root {
-    --p-primary-color: black;
-    --p-text-color: black;
-    --p-form-field-border-radius: var(--p-border-radius-lg);
-    --p-card-body-padding: 1rem;
-    --p-datatable-column-title-font-weight: 500;
-}
 
 @layer base {
+    :root {
+        --p-primary-color: black !important;
+        --p-text-color: black !important;
+        --p-form-field-border-radius: var(--p-border-radius-lg) !important;
+        --p-card-body-padding: 1rem !important;
+        --p-datatable-column-title-font-weight: 500 !important;
+        --p-primary-50: var(--p-gray-50) !important;
+        --p-primary-100: var(--p-gray-100) !important;
+        --p-primary-200: var(--p-gray-200) !important;
+        --p-primary-300: var(--p-gray-300) !important;
+        --p-primary-400: var(--p-gray-400) !important;
+        --p-primary-500: var(--p-gray-500) !important;
+        --p-primary-600: var(--p-gray-600) !important;
+        --p-primary-700: var(--p-gray-700) !important;
+        --p-primary-800: var(--p-gray-800) !important;
+        --p-primary-900: var(--p-gray-900) !important;
+        --p-primary-950: var(--p-gray-950) !important;
+        --p-highlight-background: var(--p-primary-100) !important;
+    }
     body {
         font-size: 14px;
         -webkit-font-smoothing: antialiased;
@@ -22,67 +34,83 @@
     .p-drawer {
         @apply !border-none !shadow-none;
     }
+
     .p-inputtext {
         @apply !text-sm;
     }
+
     .p-datatable-paginator-bottom {
         @apply !border-none;
     }
+
     .p-datatable {
         @apply flex flex-col gap-2;
     }
-    .p-datatable-header-cell {
+
+    .p-datatable-header-cell, .p-treetable-header-cell {
         @apply !border-t-0;
     }
-    .p-datatable-header-cell:first-child {
+
+    .p-datatable-header-cell:first-child, .p-treetable-header-cell:first-child {
         @apply !rounded-tl-lg !border-l-0;
     }
-    .p-datatable-header-cell:last-child {
+
+    .p-datatable-header-cell:last-child, .p-treetable-header-cell:last-child {
         @apply !rounded-tr-lg !border-r-0;
     }
-    .p-datatable-tbody > tr > td:first-child {
+
+    .p-datatable-tbody>tr>td:first-child, .p-treetable-tbody>tr>td:first-child {
         @apply !border-l-0;
     }
-    .p-datatable-tbody > tr > td:last-child {
+
+    .p-datatable-tbody>tr>td:last-child, .p-treetable-tbody>tr>td:last-child {
         @apply !border-r-0;
     }
-    .p-datatable-tbody > tr:last-child > td{
+
+    .p-datatable-tbody>tr:last-child>td, .p-treetable-tbody>tr:last-child>td {
         @apply !border-b-0;
     }
-    .p-datatable-tbody > tr:last-child > td:first-child {
+
+    .p-datatable-tbody>tr:last-child>td:first-child, .p-treetable-tbody>tr:last-child>td:first-child {
         @apply !rounded-bl-lg;
     }
-    .p-datatable-tbody > tr:last-child > td:last-child {
+
+    .p-datatable-tbody>tr:last-child>td:last-child, .p-treetable-tbody>tr:last-child>td:last-child {
         @apply !rounded-br-lg;
     }
-    .p-datatable-table-container {
+
+    .p-datatable-table-container, .p-treetable-table-container {
         @apply border border-gray-200 rounded-xl;
     }
-    .p-datatable.p-datatable-sm .p-datatable-tbody > tr > td {
+
+    .p-datatable.p-datatable-sm .p-datatable-tbody>tr>td, .p-treetable.p-treetable-sm .p-treetable-tbody>tr>td {
         @apply !px-3 !py-2;
     }
-    .p-datatable.p-datatable-sm .p-datatable-thead > tr > th {
+
+    .p-datatable.p-datatable-sm .p-datatable-thead>tr>th, .p-treetable.p-treetable-sm .p-treetable-thead>tr>th {
         @apply !px-3 !py-3.5;
     }
 
-    .p-treetable.p-treetable-sm .p-treetable-tbody > tr > td {
+    .p-treetable.p-treetable-sm .p-treetable-tbody>tr>td {
         @apply px-3 py-2;
     }
-    
-    .p-treetable.p-treetable-sm .p-treetable-thead > tr > th {
+
+    .p-treetable.p-treetable-sm .p-treetable-thead>tr>th {
         @apply px-3 py-3;
     }
-    
+
     :deep(.p-treetable-toggler) {
         @apply w-8 h-8 text-xs;
     }
-    
+
     :deep(.p-treetable-toggler-icon) {
         @apply text-xs;
     }
+
     .p-treetable-node-toggle-button {
         min-width: var(--p-treetable-node-toggle-button-size);
     }
+
     .p-select-option-label {
         @apply max-w-[340px] whitespace-normal;
     }

@@ -3,7 +3,7 @@
         <!-- Header -->
         <TheHeader :title="$t('categories.title')" :hideBreadcrumb="false" :items="breadcrumbItems">
             <template #header-actions>
-                <Button @click="openCategoryDialog()" :label="$t('categories.actions.create')" icon="pi pi-plus" 
+                <Button v-if="userData?.role?.code === 'administrator'" @click="openCategoryDialog()" :label="$t('categories.actions.create')" icon="pi pi-plus" 
                     size="small" />
             </template>
         </TheHeader>
@@ -100,6 +100,7 @@ const categoriesStore = useCategoriesStore()
 
 // App settings
 const { contentLanguageId, initSettings } = useAppSettings()
+const { userData } = useUserData();
 
 // ==================== REACTIVE STATE ====================
 // Filters

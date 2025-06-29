@@ -16,8 +16,6 @@ export default defineNuxtPlugin(() => {
     throw new Error('Supabase URL and key are required. Please check your environment variables.')
   }
   
-  console.log('Initializing Supabase client with URL:', supabaseUrl)
-  
   const supabase = createClient<Database>(supabaseUrl, supabaseKey)
 
   return {

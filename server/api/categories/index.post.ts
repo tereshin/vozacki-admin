@@ -51,7 +51,7 @@ export default defineEventHandler(async (event) => {
       if (contentUidError.code !== '23505') { // 23505 is duplicate key error
         throw createError({
           statusCode: 500,
-          statusMessage: 'Failed to create content uid',
+          statusMessage: contentUidError.message || 'Failed to create content uid',
           data: contentUidError
         })
       }
@@ -74,7 +74,7 @@ export default defineEventHandler(async (event) => {
     if (error) {
       throw createError({
         statusCode: 500,
-        statusMessage: 'Failed to create category',
+        statusMessage: error.message || 'Failed to create category',
         data: error
       })
     }
@@ -91,7 +91,7 @@ export default defineEventHandler(async (event) => {
     
     throw createError({
       statusCode: 500,
-      statusMessage: 'Internal server error'
+      statusMessage: error.message || 'Internal server error'
     })
   }
 }) 

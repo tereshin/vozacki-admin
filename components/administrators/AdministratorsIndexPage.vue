@@ -46,6 +46,7 @@
                 :empty-state-icon="'pi pi-users'"
                 :loading-text="$t('common.loading')"
                 :actions-column="actionsColumn"
+                :default-actions="defaultActions"
                 @page-change="onPageChange"
                 @sort="onSort"
             >
@@ -77,41 +78,6 @@
                     <span class="text-sm text-gray-600">
                         {{ formatDateLong(data.created_at) }}
                     </span>
-                </template>
-
-                <!-- Actions -->
-                <template #actions="{ data }">
-                    <div class="flex items-center gap-1">
-                        <Button 
-                            icon="pi pi-eye" 
-                            @click="viewAdministrator(data)"
-                            size="small"
-                            text
-                            rounded
-                            :title="$t('common.view')"
-                            class="text-gray-600 hover:text-gray-900"
-                        />
-                        <Button 
-                            v-if="canAccessAdministrators"
-                            icon="pi pi-pencil" 
-                            @click="editAdministrator(data)"
-                            size="small"
-                            text
-                            rounded
-                            :title="$t('common.edit')"
-                            class="text-blue-600 hover:text-blue-900"
-                        />
-                        <Button 
-                            v-if="canAccessAdministrators"
-                            icon="pi pi-trash" 
-                            @click="confirmDeleteAdministrator(data)"
-                            size="small"
-                            text
-                            rounded
-                            :title="$t('common.delete')"
-                            class="text-red-600 hover:text-red-900"
-                        />
-                    </div>
                 </template>
             </BaseDataTable>
         </div>
@@ -208,6 +174,31 @@
                             {{ formErrors.role_id }}
                         </small>
                     </div>
+
+                    <div>
+                        <label for="password" class="block text-sm font-medium text-gray-900 mb-2">
+                            {{ $t('administrators.password') }}
+                            <span v-if="!editingAdministrator" class="text-red-500">*</span>
+                            <span v-else class="text-sm font-normal text-gray-500">
+                                ({{ $t('administrators.password_optional_update') }})
+                            </span>
+                        </label>
+                        <InputText 
+                            id="password"
+                            v-model="form.password" 
+                            type="password"
+                            class="w-full"
+                            :class="{ 'p-invalid': formErrors.password }"
+                            :placeholder="editingAdministrator ? $t('administrators.password_placeholder_update') : $t('administrators.password_placeholder')"
+                            :required="!editingAdministrator"
+                        />
+                        <small v-if="formErrors.password" class="text-red-600 text-sm mt-1">
+                            {{ formErrors.password }}
+                        </small>
+                        <small v-if="editingAdministrator" class="text-gray-500 text-sm mt-1">
+                            {{ $t('administrators.password_update_hint') }}
+                        </small>
+                    </div>
                 </div>
 
                 <div class="flex justify-end gap-3 pt-4 border-t border-gray-200">
@@ -271,11 +262,11 @@
                 </div>
             </div>
 
-            <div class="flex justify-end pt-6 border-t border-gray-200">
+            <div class="flex justify-end pt-6 border-t mt-6 border-gray-200">
                 <Button 
                     :label="$t('common.close')"
                     @click="showViewDialog = false"
-                    text
+                    severity="secondary"
                 />
             </div>
         </Dialog>
@@ -384,12 +375,12 @@ const sortOrder = ref<'asc' | 'desc'>('asc')
 
 // Form state
 const form = ref<AdministratorRequest>({
-  id: crypto.randomUUID(),
   email: '',
   first_name: '',
   last_name: '',
   display_name: '',
-  role_id: ''
+  role_id: '',
+  password: ''
 })
 const formErrors = ref<Record<string, string>>({})
 
@@ -451,6 +442,36 @@ const actionsColumn = computed((): BaseDataTableActionsColumn => ({
   style: 'width: 150px'
 }))
 
+const getActionItems = (data: AdministratorResource) => {
+  const actions = []
+  if (canAccessAdministrators.value) {
+    actions.push({
+      label: t('common.edit'),
+      icon: 'pi pi-pencil',
+      command: () => editAdministrator(data)
+    })
+    actions.push({ separator: true })
+    actions.push({
+      label: t('common.delete'),
+      icon: 'pi pi-trash',
+      command: () => confirmDeleteAdministrator(data),
+      class: 'text-red-500'
+    })
+  }
+  return actions
+}
+
+const viewAdministrator = (administrator: AdministratorResource) => {
+  viewingAdministrator.value = administrator
+  showViewDialog.value = true
+}
+
+const defaultActions = {
+  primaryLabel: t('common.view'),
+  primaryAction: viewAdministrator,
+  menuItems: getActionItems
+}
+
 // Methods
 const loadAdministrators = async () => {
   try {
@@ -470,11 +491,11 @@ const loadAdministrators = async () => {
     }
     
     await administratorsStore.getAdministrators(params)
-  } catch (error) {
+  } catch (error: any) {
     toast.add({
       severity: 'error',
       summary: t('common.error'),
-      detail: t('administrators.error_loading'),
+      detail: error.message || t('administrators.error_loading'),
       life: 3000
     })
   }
@@ -506,12 +527,12 @@ const onFilterReset = () => {
 
 const resetForm = () => {
   form.value = {
-    id: crypto.randomUUID(),
     email: '',
     first_name: '',
     last_name: '',
     display_name: '',
-    role_id: ''
+    role_id: '',
+    password: ''
   }
   formErrors.value = {}
 }
@@ -525,6 +546,12 @@ const closeDialog = () => {
 const submitForm = async () => {
   formErrors.value = {}
 
+  // Валидация пароля при создании
+  if (!editingAdministrator.value && !form.value.password?.trim()) {
+    formErrors.value.password = t('login.passwordRequired')
+    return
+  }
+
   try {
     if (editingAdministrator.value) {
       const updateData: AdministratorUpdateRequest = {
@@ -533,6 +560,11 @@ const submitForm = async () => {
         last_name: form.value.last_name || null,
         display_name: form.value.display_name || null,
         role_id: form.value.role_id || null
+      }
+      
+      // Добавляем пароль только если он был введен
+      if (form.value.password?.trim()) {
+        updateData.password = form.value.password
       }
       
       await administratorsStore.updateAdministrator(editingAdministrator.value.id, updateData)
@@ -563,18 +595,11 @@ const submitForm = async () => {
       toast.add({
         severity: 'error',
         summary: t('common.error'),
-        detail: editingAdministrator.value 
-          ? t('administrators.error_updating')
-          : t('administrators.error_creating'),
+        detail: error.message || t('administrators.error_creating'),
         life: 3000
       })
     }
   }
-}
-
-const viewAdministrator = (administrator: AdministratorResource) => {
-  viewingAdministrator.value = administrator
-  showViewDialog.value = true
 }
 
 const editAdministrator = (administrator: AdministratorResource) => {
@@ -585,7 +610,8 @@ const editAdministrator = (administrator: AdministratorResource) => {
     first_name: administrator.first_name || '',
     last_name: administrator.last_name || '',
     display_name: administrator.display_name || '',
-    role_id: administrator.role_id || ''
+    role_id: administrator.role_id || '',
+    password: '' // Пароль всегда пустой при редактировании
   }
   showCreateDialog.value = true
 }
@@ -611,11 +637,11 @@ const deleteAdministrator = async () => {
     showDeleteDialog.value = false
     deletingAdministrator.value = null
     loadAdministrators()
-  } catch (error) {
+  } catch (error: any) {
     toast.add({
       severity: 'error',
       summary: t('common.error'),
-      detail: t('administrators.error_deleting'),
+      detail: error.message || t('administrators.error_deleting'),
       life: 3000
     })
   }
@@ -632,12 +658,12 @@ onMounted(async () => {
     await rolesStore.getAllRoles()
     // Затем загружаем администраторов
     await loadAdministrators()
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error initializing administrators page:', error)
     toast.add({
       severity: 'error',
       summary: t('common.error'),
-      detail: t('administrators.error_loading'),
+      detail: error.message || t('administrators.error_loading'),
       life: 3000
     })
   }

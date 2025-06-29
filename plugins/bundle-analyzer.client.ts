@@ -63,23 +63,7 @@ export default defineNuxtPlugin(() => {
     // Логирование информации о бандлах
     const logBundleInfo = () => {
       if (process.dev) {
-        console.group(`📦 Bundle Analytics - ${analytics.currentSection}`);
-        console.log(`Total chunks loaded: ${analytics.loadedChunks.length}`);
-        console.log(`Total size: ${(analytics.totalSize / 1024).toFixed(2)} KB`);
-        
-        const sectionChunks = analytics.loadedChunks.filter(chunk => 
-          chunk.name.includes(analytics.currentSection) || 
-          chunk.name.includes(`${analytics.currentSection}-section`)
-        );
-        
-        if (sectionChunks.length > 0) {
-          console.log(`Section-specific chunks:`);
-          sectionChunks.forEach(chunk => {
-            console.log(`  - ${chunk.name}: ${(chunk.size / 1024).toFixed(2)} KB`);
-          });
-        }
-        
-        console.groupEnd();
+        // Логирование отключено
       }
     };
 
@@ -100,7 +84,6 @@ export default defineNuxtPlugin(() => {
     // Экспорт аналитики в глобальную область для отладки
     if (process.dev) {
       (window as any).__BUNDLE_ANALYTICS__ = analytics;
-      console.log('Bundle analytics available at window.__BUNDLE_ANALYTICS__');
     }
 
     return {

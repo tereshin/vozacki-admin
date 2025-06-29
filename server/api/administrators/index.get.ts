@@ -1,5 +1,10 @@
+import { requireRole } from '~/server/utils/auth'
+
 export default defineEventHandler(async (event) => {
   try {
+    // Проверяем что пользователь имеет роль администратора
+    requireRole(event, ['administrator'])
+    
     const query = getQuery(event)
     const { 
       page = 1, 

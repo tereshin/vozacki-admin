@@ -42,13 +42,13 @@ export default defineEventHandler(async (event) => {
       if (fetchError.code === 'PGRST116') {
         throw createError({
           statusCode: 404,
-          statusMessage: 'Topic not found'
+          statusMessage: fetchError.message || 'Topic not found'
         })
       }
       
       throw createError({
         statusCode: 500,
-        statusMessage: 'Failed to fetch topic',
+        statusMessage: fetchError.message || 'Failed to fetch topic',
         data: fetchError
       })
     }
@@ -68,7 +68,7 @@ export default defineEventHandler(async (event) => {
     if (error) {
       throw createError({
         statusCode: 500,
-        statusMessage: 'Failed to update topic',
+        statusMessage: error.message || 'Failed to update topic',
         data: error
       })
     }
@@ -85,7 +85,7 @@ export default defineEventHandler(async (event) => {
     
     throw createError({
       statusCode: 500,
-      statusMessage: 'Internal server error'
+      statusMessage: error.message || 'Internal server error'
     })
   }
 }) 

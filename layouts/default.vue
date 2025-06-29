@@ -3,6 +3,9 @@
     <!-- Sidebar -->
     <TheSidebarMenu />
 
+    <!-- Toast notifications -->
+    <Toast />
+
     <!-- Main Content -->
     <div class="transition-all duration-300 ease-in-out  min-h-screen"
       :class="!generalStore.isMobile && generalStore.isMenuOpen ? 'lg:ml-64' : ''">

@@ -14,8 +14,6 @@ export const useDashboardApi = () => {
       if (!supabase) {
         throw new Error('Supabase client is not initialized')
       }
-
-      console.log('Fetching dashboard stats for language ID:', languageId)
       
       // Параллельное выполнение всех запросов для получения статистики
       const [articlesResult, topicsResult, testsResult, administratorsResult] = await Promise.all([
@@ -65,7 +63,6 @@ export const useDashboardApi = () => {
         administrators_count: administratorsResult.count || 0
       }
       
-      console.log('Dashboard stats result:', stats)
       return stats
       
     } catch (error) {

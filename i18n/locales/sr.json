@@ -3,13 +3,16 @@
     "title": "Uloguj se u sistem",
     "emailLabel": "Email adresa",
     "emailPlaceholder": "Unesite email",
-    "submitButton": "Dobij link za ulogovanje",
-    "submitting": "Slanje...",
+    "passwordLabel": "Lozinka",
+    "passwordPlaceholder": "Unesite lozinku",
+    "submitButton": "Uloguj se",
+    "submitting": "Ulogovanje...",
     "errorTitle": "Greška u autorizaciji",
-    "successTitle": "Link je poslat",
-    "successMessage": "Link za ulogovanje je poslat na vaš email. Proverite poštu i kliknite na link.",
+    "successTitle": "Uspešno ulogovanje",
+    "successMessage": "Uspešno ste se ulogovali u sistem",
     "invalidEmail": "Unesite ispravnu email adresu",
     "emailRequired": "Unesite email adresu",
+    "passwordRequired": "Unesite lozinku",
     "unexpectedError": "Došlo je do neočekivane greške"
   },
   "articles": {
@@ -132,6 +135,11 @@
     "full_name": "Puno ime",
     "display_name": "Prikazano ime",
     "email": "Email",
+    "password": "Lozinka",
+    "password_placeholder": "Unesite lozinku",
+    "password_placeholder_update": "Unesite novu lozinku (ostavite prazno da zadržite trenutnu)",
+    "password_optional_update": "opciono pri ažuriranju",
+    "password_update_hint": "Ostavite polje prazno ako ne želite da menjate lozinku",
     "role": "Uloga",
     "select_role": "Izaberi ulogu",
     "created_at": "Datum kreiranja",
@@ -263,7 +271,27 @@
 
   "sidebar": {
     "contentLanguage": "Jezik sadržaja",
-    "selectLanguage": "Izaberi jezik"
+    "selectLanguage": "Izaberi jezik",
+    "menu": {
+      "groups": {
+        "dashboard": "Kontrolna tabla",
+        "knowledgeBase": "Baza znanja",
+        "materials": "Materijali",
+        "users": "Korisnici"
+      },
+      "items": {
+        "dashboard": "Kontrolna tabla",
+        "articles": "Članci",
+        "categories": "Kategorije",
+        "topics": "Teme",
+        "administrators": "Administratori",
+        "roles": "Uloge"
+      }
+    },
+    "user": {
+      "defaultName": "Korisnik",
+      "defaultRole": "Admin"
+    }
   },
 
   "topics": {
@@ -418,6 +446,8 @@
 
   "dashboard": {
     "title": "Контролна табла",
+    "greeting": "Здраво, {name}! 👋🏻",
+    "greetingDefault": "Здраво, корисниче! 👋🏻",
     "stats": {
       "articles": "Чланци",
       "topics": "Теме",

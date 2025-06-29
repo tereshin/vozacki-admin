@@ -37,7 +37,7 @@ export default defineEventHandler(async (event) => {
     if (uidError) {
       throw createError({
         statusCode: 500,
-        statusMessage: 'Failed to generate UID',
+        statusMessage: uidError.message || 'Failed to generate UID',
         data: uidError
       })
     }
@@ -55,7 +55,7 @@ export default defineEventHandler(async (event) => {
       if (contentUidError.code !== '23505') { // 23505 is duplicate key error
         throw createError({
           statusCode: 500,
-          statusMessage: 'Failed to create content uid',
+          statusMessage: contentUidError.message || 'Failed to create content uid',
           data: contentUidError
         })
       }
@@ -78,7 +78,7 @@ export default defineEventHandler(async (event) => {
     if (error) {
       throw createError({
         statusCode: 500,
-        statusMessage: 'Failed to create test',
+        statusMessage: error.message || 'Failed to create test',
         data: error
       })
     }
@@ -95,7 +95,7 @@ export default defineEventHandler(async (event) => {
     
     throw createError({
       statusCode: 500,
-      statusMessage: 'Internal server error'
+      statusMessage: error.message || 'Internal server error'
     })
   }
 }) 

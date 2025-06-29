@@ -26,13 +26,13 @@ export default defineEventHandler(async (event) => {
       if (fetchError.code === 'PGRST116') {
         throw createError({
           statusCode: 404,
-          statusMessage: 'Topic not found'
+          statusMessage: fetchError.message || 'Topic not found'
         })
       }
       
       throw createError({
         statusCode: 500,
-        statusMessage: 'Failed to fetch topic',
+        statusMessage: fetchError.message || 'Failed to fetch topic',
         data: fetchError
       })
     }
@@ -46,7 +46,7 @@ export default defineEventHandler(async (event) => {
     if (testsError) {
       throw createError({
         statusCode: 500,
-        statusMessage: 'Failed to check tests',
+        statusMessage: testsError.message || 'Failed to check tests',
         data: testsError
       })
     }
@@ -67,7 +67,7 @@ export default defineEventHandler(async (event) => {
     if (error) {
       throw createError({
         statusCode: 500,
-        statusMessage: 'Failed to delete topic',
+        statusMessage: error.message || 'Failed to delete topic',
         data: error
       })
     }
@@ -96,7 +96,7 @@ export default defineEventHandler(async (event) => {
     
     throw createError({
       statusCode: 500,
-      statusMessage: 'Internal server error'
+      statusMessage: error.message || 'Internal server error'
     })
   }
 }) 

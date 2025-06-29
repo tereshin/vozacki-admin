@@ -31,13 +31,11 @@ export const useIndexedDB = () => {
       const request = indexedDB.open(DB_NAME, DB_VERSION)
 
       request.onerror = () => {
-        console.error('IndexedDB initialization failed:', request.error)
         reject(request.error)
       }
 
       request.onsuccess = () => {
         db = request.result
-        console.log('IndexedDB initialized successfully')
         resolve(db)
       }
 
@@ -60,8 +58,6 @@ export const useIndexedDB = () => {
         if (!database.objectStoreNames.contains(CACHE_META_STORE)) {
           database.createObjectStore(CACHE_META_STORE, { keyPath: 'id' })
         }
-
-        console.log('IndexedDB stores created/updated')
       }
     })
   }
@@ -84,12 +80,10 @@ export const useIndexedDB = () => {
       }
 
       transaction.oncomplete = () => {
-        console.log(`Saved ${languages.length} languages to IndexedDB`)
         resolve()
       }
 
       transaction.onerror = () => {
-        console.error('Error saving languages:', transaction.error)
         reject(transaction.error)
       }
     })
@@ -113,12 +107,10 @@ export const useIndexedDB = () => {
       }
 
       transaction.oncomplete = () => {
-        console.log(`Saved ${roles.length} roles to IndexedDB`)
         resolve()
       }
 
       transaction.onerror = () => {
-        console.error('Error saving roles:', transaction.error)
         reject(transaction.error)
       }
     })
@@ -137,7 +129,6 @@ export const useIndexedDB = () => {
       }
 
       request.onerror = () => {
-        console.error('Error getting languages:', request.error)
         reject(request.error)
       }
     })
@@ -156,7 +147,6 @@ export const useIndexedDB = () => {
       }
 
       request.onerror = () => {
-        console.error('Error getting roles:', request.error)
         reject(request.error)
       }
     })
@@ -168,7 +158,6 @@ export const useIndexedDB = () => {
       const allLanguages = await getLanguages()
       return allLanguages.filter(lang => lang.is_active === true)
     } catch (error) {
-      console.error('Error getting active languages:', error)
       throw error
     }
   }
@@ -189,12 +178,10 @@ export const useIndexedDB = () => {
       const request = store.put(meta)
 
       request.onsuccess = () => {
-        console.log('Cache metadata saved')
         resolve()
       }
 
       request.onerror = () => {
-        console.error('Error saving cache metadata:', request.error)
         reject(request.error)
       }
     })
@@ -217,7 +204,6 @@ export const useIndexedDB = () => {
       }
 
       request.onerror = () => {
-        console.error('Error getting cache metadata:', request.error)
         reject(request.error)
       }
     })
@@ -234,12 +220,10 @@ export const useIndexedDB = () => {
       transaction.objectStore(CACHE_META_STORE).clear()
 
       transaction.oncomplete = () => {
-        console.log('IndexedDB cache cleared')
         resolve()
       }
 
       transaction.onerror = () => {
-        console.error('Error clearing cache:', transaction.error)
         reject(transaction.error)
       }
     })

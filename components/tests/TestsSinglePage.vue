@@ -4,7 +4,7 @@
         <TheHeader :title="$t('tests.tree.totalQuestions')" :items="breadcrumbItems">
             <template #header-actions>
                 <div class="flex gap-2">
-                    <Button :label="$t('tests.single.addQuestion')" icon="pi pi-plus" @click="openCreateQuestionDialog"
+                    <Button v-if="userData?.role?.code === 'administrator'" :label="$t('tests.single.addQuestion')" icon="pi pi-plus" @click="openCreateQuestionDialog"
                         size="small" />
                     <Button :label="$t('tests.single.editTest')" icon="pi pi-pencil" @click="editTest" size="small"
                         severity="secondary" />
@@ -111,6 +111,7 @@ const generalStore = useGeneralStore()
 
 // 7. Composables
 const { t } = useI18n()
+const { userData } = useUserData();
 const confirm = useConfirm()
 const toast = useToast()
 const { contentLanguageId, initSettings } = useAppSettings()

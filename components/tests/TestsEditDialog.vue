@@ -159,7 +159,6 @@ const getActualLanguageId = async (codeOrId: string): Promise<string> => {
     if (codeOrId.includes('-') || codeOrId.length <= 2) {
         const language = languages.value.find(lang => lang.code === codeOrId)
         if (language) {
-            console.log(`Converted language code ${codeOrId} to ID ${language.id}`)
             return language.id
         }
     }
@@ -168,17 +167,6 @@ const getActualLanguageId = async (codeOrId: string): Promise<string> => {
     return codeOrId
 }
 
-const resetForm = () => {
-    formData.value = {
-        title: '',
-        description: '',
-        language_id: '',
-        topic_uid: ''
-    }
-    errors.value = {}
-    // Не сбрасываем languages и topics здесь, так как они кэшируются
-    console.log('Form reset')
-}
 
 const loadTestData = async () => {
     if (props.isCreateMode) {
@@ -190,7 +178,6 @@ const loadTestData = async () => {
             language_id: languageId,
             topic_uid: '' // Будет установлено в loadTopicsData
         }
-        console.log('Initialized create mode with language_id:', languageId)
         return
     }
 
@@ -206,13 +193,11 @@ const loadTestData = async () => {
         language_id: props.test.language_id || '',
         topic_uid: props.test.topic_uid || ''
     }
-    console.log('Loaded test data for edit mode:', formData.value)
 }
 
 const loadLanguagesData = async () => {
     try {
         languages.value = await loadCachedLanguages()
-        console.log('Loaded languages:', languages.value.length)
     } catch (error) {
         console.error('Error loading languages:', error)
         languages.value = []
@@ -246,7 +231,6 @@ const loadTopicsData = async () => {
             }
         }
         
-        console.log('Loaded topics:', topics.value.length, 'for language:', languageId)
     } catch (error) {
         console.error('Error loading topics:', error)
         topics.value = []
@@ -347,13 +331,12 @@ const saveTest = async () => {
 
         emit('saved')
         closeDialog()
-    } catch (error) {
+    } catch (error: any) {
         console.error('Error saving test:', error)
-        const errorDetail = props.isCreateMode ? t('tests.single.testCreateError') : t('tests.single.testUpdateError')
         toast.add({
             severity: 'error',
             summary: t('common.error'),
-            detail: errorDetail,
+            detail: error.message || t('tests.single.testUpdateError'),
             life: 3000
         })
     } finally {
@@ -362,7 +345,6 @@ const saveTest = async () => {
 }
 
 const closeDialog = () => {
-    console.log('Closing dialog')
     dialogVisible.value = false
 }
 
@@ -375,12 +357,9 @@ const onDialogHide = () => {
         topic_uid: ''
     }
     errors.value = {}
-    console.log('Dialog hidden, form data reset')
 }
 
 const initializeDialog = async () => {
-    console.log('Initializing dialog, createMode:', props.isCreateMode, 'test:', props.test)
-    
     // Сначала загружаем языки
     await loadLanguagesData()
     
@@ -395,10 +374,7 @@ const initializeDialog = async () => {
 // Watchers
 watch(() => props.visible, async (newValue) => {
     if (newValue) {
-        console.log('Dialog opened, initializing...')
         await initializeDialog()
-    } else {
-        console.log('Dialog closed')
     }
 })
 
@@ -419,7 +395,6 @@ watch(() => props.topic, (newTopic) => {
 
 // Инициализация при монтировании компонента
 onMounted(async () => {
-    console.log('TestsEditDialog mounted')
     // Предварительно загружаем языки для кеша
     await loadLanguagesData()
 })

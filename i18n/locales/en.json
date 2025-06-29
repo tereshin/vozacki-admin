@@ -3,13 +3,16 @@
     "title": "Log in to system",
     "emailLabel": "Email address",
     "emailPlaceholder": "Enter your email",
-    "submitButton": "Get login link",
-    "submitting": "Sending...",
+    "passwordLabel": "Password",
+    "passwordPlaceholder": "Enter your password",
+    "submitButton": "Sign In",
+    "submitting": "Signing in...",
     "errorTitle": "Authorization error",
-    "successTitle": "Link sent",
-    "successMessage": "Login link has been sent to your email. Check your inbox and click the link.",
+    "successTitle": "Successfully logged in",
+    "successMessage": "You have successfully logged into the system",
     "invalidEmail": "Enter a valid email address",
     "emailRequired": "Enter email address",
+    "passwordRequired": "Enter password",
     "unexpectedError": "An unexpected error occurred"
   },
 
@@ -276,6 +279,11 @@
     "full_name": "Full Name",
     "display_name": "Display Name",
     "email": "Email",
+    "password": "Password",
+    "password_placeholder": "Enter password",
+    "password_placeholder_update": "Enter new password (leave empty to keep current)",
+    "password_optional_update": "optional when updating",
+    "password_update_hint": "Leave field empty if you don't want to change the password",
     "role": "Role",
     "select_role": "Select role",
     "created_at": "Created At",
@@ -398,7 +406,27 @@
 
   "sidebar": {
     "contentLanguage": "Content Language",
-    "selectLanguage": "Select language"
+    "selectLanguage": "Select language",
+    "menu": {
+      "groups": {
+        "dashboard": "Dashboard",
+        "knowledgeBase": "Knowledge base",
+        "materials": "Materials",
+        "users": "Users"
+      },
+      "items": {
+        "dashboard": "Dashboard",
+        "articles": "Articles",
+        "categories": "Categories",
+        "topics": "Topics",
+        "administrators": "Administrators",
+        "roles": "Roles"
+      }
+    },
+    "user": {
+      "defaultName": "User",
+      "defaultRole": "Admin"
+    }
   },
 
   "languages": {
@@ -422,6 +450,8 @@
 
   "dashboard": {
     "title": "Dashboard",
+    "greeting": "Hello, {name}! 👋🏻",
+    "greetingDefault": "Hello, User! 👋🏻",
     "stats": {
       "articles": "Articles",
       "topics": "Topics",

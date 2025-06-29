@@ -32,7 +32,6 @@ const createCacheManager = () => {
       const savedTime = await getCacheMeta()
       if (savedTime) {
         lastCacheUpdate.value = savedTime
-        console.log('Loaded last cache update time:', savedTime)
       }
     } catch (error) {
       console.warn('Failed to load last update time:', error)
@@ -78,17 +77,11 @@ const createCacheManager = () => {
       
       if (hasMissingData) {
         // Есть недостающие данные - селективное обновление
-        console.log('Missing cache data detected:', { 
-          hasLanguages: cacheStatus.hasLanguages, 
-          hasRoles: cacheStatus.hasRoles 
-        })
         await updateCacheSelective(cacheStatus)
       } else if (needsUpdate) {
         // Данные есть, но кэш устарел - полное обновление
-        console.log('Cache expired, performing full update')
         await updateCache()
       } else {
-        console.log('Cache is up to date, skipping server requests')
         // Устанавливаем время последнего обновления, если данные есть но время не установлено
         if (!lastCacheUpdate.value) {
           lastCacheUpdate.value = new Date()
@@ -97,7 +90,6 @@ const createCacheManager = () => {
       }
       
       isInitialized.value = true
-      console.log('Cache manager initialized successfully')
     } catch (error) {
       console.error('Failed to initialize cache manager:', error)
       throw error
@@ -108,8 +100,7 @@ const createCacheManager = () => {
 
   const updateCache = async (): Promise<void> => {
     try {
-      console.log('Updating cache from server...')
-      
+    
       // Загружаем все языки
       const languagesResponse = await languagesApi.getLanguages({ per_page: 1000 })
       const languages = languagesResponse.data.collection
@@ -125,7 +116,6 @@ const createCacheManager = () => {
       
       lastCacheUpdate.value = new Date()
       await saveCacheMeta(lastCacheUpdate.value)
-      console.log('Cache updated successfully')
     } catch (error) {
       console.error('Failed to update cache:', error)
       throw error
@@ -135,12 +125,10 @@ const createCacheManager = () => {
   // Селективное обновление кэша - обновляет только недостающие данные
   const updateCacheSelective = async (cacheStatus: { hasLanguages: boolean; hasRoles: boolean }): Promise<void> => {
     try {
-      console.log('Selective cache update...')
       const promises: Promise<any>[] = []
       
       // Загружаем языки только если их нет в кэше
       if (!cacheStatus.hasLanguages) {
-        console.log('Loading languages from server...')
         promises.push(
           languagesApi.getLanguages({ per_page: 1000 })
             .then(response => saveLanguages(response.data.collection))
@@ -149,7 +137,6 @@ const createCacheManager = () => {
       
       // Загружаем роли только если их нет в кэше
       if (!cacheStatus.hasRoles) {
-        console.log('Loading roles from server...')
         promises.push(
           rolesApi.getAllRoles()
             .then(roles => saveRoles(roles))
@@ -161,7 +148,6 @@ const createCacheManager = () => {
         await Promise.all(promises)
         lastCacheUpdate.value = new Date()
         await saveCacheMeta(lastCacheUpdate.value)
-        console.log('Selective cache update completed')
       }
     } catch (error) {
       console.error('Failed to update cache selectively:', error)
@@ -215,7 +201,6 @@ const createCacheManager = () => {
       await clearIndexedDBCache()
       lastCacheUpdate.value = null
       isInitialized.value = false
-      console.log('Cache cleared successfully')
     } catch (error) {
       console.error('Failed to clear cache:', error)
       throw error

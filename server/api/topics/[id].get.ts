@@ -12,7 +12,7 @@ export default defineEventHandler(async (event) => {
       throw createError({
         statusCode: 400,
         statusMessage: 'Topic ID is required'
-      })
+      })    
     }
 
     const { data, error } = await serverSupabaseClient
@@ -25,13 +25,13 @@ export default defineEventHandler(async (event) => {
       if (error.code === 'PGRST116') {
         throw createError({
           statusCode: 404,
-          statusMessage: 'Topic not found'
+          statusMessage: error.message || 'Topic not found'
         })
       }
       
       throw createError({
         statusCode: 500,
-        statusMessage: 'Failed to fetch topic',
+        statusMessage: error.message || 'Failed to fetch topic',
         data: error
       })
     }
@@ -48,7 +48,7 @@ export default defineEventHandler(async (event) => {
     
     throw createError({
       statusCode: 500,
-      statusMessage: 'Internal server error'
+      statusMessage: error.message || 'Internal server error'
     })
   }
 }) 

@@ -8,7 +8,7 @@ export default defineEventHandler(async (event) => {
     if (error) {
       throw createError({
         statusCode: 500,
-        statusMessage: 'Error fetching all roles',
+        statusMessage: error.message || 'Error fetching all roles',
         data: error
       })
     }
@@ -23,7 +23,7 @@ export default defineEventHandler(async (event) => {
     console.error('Server error:', error)
     throw createError({
       statusCode: 500,
-      statusMessage: 'Internal server error'
+      statusMessage: error.message || 'Internal server error'
     })
   }
 }) 

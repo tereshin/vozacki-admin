@@ -25,13 +25,13 @@ export default defineEventHandler(async (event) => {
       if (error.code === 'PGRST116') {
         throw createError({
           statusCode: 404,
-          statusMessage: 'Test not found'
+          statusMessage: error.message || 'Test not found'
         })
       }
       
       throw createError({
         statusCode: 500,
-        statusMessage: 'Failed to fetch test',
+        statusMessage: error.message || 'Failed to fetch test',
         data: error
       })
     }
@@ -48,7 +48,7 @@ export default defineEventHandler(async (event) => {
     
     throw createError({
       statusCode: 500,
-      statusMessage: 'Internal server error'
+      statusMessage: error.message || 'Internal server error'
     })
   }
 })

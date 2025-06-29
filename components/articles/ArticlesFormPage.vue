@@ -90,9 +90,10 @@
                   <label for="category_uid" class="block text-sm font-medium text-gray-900 mb-2">
                     {{ $t('articles.form.category') }}
                   </label>
-                  <Dropdown id="category_uid" filter v-model="form.category_uid" :options="categories" option-label="name"
-                    option-value="uid" class="w-full" :class="{ 'p-invalid': formErrors.category_uid }"
-                    :placeholder="$t('articles.form.selectCategory')" :loading="categoriesLoading" :show-clear="true" />
+                  <Dropdown id="category_uid" filter v-model="form.category_uid" :options="categories"
+                    option-label="name" option-value="uid" class="w-full"
+                    :class="{ 'p-invalid': formErrors.category_uid }" :placeholder="$t('articles.form.selectCategory')"
+                    :loading="categoriesLoading" :show-clear="true" />
                   <small v-if="formErrors.category_uid" class="text-red-600 text-sm mt-1">
                     {{ formErrors.category_uid }}
                   </small>
@@ -260,12 +261,12 @@ const loadInitialData = async () => {
 
     // Load categories for selected language
     await loadCategoriesForLanguage(form.value.language_id)
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error loading initial data:', error)
     toast.add({
       severity: 'error',
       summary: t('common.error'),
-      detail: 'Failed to load initial data',
+      detail: error.message || 'Failed to load initial data',
       life: 5000
     })
   } finally {
@@ -281,17 +282,17 @@ const loadCategoriesForLanguage = async (languageId: string | null) => {
 
   try {
     categoriesLoading.value = true
-    const categoriesResponse = await categoriesStore.getCategories({ 
+    const categoriesResponse = await categoriesStore.getCategories({
       per_page: 100,
-      language_id: languageId 
+      language_id: languageId
     })
     categories.value = categoriesResponse.data.collection
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error loading categories:', error)
     toast.add({
       severity: 'error',
       summary: t('common.error'),
-      detail: 'Failed to load categories',
+      detail: error.message || 'Failed to load categories',
       life: 5000
     })
   } finally {
@@ -314,12 +315,12 @@ const loadArticle = async (id: string) => {
     }
 
     formStatus.value = article.published_at ? 'published' : 'draft'
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error loading article:', error)
     toast.add({
       severity: 'error',
       summary: t('common.error'),
-      detail: 'Failed to load article',
+      detail: error.message || 'Failed to load article',
       life: 5000
     })
   }
@@ -409,7 +410,7 @@ const handleSubmit = async () => {
         detail: t('articles.messages.created'),
         life: 3000
       })
-      
+
       // Redirect to edit page after successful creation
       await navigateTo(`/articles/${form.value.id}`)
     }
@@ -419,14 +420,14 @@ const handleSubmit = async () => {
 
     if (error.details) {
       formErrors.value = error.details
-    } else {
-      toast.add({
-        severity: 'error',
-        summary: t('common.error'),
-        detail: error.message || 'Failed to save article',
-        life: 5000
-      })
     }
+    toast.add({
+      severity: 'error',
+      summary: t('common.error'),
+      detail: error.message || t('articles.messages.error'),
+      life: 5000
+    })
+
   } finally {
     generalStore.isLoading = false
   }
@@ -452,7 +453,7 @@ watch(() => form.value.language_id, async (newLanguageId, oldLanguageId) => {
   if (newLanguageId !== oldLanguageId && oldLanguageId !== undefined) {
     // Clear current category selection since it might not exist in new language
     form.value.category_uid = null
-    
+
     // Load categories for new language
     await loadCategoriesForLanguage(newLanguageId)
   }

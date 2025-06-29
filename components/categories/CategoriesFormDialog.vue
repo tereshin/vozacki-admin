@@ -1,29 +1,16 @@
 <template>
-    <Dialog 
-        :visible="visible" 
-        @update:visible="$emit('update:visible', $event)"
-        :header="isEditMode ? $t('categories.form.editTitle') : $t('categories.form.createTitle')"
-        :modal="true"
-        :style="{ width: '600px' }"
-        :closable="!loading"
-        :draggable="false"
-        :dismissableMask="false"
-    >
+    <Dialog :visible="visible" @update:visible="$emit('update:visible', $event)"
+        :header="isEditMode ? $t('categories.form.editTitle') : $t('categories.form.createTitle')" :modal="true"
+        :style="{ width: '600px' }" :closable="!loading" :draggable="false" :dismissableMask="false">
         <form @submit.prevent="handleSubmit" class="space-y-6">
             <!-- Name -->
             <div>
                 <label for="category-name" class="block text-sm font-medium text-gray-900 mb-2">
                     {{ $t('categories.form.name') }} <span class="text-red-500">*</span>
                 </label>
-                <InputText 
-                    id="category-name" 
-                    v-model="form.name" 
-                    class="w-full" 
-                    :class="{ 'p-invalid': formErrors.name }"
-                    :placeholder="$t('categories.form.namePlaceholder')" 
-                    required 
-                    :disabled="loading"
-                />
+                <InputText id="category-name" v-model="form.name" class="w-full"
+                    :class="{ 'p-invalid': formErrors.name }" :placeholder="$t('categories.form.namePlaceholder')"
+                    required :disabled="loading" />
                 <small v-if="formErrors.name" class="text-red-600 text-sm mt-1">
                     {{ formErrors.name }}
                 </small>
@@ -34,15 +21,9 @@
                 <label for="category-slug" class="block text-sm font-medium text-gray-900 mb-2">
                     {{ $t('categories.form.slug') }} <span class="text-red-500">*</span>
                 </label>
-                <InputText 
-                    id="category-slug" 
-                    v-model="form.slug" 
-                    class="w-full" 
-                    :class="{ 'p-invalid': formErrors.slug }"
-                    :placeholder="$t('categories.form.slugPlaceholder')" 
-                    required 
-                    :disabled="loading"
-                />
+                <InputText id="category-slug" v-model="form.slug" class="w-full"
+                    :class="{ 'p-invalid': formErrors.slug }" :placeholder="$t('categories.form.slugPlaceholder')"
+                    required :disabled="loading" />
                 <small v-if="formErrors.slug" class="text-red-600 text-sm mt-1">
                     {{ formErrors.slug }}
                 </small>
@@ -53,15 +34,9 @@
                 <label for="category-description" class="block text-sm font-medium text-gray-900 mb-2">
                     {{ $t('categories.form.description') }}
                 </label>
-                <Textarea 
-                    id="category-description" 
-                    v-model="form.description" 
-                    class="w-full" 
+                <Textarea id="category-description" v-model="form.description" class="w-full"
                     :class="{ 'p-invalid': formErrors.description }"
-                    :placeholder="$t('categories.form.descriptionPlaceholder')" 
-                    rows="3"
-                    :disabled="loading"
-                />
+                    :placeholder="$t('categories.form.descriptionPlaceholder')" rows="3" :disabled="loading" />
                 <small v-if="formErrors.description" class="text-red-600 text-sm mt-1">
                     {{ formErrors.description }}
                 </small>
@@ -75,20 +50,11 @@
                         ({{ $t('categories.form.languageEditNotice') }})
                     </span>
                 </label>
-                <Dropdown 
-                    id="category-language" 
-                    v-model="form.language_id" 
-                    :options="languages" 
-                    option-label="name"
-                    option-value="id" 
-                    class="w-full" 
+                <Dropdown id="category-language" v-model="form.language_id" :options="languages" option-label="name"
+                    option-value="id" class="w-full"
                     :class="{ 'p-invalid': formErrors.language_id, 'p-disabled': isEditMode }"
-                    :placeholder="$t('categories.form.selectLanguage')" 
-                    :loading="languagesLoading" 
-                    required 
-                    :disabled="loading || isEditMode"
-                    @change="onLanguageChange"
-                />
+                    :placeholder="$t('categories.form.selectLanguage')" :loading="languagesLoading" required
+                    :disabled="loading || isEditMode" @change="onLanguageChange" />
                 <small v-if="formErrors.language_id" class="text-red-600 text-sm mt-1">
                     {{ formErrors.language_id }}
                 </small>
@@ -102,20 +68,11 @@
                 <label for="category-parent" class="block text-sm font-medium text-gray-900 mb-2">
                     {{ $t('categories.form.parent') }}
                 </label>
-                <Dropdown 
-                    id="category-parent" 
-                    v-model="form.parent_category_uid" 
-                    :options="availableParentCategories" 
-                    option-label="name"
-                    option-value="uid" 
-                    class="w-full" 
+                <Dropdown id="category-parent" v-model="form.parent_category_uid" :options="availableParentCategories"
+                    option-label="name" option-value="uid" class="w-full"
                     :class="{ 'p-invalid': formErrors.parent_category_uid }"
-                    :placeholder="$t('categories.form.selectParent')" 
-                    :loading="categoriesLoading" 
-                    :show-clear="true"
-                    filter
-                    :disabled="loading || !form.language_id"
-                />
+                    :placeholder="$t('categories.form.selectParent')" :loading="categoriesLoading" :show-clear="true"
+                    filter :disabled="loading || !form.language_id" />
                 <small v-if="formErrors.parent_category_uid" class="text-red-600 text-sm mt-1">
                     {{ formErrors.parent_category_uid }}
                 </small>
@@ -124,19 +81,10 @@
 
         <template #footer>
             <div class="flex justify-between gap-2">
-                <Button 
-                    :label="$t('common.cancel')" 
-                    icon="pi pi-times" 
-                    severity="secondary" 
-                    @click="closeDialog"
-                    :disabled="loading"
-                />
-                <Button 
-                    :label="isEditMode ? $t('categories.form.update') : $t('categories.form.create')" 
-                    icon="pi pi-check" 
-                    @click="handleSubmit"
-                    :loading="loading"
-                />
+                <Button :label="$t('common.cancel')" icon="pi pi-times" severity="secondary" @click="closeDialog"
+                    :disabled="loading" />
+                <Button :label="isEditMode ? $t('categories.form.update') : $t('categories.form.create')"
+                    icon="pi pi-check" @click="handleSubmit" :loading="loading" />
             </div>
         </template>
 
@@ -370,14 +318,13 @@ const handleSubmit = async () => {
 
         if (error.details) {
             formErrors.value = error.details
-        } else {
-            toast.add({
-                severity: 'error',
-                summary: t('common.error'),
-                detail: error.message || 'Failed to save category',
-                life: 5000
-            })
         }
+        toast.add({
+            severity: 'error',
+            summary: t('common.error'),
+            detail: error.message || 'Failed to save category',
+            life: 5000
+        })
     } finally {
         loading.value = false
     }
@@ -407,4 +354,4 @@ onMounted(async () => {
     initSettings()
     await loadLanguages()
 })
-</script> 
+</script>
