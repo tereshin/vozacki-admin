@@ -1,9 +1,7 @@
 export default defineNuxtRouteMiddleware(async (to) => {
-  // Проверяем аутентификацию через supabase напрямую
-  const supabase = useSupabase();
-  const { data: { session } } = await supabase.auth.getSession();
-  
-  const isAuthenticated = !!session;
+  // Проверяем аутентификацию через JWT токен в cookies
+  const token = useCookie('access_token');
+  const isAuthenticated = !!token.value;
 
   // Если пользователь не авторизован и пытается попасть на защищенную страницу
   if (!isAuthenticated && to.path !== '/login') {
@@ -16,39 +14,48 @@ export default defineNuxtRouteMiddleware(async (to) => {
   }
 
   // Проверяем права доступа к защищенным страницам
-  if (isAuthenticated && session?.access_token) {
+  if (isAuthenticated && token.value) {
     // Получаем информацию о текущем администраторе
+    let user: any = null;
+    
     try {
+      // Получаем данные пользователя с сервера
       const response = await $fetch<{ data: any }>('/api/auth/me', {
         headers: {
-          'Authorization': `Bearer ${session.access_token}`
+          'Authorization': `Bearer ${token.value}`
         }
       });
-      const user = response.data;
-      
-      // Проверяем доступ к странице администраторов
-      if (to.path === '/administrators') {
-        if (!user.role || user.role.code !== 'administrator') {
-          return navigateTo('/dashboard');
+      user = response.data;
+      if (user) {
+        // Проверяем доступ к странице администраторов
+        if (to.path === '/administrators') {
+          if (!user.role || user.role.code !== 'administrator') {
+            return navigateTo('/dashboard');
+          }
         }
-      }
-      
-      // Проверяем доступ к странице ролей
-      if (to.path === '/roles') {
-        if (!user.role || user.role.code !== 'administrator') {
-          return navigateTo('/dashboard');
+        
+        // Проверяем доступ к странице ролей
+        if (to.path === '/roles') {
+          if (!user.role || user.role.code !== 'administrator') {
+            return navigateTo('/dashboard');
+          }
         }
-      }
-      
-      // Проверяем доступ к управлению статьями
-      if (to.path.startsWith('/articles') && to.path !== '/articles') {
-        if (!user.role || (user.role.code !== 'administrator' && user.role.code !== 'moderator' && user.role.code !== 'guest')) {
-          return navigateTo('/articles');
+        
+        // Проверяем доступ к управлению статьями
+        if (to.path.startsWith('/articles') && to.path !== '/articles') {
+          if (!user.role || (user.role.code !== 'administrator' && user.role.code !== 'moderator' && user.role.code !== 'guest')) {
+            return navigateTo('/articles');
+          }
         }
       }
     } catch (error) {
       console.error('Error checking permissions:', error);
-      // В случае ошибки перенаправляем на dashboard
+      // В случае ошибки авторизации очищаем токен и перенаправляем на логин
+      if (error && (error as any).status === 401) {
+        token.value = null;
+        return navigateTo('/login');
+      }
+      // В случае других ошибок перенаправляем на dashboard
       if (to.path === '/administrators' || to.path === '/roles') {
         return navigateTo('/dashboard');
       }

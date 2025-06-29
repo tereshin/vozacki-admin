@@ -249,4 +249,57 @@ export const useYourApi = () => {
     customMethod // если есть
   }
 }
-``` 
+```
+
+## Архитектура авторизации
+
+Система использует **backend API авторизацию** с JWT токенами:
+
+### Основные компоненты:
+
+1. **Backend Auth API** (`/api/auth/`)
+   - `POST /api/auth/login` - авторизация пользователей
+   - `POST /api/auth/logout` - выход из системы  
+   - `GET /api/auth/me` - получение данных текущего пользователя
+
+2. **JWT токены**
+   - Генерируются на сервере при успешной авторизации
+   - Хранятся в httpOnly cookies для безопасности
+   - Срок действия: 24 часа
+   - Содержат: id, email, supabase_id, role
+
+3. **useAuthApi composable**
+   - `login()` - авторизация через backend API
+   - `logout()` - выход через backend API
+   - `getCurrentUser()` - получение данных пользователя
+   - `getCurrentAdministrator()` - получение данных администратора
+
+### Процесс авторизации:
+
+1. **Логин**: 
+   - Frontend отправляет email/password на `/api/auth/login`
+   - Backend проверяет через Supabase Auth
+   - При успехе создается JWT токен с данными администратора
+   - Токен устанавливается в httpOnly cookie
+
+2. **Аутентификация**:
+   - Все защищенные запросы используют JWT токен
+   - Middleware проверяет токен из cookies
+   - Токен валидируется на сервере
+
+3. **Авторизация**:
+   - Роли и права определяются из JWT payload
+   - Проверки выполняются на сервере через `requireAuth()` и `requireRole()`
+
+### Безопасность:
+
+- JWT токены хранятся в httpOnly cookies
+- Токены содержат только необходимые данные
+- Проверка ролей на сервере
+- Автоматическое очищение токенов при logout
+
+### Utilities:
+
+- `useAuthenticatedFetch()` - автоматически добавляет Authorization header
+- `server/utils/auth.ts` - серверные утилиты для проверки токенов
+- Middleware `auth.ts` - защита роутов 

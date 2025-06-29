@@ -61,6 +61,7 @@ export default defineEventHandler(async (event) => {
       .single()
 
     if (error) {
+      console.error('Error updating article:', error)
       throw createError({
         statusCode: 500,
         statusMessage: 'Failed to update article'

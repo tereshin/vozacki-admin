@@ -1,31 +1,14 @@
+import { requireAuth } from '~/server/utils/auth'
 import { serverSupabaseClient } from '~/server/utils/supabase'
 
 export default defineEventHandler(async (event) => {
   try {
+    // Проверяем JWT токен и получаем данные пользователя
+    const payload = requireAuth(event)
+    
     const supabase = serverSupabaseClient
-    
-    // Получаем токен из заголовков
-    const authHeader = getHeader(event, 'authorization')
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      throw createError({
-        statusCode: 401,
-        statusMessage: 'Missing or invalid authorization header'
-      })
-    }
-    
-    const token = authHeader.replace('Bearer ', '')
-    
-    // Получаем текущего пользователя из токена
-    const { data: { user }, error: authError } = await supabase.auth.getUser(token)
-    
-    if (authError || !user || !user.email) {
-      throw createError({
-        statusCode: 401,
-        statusMessage: 'Unauthorized'
-      })
-    }
 
-    // Получаем информацию об администраторе с ролью
+    // Получаем актуальные данные администратора с ролью
     const { data: administrator, error: adminError } = await supabase
       .from('administrators')
       .select(`
@@ -42,7 +25,7 @@ export default defineEventHandler(async (event) => {
           code
         )
       `)
-      .eq('email', user.email)
+      .eq('id', payload.id)
       .single()
 
     if (adminError) {

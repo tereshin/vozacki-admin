@@ -208,6 +208,31 @@
                             {{ formErrors.role_id }}
                         </small>
                     </div>
+
+                    <div>
+                        <label for="password" class="block text-sm font-medium text-gray-900 mb-2">
+                            {{ $t('administrators.password') }}
+                            <span v-if="!editingAdministrator" class="text-red-500">*</span>
+                            <span v-else class="text-sm font-normal text-gray-500">
+                                ({{ $t('administrators.password_optional_update') }})
+                            </span>
+                        </label>
+                        <InputText 
+                            id="password"
+                            v-model="form.password" 
+                            type="password"
+                            class="w-full"
+                            :class="{ 'p-invalid': formErrors.password }"
+                            :placeholder="editingAdministrator ? $t('administrators.password_placeholder_update') : $t('administrators.password_placeholder')"
+                            :required="!editingAdministrator"
+                        />
+                        <small v-if="formErrors.password" class="text-red-600 text-sm mt-1">
+                            {{ formErrors.password }}
+                        </small>
+                        <small v-if="editingAdministrator" class="text-gray-500 text-sm mt-1">
+                            {{ $t('administrators.password_update_hint') }}
+                        </small>
+                    </div>
                 </div>
 
                 <div class="flex justify-end gap-3 pt-4 border-t border-gray-200">
@@ -384,12 +409,12 @@ const sortOrder = ref<'asc' | 'desc'>('asc')
 
 // Form state
 const form = ref<AdministratorRequest>({
-  id: crypto.randomUUID(),
   email: '',
   first_name: '',
   last_name: '',
   display_name: '',
-  role_id: ''
+  role_id: '',
+  password: ''
 })
 const formErrors = ref<Record<string, string>>({})
 
@@ -506,12 +531,12 @@ const onFilterReset = () => {
 
 const resetForm = () => {
   form.value = {
-    id: crypto.randomUUID(),
     email: '',
     first_name: '',
     last_name: '',
     display_name: '',
-    role_id: ''
+    role_id: '',
+    password: ''
   }
   formErrors.value = {}
 }
@@ -525,6 +550,12 @@ const closeDialog = () => {
 const submitForm = async () => {
   formErrors.value = {}
 
+  // Валидация пароля при создании
+  if (!editingAdministrator.value && !form.value.password?.trim()) {
+    formErrors.value.password = t('login.passwordRequired')
+    return
+  }
+
   try {
     if (editingAdministrator.value) {
       const updateData: AdministratorUpdateRequest = {
@@ -533,6 +564,11 @@ const submitForm = async () => {
         last_name: form.value.last_name || null,
         display_name: form.value.display_name || null,
         role_id: form.value.role_id || null
+      }
+      
+      // Добавляем пароль только если он был введен
+      if (form.value.password?.trim()) {
+        updateData.password = form.value.password
       }
       
       await administratorsStore.updateAdministrator(editingAdministrator.value.id, updateData)
@@ -585,7 +621,8 @@ const editAdministrator = (administrator: AdministratorResource) => {
     first_name: administrator.first_name || '',
     last_name: administrator.last_name || '',
     display_name: administrator.display_name || '',
-    role_id: administrator.role_id || ''
+    role_id: administrator.role_id || '',
+    password: '' // Пароль всегда пустой при редактировании
   }
   showCreateDialog.value = true
 }

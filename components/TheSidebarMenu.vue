@@ -8,7 +8,7 @@
           <span class="inline-flex items-center gap-4">
             <!-- Logo -->
             <div class="mx-auto w-10 h-10 shadow-sm rounded-xl flex items-center justify-center">
-              <img src="https://autokurs.tereshin.co/favicon/apple-touch-icon.png" alt="logo" class="w-full rounded-xl">
+              <img src="/favicon/apple-touch-icon.png" alt="logo" class="w-full rounded-xl">
             </div>
           </span>
           <span class="lg:hidden">
@@ -32,7 +32,7 @@
             <label class="text-xs font-medium text-gray-700">{{ $t('sidebar.contentLanguage') }}</label>
             <Select v-model="contentLanguageId" :options="availableLanguages" option-label="name" option-value="id"
               :placeholder="$t('sidebar.selectLanguage')" class="w-full text-sm" size="small"
-              @change="onLanguageChange" />
+              />
           </div>
         </div>
 
@@ -164,9 +164,7 @@ const collapsedGroups = ref<Record<number, boolean>>({});
 const router = useRouter();
 // Functions
 function toggleGroup(groupIndex: number) {
-  console.log('Toggling group:', groupIndex, 'Current state:', collapsedGroups.value[groupIndex]);
   collapsedGroups.value[groupIndex] = !collapsedGroups.value[groupIndex];
-  console.log('New state:', collapsedGroups.value[groupIndex]);
   // Save to localStorage for persistence
   if (import.meta.client) {
     localStorage.setItem('sidebar-collapsed-groups', JSON.stringify(collapsedGroups.value));
@@ -200,11 +198,6 @@ async function handleLogout() {
   } catch (error) {
     console.error('Ошибка при выходе:', error);
   }
-}
-
-function onLanguageChange() {
-  // Язык автоматически сохраняется через contentLanguageId computed свойство
-  console.log('Content language changed to:', contentLanguageId.value);
 }
 
 async function loadLanguages() {

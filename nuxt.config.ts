@@ -4,6 +4,9 @@ import { i18nConfig } from "./i18n/i18n";
 import Aura from '@primeuix/themes/aura';
 
 export default defineNuxtConfig({
+  nitro: {
+    preset: 'node-server'
+  },
   app: {
     head: {
       title: "Vozacki Admin",
@@ -29,7 +32,7 @@ export default defineNuxtConfig({
         },
         { rel: "manifest", href: "/favicon/site.webmanifest" },
       ],
-      meta: [{ name: "apple-mobile-web-app-title", content: "Vozacki Admin" }],
+      meta: [{ name: "apple-mobile-web-app-title", content: "Vozacki SRB" }],
     },
   },
   compatibilityDate: '2025-05-15',
@@ -99,6 +102,7 @@ export default defineNuxtConfig({
     public: {
       supabaseUrl: process.env.SUPABASE_URL || 'https://vemilyrevahvusnpoghi.supabase.co',
       supabasePublishableKey: process.env.SUPABASE_ANON_KEY || '',
+      appUrl: process.env.NUXT_PUBLIC_APP_URL || 'http://localhost:3000'
     }
   },
 })

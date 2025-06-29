@@ -1,6 +1,4 @@
 export const useAuthenticatedFetch = () => {
-  const supabase = useSupabase()
-
   const authenticatedFetch = async <T = any>(
     url: string,
     options: {
@@ -11,16 +9,16 @@ export const useAuthenticatedFetch = () => {
     } = {}
   ): Promise<T> => {
     try {
-      // Получаем текущую сессию
-      const { data: { session } } = await supabase.auth.getSession()
+      // Получаем токен из cookies
+      const token = useCookie('access_token')
       
       // Формируем заголовки с авторизацией
       const headers: Record<string, string> = {
         ...options.headers
       }
       
-      if (session?.access_token) {
-        headers.Authorization = `Bearer ${session.access_token}`
+      if (token.value) {
+        headers.Authorization = `Bearer ${token.value}`
       }
 
       // Выполняем запрос

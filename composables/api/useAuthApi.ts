@@ -1,50 +1,51 @@
-import type { LoginRequest, LoginResponse, User, AdministratorUser } from "~/types/auth";
+import type { LoginRequest, LoginResponse, AdministratorUser } from "~/types/auth";
 import { useApiErrorHandler } from './utils/useApiErrorHandler'
 
 export const useAuthApi = () => {
-  const supabase = useSupabase();
   const { handleError } = useApiErrorHandler()
 
   const login = async (payload: LoginRequest): Promise<LoginResponse> => {
     try {
-      const { data, error } = await supabase.auth.signInWithOtp({
-        email: payload.email,
-        options: {
-          shouldCreateUser: true,
-        },
-      });
+      const response = await $fetch<{ success: boolean; data: { user: AdministratorUser; access_token: string; expires_in: number } }>('/api/auth/login', {
+        method: 'POST',
+        body: payload
+      })
 
-      if (error) {
-        handleError(error, 'logging in')
+      if (!response.success) {
         return {
           user: null,
           session: null,
-          error: error.message,
+          error: "Ошибка авторизации",
         };
+      }
+      
+      // Создаем объект session для совместимости
+      const session = {
+        access_token: response.data.access_token,
+        expires_in: response.data.expires_in,
+        user: response.data.user
       }
 
       return {
-        user: data.user as AdministratorUser | null,
-        session: data.session,
+        user: response.data.user,
+        session: session,
       };
     } catch (error: any) {
+      console.error('Login catch error:', error)
       handleError(error, 'logging in')
       return {
         user: null,
         session: null,
-        error: error.message || "Произошла ошибка при авторизации",
+        error: error.data?.message || error.message || "Произошла ошибка при авторизации",
       };
     }
   };
 
   const logout = async (): Promise<{ error?: string }> => {
     try {
-      const { error } = await supabase.auth.signOut();
-      
-      if (error) {
-        handleError(error, 'logging out')
-        return { error: error.message };
-      }
+      await $fetch('/api/auth/logout', {
+        method: 'POST'
+      })
 
       return {};
     } catch (error: any) {
@@ -55,14 +56,16 @@ export const useAuthApi = () => {
 
   const getCurrentUser = async (): Promise<{ user: AdministratorUser | null; error?: string }> => {
     try {
-      const { data: { user }, error } = await supabase.auth.getUser();
-      
-      if (error) {
-        handleError(error, 'fetching current user')
-        return { user: null, error: error.message };
+      // Проверяем наличие токена в cookies на клиенте
+      if (typeof window !== 'undefined') {
+        const token = useCookie('access_token')
+        if (!token.value) {
+          return { user: null, error: "No authentication token" };
+        }
       }
-     
-      return { user: user as AdministratorUser | null };
+
+      const response = await $fetch<{ data: AdministratorUser }>('/api/auth/me')
+      return { user: response.data };
     } catch (error: any) {
       handleError(error, 'fetching current user')
       return { user: null, error: error.message || "Произошла ошибка при получении пользователя" };
@@ -71,11 +74,17 @@ export const useAuthApi = () => {
 
   const getCurrentSession = async () => {
     try {
-      const { data: { session }, error } = await supabase.auth.getSession();
+      // Получаем токен из cookies
+      const token = useCookie('access_token')
       
-      if (error) {
-        handleError(error, 'fetching current session')
-        return { session: null, error: error.message };
+      if (!token.value) {
+        return { session: null, error: "No session found" };
+      }
+
+      // Создаем объект session для совместимости
+      const session = {
+        access_token: token.value,
+        expires_in: 86400 // 24 hours
       }
 
       return { session };
@@ -87,21 +96,7 @@ export const useAuthApi = () => {
 
   const getCurrentAdministrator = async (): Promise<{ user: AdministratorUser | null; error?: string }> => {
     try {
-      // Получаем текущую сессию для токена
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-      
-      if (sessionError || !session?.access_token) {
-        const errorMessage = "No valid session found"
-        handleError(sessionError || new Error(errorMessage), 'fetching administrator data')
-        return { 
-          user: null, 
-          error: errorMessage
-        };
-      }
-
-      const { authenticatedFetch } = useAuthenticatedFetch()
-      const response = await authenticatedFetch<{ data: AdministratorUser }>('/api/auth/me');
-      console.log(response.data)
+      const response = await $fetch<{ data: AdministratorUser }>('/api/auth/me')
       return { user: response.data };
     } catch (error: any) {
       handleError(error, 'fetching administrator data')

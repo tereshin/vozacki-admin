@@ -1,73 +1,97 @@
-export async function verifyAuthToken(event: any) {
-  const authHeader = getHeader(event, 'authorization')
-  
-  if (!authHeader) {
-    throw createError({
-      statusCode: 401,
-      statusMessage: 'Authorization header missing'
-    })
-  }
+import jwt from 'jsonwebtoken'
 
-  const token = authHeader.replace('Bearer ', '')
+export interface JwtPayload {
+  id: string
+  email: string
+  supabase_id: string
+  role: {
+    id: string
+    name: string
+    code: string
+  }
+  iat?: number
+  exp?: number
+  iss?: string
+}
+
+export const verifyAccessToken = (token: string): JwtPayload | null => {
+  try {
+    const jwtSecret = process.env.JWT_SECRET || 'your-secret-key'
+    const decoded = jwt.verify(token, jwtSecret) as JwtPayload
+    
+    if (decoded.iss !== 'vozacki-admin') {
+      return null
+    }
+    
+    return decoded
+  } catch (error) {
+    return null
+  }
+}
+
+export const extractTokenFromEvent = (event: any): string | null => {
+  // Пытаемся получить токен из headers
+  const authHeader = getHeader(event, 'authorization')
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    return authHeader.replace('Bearer ', '')
+  }
+  
+  // Пытаемся получить токен из cookies
+  const cookieToken = getCookie(event, 'access_token')
+  if (cookieToken) {
+    return cookieToken
+  }
+  
+  return null
+}
+
+export const requireAuth = (event: any): JwtPayload => {
+  const token = extractTokenFromEvent(event)
   
   if (!token) {
     throw createError({
       statusCode: 401,
-      statusMessage: 'Invalid authorization header'
+      statusMessage: 'Missing authentication token'
     })
   }
-
-  try {
-    // Verify the JWT token with Supabase
-    const { data: { user }, error } = await serverSupabaseClient.auth.getUser(token)
-    
-    if (error || !user) {
-      throw createError({
-        statusCode: 401,
-        statusMessage: 'Invalid or expired token'
-      })
-    }
-    
-    return user
-  } catch (error) {
+  
+  const payload = verifyAccessToken(token)
+  
+  if (!payload) {
     throw createError({
       statusCode: 401,
-      statusMessage: 'Authentication failed'
+      statusMessage: 'Invalid or expired token'
     })
   }
+  
+  return payload
 }
 
-export async function requireAuth(event: any) {
-  const user = await verifyAuthToken(event)
+export const requireRole = (event: any, allowedRoles: string[]): JwtPayload => {
+  const payload = requireAuth(event)
   
-  // Check if user is an administrator with role information
-  const { data: admin, error } = await serverSupabaseClient
-    .from('administrators')
-    .select(`
-      *,
-      role:roles(
-        id,
-        name,
-        code
-      )
-    `)
-    .eq('email', user.email || '')
-    .single()
-  
-  if (error || !admin) {
+  if (!allowedRoles.includes(payload.role.code)) {
     throw createError({
       statusCode: 403,
-      statusMessage: 'Access denied. Administrator privileges required.'
+      statusMessage: 'Insufficient permissions'
     })
   }
   
-  return { user, admin }
+  return payload
 }
 
 export async function requirePermission(event: any, permission: 'manage_content' | 'view_content' | 'manage_administrators' | 'manage_roles') {
-  const { user, admin } = await requireAuth(event)
+  const payload = requireAuth(event)
   
-  const roleCode = admin.role?.code
+  const roleCode = payload.role?.code
+  
+  // Проверяем, что роль существует
+  if (!roleCode) {
+    throw createError({
+      statusCode: 403,
+      statusMessage: 'No role assigned to user. Please contact administrator.'
+    })
+  }
   
   switch (permission) {
     case 'manage_content':
@@ -105,5 +129,5 @@ export async function requirePermission(event: any, permission: 'manage_content'
       })
   }
   
-  return { user, admin }
+  return payload
 } 

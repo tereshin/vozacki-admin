@@ -591,7 +591,6 @@ watch(contentLanguageId, (newValue) => {
     // Проверяем, что язык существует в загруженных языках
     const languageExists = languages.value.find(lang => lang.id === languageId)
     if (languageExists && languageId !== filters.value.language_id) {
-        console.log('Language changed from', filters.value.language_id, 'to', languageId)
         // Clear tests cache when language changes
         testsByTopic.value.clear()
         filters.value.language_id = languageId
@@ -637,7 +636,6 @@ watch(languages, (newLanguages, oldLanguages) => {
 
         if (languageId) {
             filters.value.language_id = languageId
-            console.log('Set language_id from languages watcher:', languageId)
         }
     }
 }, { immediate: true })
@@ -685,7 +683,6 @@ onMounted(async () => {
 
     if (languageId) {
         filters.value.language_id = languageId
-        console.log('Set language_id for filters:', languageId)
     }
 
     // Now load data with correct language_id

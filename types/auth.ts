@@ -15,11 +15,16 @@ export interface AdministratorUser extends User {
 
 export interface LoginRequest {
   email: string;
+  password: string;
 }
 
 export interface LoginResponse {
   user: AdministratorUser | null;
-  session: any | null;
+  session: {
+    access_token: string;
+    expires_in: number;
+    user?: AdministratorUser;
+  } | null;
   error?: string;
 }
 

@@ -17,9 +17,14 @@ export interface SingleAdministratorResponse {
   data: AdministratorResource;
 }
 
-export interface AdministratorRequest extends TablesInsert<'administrators'> {}
+export interface AdministratorRequest extends Omit<TablesInsert<'administrators'>, 'id'> {
+  id?: string;
+  password?: string;
+}
 
-export interface AdministratorUpdateRequest extends TablesUpdate<'administrators'> {}
+export interface AdministratorUpdateRequest extends TablesUpdate<'administrators'> {
+  password?: string;
+}
 
 export interface ErrorDetailsAdministrator {
   display_name?: string[];
@@ -27,6 +32,7 @@ export interface ErrorDetailsAdministrator {
   first_name?: string[];
   last_name?: string[];
   role_id?: string[];
+  password?: string[];
 }
 
 // Role types
