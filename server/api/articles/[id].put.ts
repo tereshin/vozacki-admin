@@ -64,7 +64,7 @@ export default defineEventHandler(async (event) => {
       console.error('Error updating article:', error)
       throw createError({
         statusCode: 500,
-        statusMessage: 'Failed to update article'
+        statusMessage: error.message || 'Failed to update article'
       })
     }
 
@@ -80,7 +80,7 @@ export default defineEventHandler(async (event) => {
     
     throw createError({
       statusCode: 500,
-      statusMessage: 'Internal server error'
+      statusMessage: error.message || 'Internal server error'
     })
   }
 }) 

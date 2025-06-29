@@ -26,13 +26,13 @@ export default defineEventHandler(async (event) => {
       if (fetchError.code === 'PGRST116') {
         throw createError({
           statusCode: 404,
-          statusMessage: 'Category not found'
+          statusMessage: fetchError.message || 'Category not found'
         })
       }
       
       throw createError({
         statusCode: 500,
-        statusMessage: 'Failed to fetch category',
+        statusMessage: fetchError.message || 'Failed to fetch category',
         data: fetchError
       })
     }
@@ -46,7 +46,7 @@ export default defineEventHandler(async (event) => {
     if (subcategoriesError) {
       throw createError({
         statusCode: 500,
-        statusMessage: 'Failed to check subcategories',
+        statusMessage: subcategoriesError.message || 'Failed to check subcategories',
         data: subcategoriesError
       })
     }
@@ -67,7 +67,7 @@ export default defineEventHandler(async (event) => {
     if (articlesError) {
       throw createError({
         statusCode: 500,
-        statusMessage: 'Failed to check articles',
+        statusMessage: articlesError.message || 'Failed to check articles',
         data: articlesError
       })
     }
@@ -88,7 +88,7 @@ export default defineEventHandler(async (event) => {
     if (error) {
       throw createError({
         statusCode: 500,
-        statusMessage: 'Failed to delete category',
+        statusMessage: error.message || 'Failed to delete category',
         data: error
       })
     }
@@ -117,7 +117,7 @@ export default defineEventHandler(async (event) => {
     
     throw createError({
       statusCode: 500,
-      statusMessage: 'Internal server error'
+      statusMessage: error.message || 'Internal server error'
     })
   }
 }) 

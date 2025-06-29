@@ -315,7 +315,7 @@ const handleSubmit = async () => {
         toast.add({
             severity: 'error',
             summary: t('topics.states.error'),
-            detail: props.isEditMode ? t('topics.actions.updateError') : t('topics.actions.createError'),
+            detail: error.message,
             life: 5000
         })
     } finally {

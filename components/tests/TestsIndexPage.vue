@@ -4,6 +4,7 @@
         <TheHeader :title="$t('tests.title')" :items="breadcrumbItems">
             <template #header-actions>
                 <Button 
+                    v-if="userData?.role?.code === 'administrator'"
                     :label="$t('tests.tree.addTopic')" 
                     icon="pi pi-plus" 
                     @click="openCreateTopicDialog"
@@ -144,6 +145,9 @@ import { useGeneralStore } from '~/store/general'
 // ==================== COMPOSABLES ====================
 // I18n
 const { t } = useI18n()
+
+// User data
+const { userData } = useUserData();
 
 // PrimeVue composables
 const confirm = useConfirm()

@@ -28,7 +28,7 @@ export default defineEventHandler(async (event) => {
     
     return {
       success: true,
-      message: 'Successfully logged out'
+      message: error.message || 'Successfully logged out'
     }
   }
 }) 

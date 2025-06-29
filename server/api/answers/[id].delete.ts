@@ -27,7 +27,7 @@ export default defineEventHandler(async (event) => {
     if (getError) {
       throw createError({
         statusCode: 404,
-        statusMessage: 'Answer not found',
+        statusMessage: getError.message || 'Answer not found',
         data: getError
       })
     }
@@ -41,7 +41,7 @@ export default defineEventHandler(async (event) => {
     if (deleteError) {
       throw createError({
         statusCode: 500,
-        statusMessage: 'Failed to delete answer',
+        statusMessage: deleteError.message || 'Failed to delete answer',
         data: deleteError
       })
     }
@@ -71,7 +71,7 @@ export default defineEventHandler(async (event) => {
     
     throw createError({
       statusCode: 500,
-      statusMessage: 'Internal server error'
+      statusMessage: error.message || 'Internal server error'
     })
   }
 }) 

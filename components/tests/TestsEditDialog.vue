@@ -331,13 +331,12 @@ const saveTest = async () => {
 
         emit('saved')
         closeDialog()
-    } catch (error) {
+    } catch (error: any) {
         console.error('Error saving test:', error)
-        const errorDetail = props.isCreateMode ? t('tests.single.testCreateError') : t('tests.single.testUpdateError')
         toast.add({
             severity: 'error',
             summary: t('common.error'),
-            detail: errorDetail,
+            detail: error.message || t('tests.single.testUpdateError'),
             life: 3000
         })
     } finally {

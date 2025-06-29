@@ -32,12 +32,12 @@ export default defineEventHandler(async (event) => {
       if (adminError.code === 'PGRST116') {
         throw createError({
           statusCode: 404,
-          statusMessage: 'Administrator not found'
+          statusMessage: adminError.message || 'Administrator not found'
         })
       }
       throw createError({
         statusCode: 500,
-        statusMessage: 'Error fetching administrator data',
+        statusMessage: adminError.message || 'Error fetching administrator data',
         data: adminError
       })
     }
@@ -61,7 +61,7 @@ export default defineEventHandler(async (event) => {
     console.error('Server error:', error)
     throw createError({
       statusCode: 500,
-      statusMessage: 'Internal server error'
+      statusMessage: error.message || 'Internal server error'
     })
   }
 }) 

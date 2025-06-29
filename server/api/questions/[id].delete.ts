@@ -27,7 +27,7 @@ export default defineEventHandler(async (event) => {
     if (getError) {
       throw createError({
         statusCode: 404,
-        statusMessage: 'Question not found',
+        statusMessage: getError.message || 'Question not found',
         data: getError
       })
     }
@@ -52,7 +52,7 @@ export default defineEventHandler(async (event) => {
         if (deleteAnswersError) {
           throw createError({
             statusCode: 500,
-            statusMessage: 'Failed to delete question answers',
+            statusMessage: deleteAnswersError.message || 'Failed to delete question answers',
             data: deleteAnswersError
           })
         }
@@ -83,7 +83,7 @@ export default defineEventHandler(async (event) => {
     if (deleteError) {
       throw createError({
         statusCode: 500,
-        statusMessage: 'Failed to delete question',
+        statusMessage: deleteError.message || 'Failed to delete question',
         data: deleteError
       })
     }
@@ -113,7 +113,7 @@ export default defineEventHandler(async (event) => {
     
     throw createError({
       statusCode: 500,
-      statusMessage: 'Internal server error'
+      statusMessage: error.message || 'Internal server error'
     })
   }
 }) 

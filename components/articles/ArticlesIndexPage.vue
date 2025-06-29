@@ -3,7 +3,7 @@
         <!-- Header -->
         <TheHeader :title="$t('articles.title')" :hideBreadcrumb="false" :items="breadcrumbItems">
             <template #header-actions>
-                <Button @click="createArticle" :label="$t('articles.actions.create')" icon="pi pi-plus" 
+                <Button v-if="userData?.role?.code === 'administrator'" @click="createArticle" :label="$t('articles.actions.create')" icon="pi pi-plus" 
                     size="small" />
             </template>
         </TheHeader>
@@ -126,6 +126,7 @@ const categoriesStore = useCategoriesStore()
 
 // App settings
 const { contentLanguageId, initSettings } = useAppSettings()
+const { userData } = useUserData();
 
 // Utils composables
 const { formatDateShort } = useFormatDate()
@@ -259,12 +260,12 @@ const onFilterChange = async (field: string, value: any) => {
                 language_id: value || undefined
             })
             categories.value = categoriesResponse.data.collection
-        } catch (error) {
+        } catch (error: any) {
             console.error('Error loading categories for language:', error)
             toast.add({
                 severity: 'error',
                 summary: t('articles.states.error'),
-                detail: 'Failed to load categories for selected language',
+                detail: error.message || 'Failed to load categories for selected language',
                 life: 5000
             })
         }
@@ -281,12 +282,12 @@ const onFilterReset = async () => {
     try {
         const categoriesResponse = await categoriesStore.getCategories({ per_page: 100 })
         categories.value = categoriesResponse.data.collection
-    } catch (error) {
+    } catch (error: any) {
         console.error('Error loading categories on reset:', error)
         toast.add({
             severity: 'error',
             summary: t('articles.states.error'),
-            detail: 'Failed to load categories',
+            detail: error.message || 'Failed to load categories',
             life: 5000
         })
     }
@@ -521,12 +522,12 @@ onMounted(async () => {
 
         // Load articles
         await applyFilters()
-    } catch (error) {
+    } catch (error: any) {
         console.error('Error loading initial data:', error)
         toast.add({
             severity: 'error',
             summary: t('articles.states.error'),
-            detail: 'Failed to load initial data',
+            detail: error.message || 'Failed to load initial data',
             life: 5000
         })
     }

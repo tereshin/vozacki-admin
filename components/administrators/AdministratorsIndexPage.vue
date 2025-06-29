@@ -495,11 +495,11 @@ const loadAdministrators = async () => {
     }
     
     await administratorsStore.getAdministrators(params)
-  } catch (error) {
+  } catch (error: any) {
     toast.add({
       severity: 'error',
       summary: t('common.error'),
-      detail: t('administrators.error_loading'),
+      detail: error.message || t('administrators.error_loading'),
       life: 3000
     })
   }
@@ -599,9 +599,7 @@ const submitForm = async () => {
       toast.add({
         severity: 'error',
         summary: t('common.error'),
-        detail: editingAdministrator.value 
-          ? t('administrators.error_updating')
-          : t('administrators.error_creating'),
+        detail: error.message || t('administrators.error_creating'),
         life: 3000
       })
     }
@@ -648,11 +646,11 @@ const deleteAdministrator = async () => {
     showDeleteDialog.value = false
     deletingAdministrator.value = null
     loadAdministrators()
-  } catch (error) {
+  } catch (error: any) {
     toast.add({
       severity: 'error',
       summary: t('common.error'),
-      detail: t('administrators.error_deleting'),
+      detail: error.message || t('administrators.error_deleting'),
       life: 3000
     })
   }
@@ -669,12 +667,12 @@ onMounted(async () => {
     await rolesStore.getAllRoles()
     // Затем загружаем администраторов
     await loadAdministrators()
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error initializing administrators page:', error)
     toast.add({
       severity: 'error',
       summary: t('common.error'),
-      detail: t('administrators.error_loading'),
+      detail: error.message || t('administrators.error_loading'),
       life: 3000
     })
   }

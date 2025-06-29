@@ -37,7 +37,7 @@ export default defineEventHandler(async (event) => {
     if (uidError) {
       throw createError({
         statusCode: 500,
-        statusMessage: 'Failed to generate UID',
+        statusMessage: uidError.message || 'Failed to generate UID',
         data: uidError
       })
     }
@@ -58,7 +58,7 @@ export default defineEventHandler(async (event) => {
     if (error) {
       throw createError({
         statusCode: 500,
-        statusMessage: 'Failed to create topic',
+        statusMessage: error.message || 'Failed to create topic',
         data: error
       })
     }
@@ -75,7 +75,7 @@ export default defineEventHandler(async (event) => {
     
     throw createError({
       statusCode: 500,
-      statusMessage: 'Internal server error'
+      statusMessage: error.message || 'Internal server error'
     })
   }
 }) 
