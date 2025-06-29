@@ -51,6 +51,7 @@
                         }}
                     </h1>
                 </div>
+                
                 <!-- Stats cards -->
                 <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mb-8">
                     <!-- Articles card -->
@@ -128,7 +129,7 @@
                     </Card>
 
                     <!-- Administrators card -->
-                    <Card class="hover:shadow-lg transition-shadow duration-300 cursor-pointer" @click="navigateTo('/administrators')">
+                    <Card class="hover:shadow-lg transition-shadow duration-300 cursor-pointer" v-if="userData?.role?.code !== 'guest'" @click="navigateTo('/administrators')">
                         <template #content>
                             <div>
                                 <div class="flex items-center justify-between mb-4">

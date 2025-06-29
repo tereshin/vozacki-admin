@@ -2,7 +2,9 @@ import type { Tables, TablesInsert, TablesUpdate } from './database'
 import type { MetaResponse } from './general'
 
 export interface AdministratorResource extends Tables<'administrators'> {
-  full_name?: string;
+  first_name: string;
+  last_name: string;
+  full_name: string;
   role?: Tables<'roles'>;
 }
 

@@ -13,7 +13,8 @@
     "invalidEmail": "Enter a valid email address",
     "emailRequired": "Enter email address",
     "passwordRequired": "Enter password",
-    "unexpectedError": "An unexpected error occurred"
+    "unexpectedError": "An unexpected error occurred",
+    "demoButton": "Demo Account"
   },
 
   "articles": {
@@ -466,7 +467,8 @@
       "tryAgain": "Try Again"
     },
     "errors": {
-      "loadingStats": "Error loading statistics"
+      "loadingStats": "Error loading statistics",
+      "guestAccess": "Guest access is read-only."
     },
     "currentLanguage": {
       "title": "Current Content Language",
