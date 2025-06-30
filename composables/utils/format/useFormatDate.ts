@@ -73,10 +73,19 @@ export const useFormatDate = () => {
    * Форматирует только время
    */
   const formatTimeOnly = (date: string | Date, locale: string = 'ru-RU'): string => {
-    return formatDate(date, {
+    if (!date) return ''
+    
+    const dateObj = typeof date === 'string' ? new Date(date) : date
+    
+    // Проверяем валидность даты
+    if (isNaN(dateObj.getTime())) {
+      return ''
+    }
+    
+    return dateObj.toLocaleTimeString(locale, {
       hour: '2-digit',
       minute: '2-digit'
-    }, locale)
+    })
   }
 
   return {

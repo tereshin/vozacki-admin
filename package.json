@@ -10,7 +10,14 @@
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
     "analyze": "node scripts/analyze-bundles.cjs",
-    "build:report": "npm run build && npm run analyze"
+    "build:report": "npm run build && npm run analyze",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "test:run": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:install": "playwright install"
   },
   "dependencies": {
     "@editorjs/checklist": "^1.6.0",
@@ -53,6 +60,14 @@
     "@primevue/nuxt-module": "^4.3.5",
     "@types/bcryptjs": "^2.4.6",
     "@types/jsonwebtoken": "^9.0.10",
-    "vite": "^6.3.5"
+    "vite": "^6.3.5",
+    "@playwright/test": "^1.43.1",
+    "@testing-library/vue": "^8.0.1",
+    "@testing-library/user-event": "^14.5.2",
+    "@vitest/ui": "^1.0.0",
+    "@vitest/coverage-v8": "^1.0.0",
+    "happy-dom": "^12.0.0",
+    "vitest": "^1.0.0",
+    "vitest-environment-nuxt": "^1.0.1"
   }
 }

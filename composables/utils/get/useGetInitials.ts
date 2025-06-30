@@ -53,7 +53,7 @@ export const useGetInitials = () => {
   ): string => {
     if (!email?.trim()) return defaultValue
     
-    const emailPart = email.split('@')[0]
+    const emailPart = email.trim().split('@')[0]
     const initials = emailPart?.charAt(0).toUpperCase() || defaultValue
     
     return initials

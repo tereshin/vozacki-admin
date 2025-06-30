@@ -126,6 +126,10 @@ export function useFilters() {
   function hasActiveFilters(filters: FiltersState, searchValue?: string): boolean {
     const hasFilterValues = Object.values(filters).some(filter => filter.chosenOptions.length > 0);
     const hasSearch = searchValue && searchValue.length > 0;
+    // Строка с пробелами не считается активным фильтром
+    if (searchValue && searchValue.trim() === '') {
+      return false;
+    }
     return hasFilterValues || !!hasSearch;
   }
 

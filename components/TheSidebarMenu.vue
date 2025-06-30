@@ -53,7 +53,7 @@
                 <span class="text-xs text-gray-500">{{ currentRoleName || $t('sidebar.user.defaultRole') }}</span>
               </div>
             </div>
-            <Button variant="text" size="small" @click="handleLogout" :loading="authStore.loading"
+            <Button class="logout-button" variant="text" size="small" @click="handleLogout" :loading="authStore.loading"
               icon="pi pi-sign-out" />
           </div>
         </div>
