@@ -1,6 +1,6 @@
 <template>
   <div
-    class="bg-surface-300/40 dark:bg-surface-950 h-screen relative"
+    class="bg-surface-300/40 h-screen relative"
   >
     <!-- Language Selector -->
     <div class="absolute top-4 right-4 z-10">
