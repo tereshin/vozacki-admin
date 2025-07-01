@@ -4,6 +4,7 @@ import { resolve } from 'path'
 export default defineConfig({
   resolve: {
     alias: {
+      '@typed-router': resolve(__dirname, 'tests/__mocks__/@typed-router.ts'),
       '@': resolve(__dirname),
       '~': resolve(__dirname),
       'assets': resolve(__dirname, 'assets'),

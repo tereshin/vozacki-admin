@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { useGetLanguageFromCookie } from '../../../../composables/utils/get/useGetLanguageFromCookie'
+import { useGetLanguageFromCookie } from '../../../../../composables/utils/get/useGetLanguageFromCookie'
 
 // Мокаем i18n
 vi.mock('../../../../i18n/i18n', () => ({

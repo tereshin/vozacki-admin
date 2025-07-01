@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { useGetIcon } from '../../../../composables/utils/get/useGetIcon'
+import { useGetIcon } from '../../../../../composables/utils/get/useGetIcon'
 
 describe('useGetIcon', () => {
   it('should return correct icon component for valid icon names', () => {

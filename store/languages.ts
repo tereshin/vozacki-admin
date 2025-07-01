@@ -2,10 +2,9 @@ import { defineStore } from "pinia";
 import type { MetaResponse } from "~/types/general";
 import type { LanguageResource, LanguageResponse, LanguageRequest, LanguageUpdateRequest } from "~/types/languages";
 import { useCacheManager } from "~/composables/cache/useCacheManager";
+import { useLanguagesApi } from "~/composables/api/useLanguagesApi";
 
 export const useLanguagesStore = defineStore("languages", () => {
-  // Cache utilities
-  const { getCachedLanguages } = useCacheManager();
   // State
   const items = ref<LanguageResource[]>([]);
   const meta = ref<MetaResponse>({
@@ -18,6 +17,10 @@ export const useLanguagesStore = defineStore("languages", () => {
   });
   const loading = ref(false);
   const error = ref<string | null>(null);
+
+  // Get composables
+  const { getCachedLanguages } = useCacheManager();
+  const { getLanguages: apiGetLanguages, getSingleLanguage: apiGetSingleLanguage, createLanguage: apiCreateLanguage, updateLanguage: apiUpdateLanguage, deleteLanguage: apiDeleteLanguage } = useLanguagesApi();
 
   // Actions
   async function getLanguages(payload?: any): Promise<LanguageResponse> {
@@ -79,9 +82,7 @@ export const useLanguagesStore = defineStore("languages", () => {
     error.value = null;
     
     try {
-      const { getSingleLanguage } = useLanguagesApi();
-      const response = await getSingleLanguage(id);
-      
+      const response = await apiGetSingleLanguage(id);
       return response.data;
     } catch (err) {
       error.value = err instanceof Error ? err.message : 'An error occurred';
@@ -96,8 +97,7 @@ export const useLanguagesStore = defineStore("languages", () => {
     error.value = null;
     
     try {
-      const { createLanguage } = useLanguagesApi();
-      const response = await createLanguage(body);
+      const response = await apiCreateLanguage(body);
       
       // Add to items array
       items.value.unshift(response.data);
@@ -117,8 +117,7 @@ export const useLanguagesStore = defineStore("languages", () => {
     error.value = null;
     
     try {
-      const { updateLanguage } = useLanguagesApi();
-      const response = await updateLanguage(id, body);
+      const response = await apiUpdateLanguage(id, body);
       
       // Update in items array
       const index = items.value.findIndex(item => item.id === id);
@@ -140,8 +139,7 @@ export const useLanguagesStore = defineStore("languages", () => {
     error.value = null;
     
     try {
-      const { deleteLanguage } = useLanguagesApi();
-      await deleteLanguage(id);
+      await apiDeleteLanguage(id);
       
       // Remove from items array
       const index = items.value.findIndex(item => item.id === id);

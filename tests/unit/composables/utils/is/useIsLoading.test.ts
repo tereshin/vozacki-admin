@@ -1,12 +1,12 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { useIsLoading } from '../../../../composables/utils/is/useIsLoading'
+import { useIsLoading } from '~/composables/utils/is/useIsLoading'
 
 // Мокаем general store
 const mockGeneralStore = {
   isLoading: false
 }
 
-vi.mock('../../../../store/general', () => ({
+vi.mock('~/store/general', () => ({
   useGeneralStore: () => mockGeneralStore
 }))
 

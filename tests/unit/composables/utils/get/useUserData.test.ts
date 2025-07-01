@@ -10,7 +10,7 @@ vi.mock('~/store/auth', () => ({
   useAuthStore: vi.fn()
 }))
 
-const { useUserData } = await import('../../../../composables/utils/get/useUserData')
+const { useUserData } = await import('../../../../../composables/utils/get/useUserData')
 
 describe('useUserData', () => {
   let mockAuthStore: any

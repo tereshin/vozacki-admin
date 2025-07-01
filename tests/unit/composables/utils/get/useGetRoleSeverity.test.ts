@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { useGetRoleSeverity } from '../../../../composables/utils/get/useGetRoleSeverity'
+import { useGetRoleSeverity } from '../../../../../composables/utils/get/useGetRoleSeverity'
 
 describe('useGetRoleSeverity', () => {
   const { 

@@ -25,9 +25,9 @@ const mockRouter = {
 globalThis.useRoute = vi.fn(() => mockRoute)
 globalThis.useRouter = vi.fn(() => mockRouter)
 
-const { useFilters } = await import('../../../../composables/utils/data/useFilters')
+const { useFilters } = await import('../../../../../composables/utils/data/useFilters')
 
-import type { FilterConfig, FiltersState } from '../../../../composables/utils/data/useFilters'
+import type { FilterConfig, FiltersState } from '../../../../../composables/utils/data/useFilters'
 
 describe('useFilters', () => {
   // Временно пропускаем useFilters тесты из-за проблем с мокингом Nuxt composables

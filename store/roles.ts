@@ -4,9 +4,6 @@ import type { RoleResource, RoleResponse } from "~/types/administrators";
 import { useCacheManager } from "~/composables/cache/useCacheManager";
 
 export const useRolesStore = defineStore("roles", () => {
-  // Cache utilities
-  const { getCachedRoles } = useCacheManager();
-  
   // State
   const items = ref<RoleResource[]>([]);
   const allRoles = ref<RoleResource[]>([]);
@@ -21,17 +18,20 @@ export const useRolesStore = defineStore("roles", () => {
   const loading = ref(false);
   const error = ref<string | null>(null);
 
+  // Get composables
+  const { getCachedRoles } = useCacheManager();
+
   // Actions
   async function getRoles(payload?: any): Promise<RoleResponse> {
     loading.value = true;
     error.value = null;
     
     try {
-      // Получаем все роли из кэша
+      // Get roles from cache
       const cachedRoles = await getCachedRoles();
-      let filteredRoles = cachedRoles;
+      let filteredRoles = Array.isArray(cachedRoles) ? cachedRoles : [];
       
-      // Применяем фильтры если payload предоставлен
+      // Apply filters if payload provided
       if (payload) {
         if (payload.search) {
           const searchLower = payload.search.toLowerCase();
@@ -42,7 +42,7 @@ export const useRolesStore = defineStore("roles", () => {
         }
       }
       
-      // Применяем пагинацию
+      // Apply pagination
       const page = payload?.page || 1;
       const perPage = payload?.per_page || 10;
       const startIndex = (page - 1) * perPage;
@@ -78,11 +78,11 @@ export const useRolesStore = defineStore("roles", () => {
     error.value = null;
     
     try {
-      // Получаем все роли из кэша
+      // Get all roles from cache
       const roles = await getCachedRoles();
-      allRoles.value = roles;
+      allRoles.value = Array.isArray(roles) ? roles : [];
       
-      return roles;
+      return allRoles.value;
     } catch (err) {
       error.value = err instanceof Error ? err.message : 'An error occurred';
       throw err;

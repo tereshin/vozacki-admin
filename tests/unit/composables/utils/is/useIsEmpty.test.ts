@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { useIsEmpty } from '../../../../composables/utils/is/useIsEmpty'
+import { useIsEmpty } from '../../../../../composables/utils/is/useIsEmpty'
 
 describe('useIsEmpty', () => {
   describe('null and undefined values', () => {

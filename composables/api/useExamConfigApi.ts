@@ -5,7 +5,6 @@ import type {
   ExamConfigResponse,
   SingleExamConfigResponse 
 } from '~/types/exam-config'
-import { useCrudMixin } from './mixins/useCrudMixin'
 
 export const useExamConfigApi = () => {
   const crudMixin = useCrudMixin<

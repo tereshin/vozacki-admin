@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { useGetInitials } from '../../../../composables/utils/get/useGetInitials'
+import { useGetInitials } from '../../../../../composables/utils/get/useGetInitials'
 
 describe('useGetInitials', () => {
   const { getInitials, getInitialsFromFullName, getInitialsFromEmail } = useGetInitials()

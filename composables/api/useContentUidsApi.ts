@@ -5,7 +5,6 @@ import type {
   ContentUidResponse,
   SingleContentUidResponse 
 } from '~/types/content-uids'
-import { useCrudMixin } from './mixins/useCrudMixin'
 
 export const useContentUidsApi = () => {
   const crudMixin = useCrudMixin<

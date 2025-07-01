@@ -21,7 +21,9 @@ interface CacheMeta {
 export const useIndexedDB = () => {
   let db: IDBDatabase | null = null
 
-  const initDB = (): Promise<IDBDatabase> => {
+  const api: any = {}
+
+  api.initDB = (): Promise<IDBDatabase> => {
     return new Promise((resolve, reject) => {
       if (db) {
         resolve(db)
@@ -62,139 +64,111 @@ export const useIndexedDB = () => {
     })
   }
 
-  const saveLanguages = async (languages: LanguageResource[]): Promise<void> => {
-    const database = await initDB()
-    
+  api.saveLanguages = async (languages: LanguageResource[]): Promise<void> => {
+    const database = await api.initDB()
     return new Promise((resolve, reject) => {
       const transaction = database.transaction([LANGUAGES_STORE], 'readwrite')
       const store = transaction.objectStore(LANGUAGES_STORE)
-
-      // Очищаем старые данные
       const clearRequest = store.clear()
-      
       clearRequest.onsuccess = () => {
-        // Добавляем новые данные
         languages.forEach((language) => {
           store.add(language)
         })
       }
-
       transaction.oncomplete = () => {
         resolve()
       }
-
       transaction.onerror = () => {
         reject(transaction.error)
       }
     })
   }
 
-  const saveRoles = async (roles: RoleResource[]): Promise<void> => {
-    const database = await initDB()
-    
+  api.saveRoles = async (roles: RoleResource[]): Promise<void> => {
+    const database = await api.initDB()
     return new Promise((resolve, reject) => {
       const transaction = database.transaction([ROLES_STORE], 'readwrite')
       const store = transaction.objectStore(ROLES_STORE)
-
-      // Очищаем старые данные
       const clearRequest = store.clear()
-      
       clearRequest.onsuccess = () => {
-        // Добавляем новые данные
         roles.forEach((role) => {
           store.add(role)
         })
       }
-
       transaction.oncomplete = () => {
         resolve()
       }
-
       transaction.onerror = () => {
         reject(transaction.error)
       }
     })
   }
 
-  const getLanguages = async (): Promise<LanguageResource[]> => {
-    const database = await initDB()
-    
+  api.getLanguages = async (): Promise<LanguageResource[]> => {
+    const database = await api.initDB()
     return new Promise((resolve, reject) => {
       const transaction = database.transaction([LANGUAGES_STORE], 'readonly')
       const store = transaction.objectStore(LANGUAGES_STORE)
       const request = store.getAll()
-
       request.onsuccess = () => {
         resolve(request.result || [])
       }
-
       request.onerror = () => {
         reject(request.error)
       }
     })
   }
 
-  const getRoles = async (): Promise<RoleResource[]> => {
-    const database = await initDB()
-    
+  api.getRoles = async (): Promise<RoleResource[]> => {
+    const database = await api.initDB()
     return new Promise((resolve, reject) => {
       const transaction = database.transaction([ROLES_STORE], 'readonly')
       const store = transaction.objectStore(ROLES_STORE)
       const request = store.getAll()
-
       request.onsuccess = () => {
         resolve(request.result || [])
       }
-
       request.onerror = () => {
         reject(request.error)
       }
     })
   }
 
-  const getActiveLanguages = async (): Promise<LanguageResource[]> => {
+  api.getActiveLanguages = async (): Promise<LanguageResource[]> => {
     try {
-      // Получаем все языки и фильтруем активные
-      const allLanguages = await getLanguages()
-      return allLanguages.filter(lang => lang.is_active === true)
+      const allLanguages = await api.getLanguages()
+      return allLanguages.filter((lang: LanguageResource) => lang.is_active === true)
     } catch (error) {
       throw error
     }
   }
 
-  const saveCacheMeta = async (lastUpdate: Date): Promise<void> => {
-    const database = await initDB()
-    
+  api.saveCacheMeta = async (lastUpdate: Date): Promise<void> => {
+    const database = await api.initDB()
     return new Promise((resolve, reject) => {
       const transaction = database.transaction([CACHE_META_STORE], 'readwrite')
       const store = transaction.objectStore(CACHE_META_STORE)
-
       const meta: CacheMeta = {
         id: 'cache_info',
         lastUpdate: lastUpdate.toISOString(),
         version: '1.0'
       }
-
       const request = store.put(meta)
-
       request.onsuccess = () => {
         resolve()
       }
-
       request.onerror = () => {
         reject(request.error)
       }
     })
   }
 
-  const getCacheMeta = async (): Promise<Date | null> => {
-    const database = await initDB()
-    
+  api.getCacheMeta = async (): Promise<Date | null> => {
+    const database = await api.initDB()
     return new Promise((resolve, reject) => {
       const transaction = database.transaction([CACHE_META_STORE], 'readonly')
       const store = transaction.objectStore(CACHE_META_STORE)
       const request = store.get('cache_info')
-
       request.onsuccess = () => {
         if (request.result) {
           resolve(new Date(request.result.lastUpdate))
@@ -202,42 +176,27 @@ export const useIndexedDB = () => {
           resolve(null)
         }
       }
-
       request.onerror = () => {
         reject(request.error)
       }
     })
   }
 
-  const clearCache = async (): Promise<void> => {
-    const database = await initDB()
-    
+  api.clearCache = async (): Promise<void> => {
+    const database = await api.initDB()
     return new Promise((resolve, reject) => {
       const transaction = database.transaction([LANGUAGES_STORE, ROLES_STORE, CACHE_META_STORE], 'readwrite')
-      
       transaction.objectStore(LANGUAGES_STORE).clear()
       transaction.objectStore(ROLES_STORE).clear()
       transaction.objectStore(CACHE_META_STORE).clear()
-
       transaction.oncomplete = () => {
         resolve()
       }
-
       transaction.onerror = () => {
         reject(transaction.error)
       }
     })
   }
 
-  return {
-    initDB,
-    saveLanguages,
-    saveRoles,
-    getLanguages,
-    getRoles,
-    getActiveLanguages,
-    saveCacheMeta,
-    getCacheMeta,
-    clearCache
-  }
+  return api
 } 
